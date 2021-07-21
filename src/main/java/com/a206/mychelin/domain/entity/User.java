@@ -10,7 +10,7 @@ import java.util.Date;
 @Entity
 @Table(name="user")
 @ToString
-public class UserEntity {
+public class User {
     @Id
     @Column(name="id", nullable = false)
     private String id;
