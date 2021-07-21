@@ -30,7 +30,7 @@ dependencies {
     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    // jwt 토큰 인증 추가
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }
 
