@@ -41,7 +41,7 @@ public class User  {
     private String bio;
     @Column(name="withdraw", nullable = true)
     private boolean withdraw;
-    @Column(name="role",nullable =)
+    @Column(name="role",nullable = true)
     private String role;
 
 }
