@@ -36,4 +36,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public CustomAuthenticationFilter customAuthenticationFilter() throws Exception{
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManager());
+        customAuthenticationFilter.setFilterProcessesUrl("/user/login");
+        customAuthenticationFilter.setAuthenticationSuccessHandler(customLoginSuccessHandler());
+        customAuthenticationFilter.afterPropertiesSet();
+        return customAuthenticationFilter;
+    }
+
+    @Bean
+    public CustomLoginSuccessHandler customLoginSuccessHandler(){
+        return new CustomLoginSuccessHandler();
+    }
 }
