@@ -12,6 +12,14 @@ import java.util.Date;
 @Table(name="user")
 @ToString
 public class User  {
+    @Builder
+    public User(String id, String nickname, String password, String phoneNumber) {
+        this.id = id;
+        this.nickname = nickname;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+    }
+
     @Id
     @Column(name="id", nullable = false)
     private String id;
@@ -21,7 +29,7 @@ public class User  {
     private String password;
     @Column(name="gender", nullable = true)
     private char gender;
-    @Column(name="phone_number", nullable = true)
+    @Column(name="phone_number", nullable = false)
     private String phoneNumber;
     @Column(name="report_count", nullable = true)
     private int reportCount;

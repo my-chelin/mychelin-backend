@@ -38,8 +38,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
 
             authRequst = new UsernamePasswordAuthenticationToken(user.getId(),user.getPassword());
-            System.out.println(user);
-            System.out.println(authRequst.toString());
+//            System.out.println(user);
+//            System.out.println(authRequst.toString());
         } catch (IOException e) {
             throw new InputNotFoundException();
         }
