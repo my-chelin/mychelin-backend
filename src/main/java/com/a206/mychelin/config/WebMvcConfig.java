@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 // 정적 리소스에 대한 설정
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
     // 정적 리소스 위치 목록
     private static final String[] CLASSPATH_RESOURCE_LOCATIONS={
             "classpath:/static/","class:/public/","classpath:/resources","classpath:/META-INF/resources/webjars"
@@ -25,4 +26,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addViewController("/").setViewName("forward:/index");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
+
+
 }

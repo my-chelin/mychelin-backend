@@ -17,9 +17,10 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     // 해당 유저에 대한 토큰 생성, 헤더에 붙이기
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        final User user = ((MyUserDetails)authentication.getPrincipal()).getUser();
-
-        final String token = TokenUtils.generateJwtToken(user);
+//        final User user = ((MyUserDetails)authentication.getPrincipal()).getUser();
+//
+//        final String token = TokenUtils.generateJwtToken(user);
+        final String token="123";
         response.addHeader(AuthConstants.AUTH_HEADER,AuthConstants.TOKEN_TYPE+" "+token);
     }
 }

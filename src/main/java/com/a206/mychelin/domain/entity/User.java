@@ -3,6 +3,7 @@ package com.a206.mychelin.domain.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @NoArgsConstructor
@@ -10,7 +11,8 @@ import java.util.Date;
 @Entity
 @Table(name="user")
 @ToString
-public class User {
+@Builder
+public class User  {
     @Id
     @Column(name="id", nullable = false)
     private String id;
@@ -32,4 +34,7 @@ public class User {
     private String bio;
     @Column(name="withdraw", nullable = true)
     private boolean withdraw;
+    @Column(name="role",nullable = false)
+    private String role;
+
 }
