@@ -31,9 +31,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
-
     // jwt 토큰 인증 추가
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    compileOnly 'javax.servlet:javax.servlet-api:3.1.0'
 
 }
 
