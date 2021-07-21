@@ -11,7 +11,6 @@ import java.util.Date;
 @Entity
 @Table(name="user")
 @ToString
-@Builder
 public class User  {
     @Id
     @Column(name="id", nullable = false)

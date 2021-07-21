@@ -1,6 +1,7 @@
 package com.a206.mychelin.config;
 
 import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.util.TokenUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -17,10 +18,13 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     // 해당 유저에 대한 토큰 생성, 헤더에 붙이기
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-//        final User user = ((MyUserDetails)authentication.getPrincipal()).getUser();
-//
-//        final String token = TokenUtils.generateJwtToken(user);
-        final String token="123";
+        final User user = ((MyUserDetails)authentication.getPrincipal()).getUser();
+
+        final String token = TokenUtils.generateJwtToken(user);
         response.addHeader(AuthConstants.AUTH_HEADER,AuthConstants.TOKEN_TYPE+" "+token);
+
+
+
+
     }
 }
