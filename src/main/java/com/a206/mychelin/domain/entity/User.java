@@ -1,6 +1,8 @@
 package com.a206.mychelin.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,6 +13,8 @@ import java.util.Date;
 @Entity
 @Table(name="user")
 @ToString
+@DynamicUpdate
+@DynamicInsert
 public class User  {
     @Builder
     public User(String id, String nickname, String password, String phoneNumber) {
@@ -18,6 +22,7 @@ public class User  {
         this.nickname = nickname;
         this.password = password;
         this.phoneNumber = phoneNumber;
+//        this.role="ROLE_USER";
     }
 
     @Id
@@ -41,7 +46,7 @@ public class User  {
     private String bio;
     @Column(name="withdraw", nullable = true)
     private boolean withdraw;
-    @Column(name="role",nullable = false)
+    @Column(name="role",nullable = true)
     private String role;
 
 }
