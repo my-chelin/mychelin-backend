@@ -10,14 +10,17 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.FilterRegistration;
+import java.util.ArrayList;
+import java.util.List;
 
 // 정적 리소스에 대한 설정
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    // 패턴에 들어가는 값이 토큰이 필요한 url이다.
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtTokenInterceptor()).addPathPatterns("/user/profile");
+        registry.addInterceptor(jwtTokenInterceptor()).addPathPatterns(AuthorizationCheck.getObject().getPathList());
     }
 
     @Bean
@@ -30,7 +33,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Bean
     public HeaderFilter createHeaderFilter() {
-        return new HerderFilter();
+        return new HeaderFilter();
     }
 
     @Bean

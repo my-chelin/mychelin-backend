@@ -10,6 +10,11 @@ import java.io.IOException;
 public class HeaderFilter implements Filter {
 
     @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
+    }
+
+    @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final HttpServletResponse res = (HttpServletResponse) response;
         res.setHeader("Access-Control-Allow-Origin", "*");
@@ -26,6 +31,11 @@ public class HeaderFilter implements Filter {
         res.setHeader("Access-Control-Allow-Credentials", "false");
 
         chain.doFilter(request, response);
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
 }
