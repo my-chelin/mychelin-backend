@@ -8,12 +8,6 @@ import java.io.IOException;
 
 @Log4j2
 public class HeaderFilter implements Filter {
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-
-    }
-
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
         final HttpServletResponse res = (HttpServletResponse) response;
@@ -24,18 +18,18 @@ public class HeaderFilter implements Filter {
                 "Access-Control-Allow-Headers",
                 "X-Requested-With, Content-Type, Authorization, X-XSRF-token"
         );
-        res.setHeader(
-                "Access-Control-Expose-Headers",
-                "Refresh_token"
-        );
+        res.setHeader("Access-Control-Expose-Headers", "Refresh_token");
         res.setHeader("Access-Control-Allow-Credentials", "false");
-
         chain.doFilter(request, response);
+    }
+
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+
     }
 
     @Override
     public void destroy() {
 
     }
-
 }

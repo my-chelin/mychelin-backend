@@ -5,7 +5,6 @@ import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public MyUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         return userRepository.findById(id)
                 .map(u -> new MyUserDetails(u, Collections.singleton(new SimpleGrantedAuthority(u.getRole()))))
-                .orElseThrow(()->new UserNotFoundException(id));
+                .orElseThrow(() -> new UserNotFoundException(id));
     }
 }
