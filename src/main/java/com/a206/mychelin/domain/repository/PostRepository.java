@@ -7,15 +7,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, String> {
-    List<Post> getPostsByUserId(String user_id);
-
-    List<Post> findPostsByUserId(String user_id);
-
-    Optional<Post> findPostsById(String id);//특정 포스트 정보 가지고오기
-
-    List<Post> findPostsByTitleOrContentContains(String title, String content);
-
-    List<Post> findPostByTitleContains(String title);
-
-    List<Post> findPostsByContentContains(String content);
+//    List<Post> getPostsByUserId(String user_id);
+//
+//    List<Post> findPostsByUserId(String user_id);
+//
+//    Optional<Post> findPostsById(String id);//특정 포스트 정보 가지고오기
+//
+//    List<Post> findPostsByTitleOrContentContains(String title, String content);
+//
+//    List<Post> findPostByTitleContains(String title);
+//
+//    List<Post> findPostsByContentContains(String content);
 }

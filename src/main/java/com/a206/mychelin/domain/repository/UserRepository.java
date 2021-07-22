@@ -1,6 +1,7 @@
 package com.a206.mychelin.domain.repository;
 
 import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.web.dto.UserSaveRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -14,4 +15,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findUserByIdAndPassword(String id, String password);
 
     Optional<User> findUserByPhoneNumber(String phone_number);
+
+    String save(UserSaveRequest userSaveRequest);
 }

@@ -2,6 +2,8 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.service.UserService;
+import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import java.util.Map;
 public class UserController {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Object> signUp(@RequestBody User user) {
@@ -47,6 +50,11 @@ public class UserController {
 
             return ResponseEntity.ok(result);
         }
+    }
+
+    @PutMapping("/changeInfo/{id}")
+    public User updateInfo(@PathVariable String id, @RequestBody UserUpdateRequest requestDto){
+        return userService.update(id, requestDto);
     }
 
     @GetMapping("/profile")

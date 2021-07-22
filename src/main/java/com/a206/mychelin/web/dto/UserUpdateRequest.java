@@ -7,14 +7,16 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class UserUpdateRequestDto {
+public class UserUpdateRequest {
+    private String id;
     private String nickname;
     private String phone_number;
     private String bio;
     private String profile_image;
 
     @Builder
-    public UserUpdateRequestDto(String nickname, String phone_number, String bio, String profile_image) {
+    public UserUpdateRequest(String id, String nickname, String phone_number, String bio, String profile_image) {
+        this.id = id;
         this.nickname = nickname;
         this.phone_number = phone_number;
         this.bio = bio;
