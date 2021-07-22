@@ -4,7 +4,9 @@ import com.a206.mychelin.domain.entity.User;
 import io.jsonwebtoken.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -75,6 +77,7 @@ public class TokenUtils {
     private static Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
+        claims.put("nickname", user.getNickname());
         claims.put("role", user.getRole());
         return claims;
     }
@@ -86,7 +89,7 @@ public class TokenUtils {
     }
 
     // jwt에서 claims(payload) 부분 가져오기
-    private static Claims getClaimsFormToken(String token) {
+    public static Claims getClaimsFormToken(String token) {
         return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
                 .parseClaimsJws(token).getBody();
     }
@@ -95,6 +98,12 @@ public class TokenUtils {
     private static String getUserIdFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("id");
+    }
+
+    // Claims에서 user id 가져오기
+    private static String getUserNicknameFromToken(String token) {
+        Claims claims = getClaimsFormToken(token);
+        return (String) claims.get("nickname");
     }
 
     // Claims에서 user role 가져오기

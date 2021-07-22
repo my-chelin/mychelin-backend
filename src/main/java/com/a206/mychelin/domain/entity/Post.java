@@ -21,16 +21,19 @@ public class Post {
     @Id
     @Column(name="id", nullable = true)
     private int Id;
+
     @Column(name="user_id", nullable = false)
     private String userId;
-    @Column(name="create_date", nullable = false)
+
+    @Column(name="create_date", nullable = true)
     private Date createDate;
+
     @Column(name="title", nullable = true)
     private String title;
-    @Column(name="create_date", nullable = false)
-    private String content;
+
     @Column(name="place_id", nullable = true)
     private String placeId;
+
     @Column(name="placelist_id", nullable = true)
     private String placeListId;
 }

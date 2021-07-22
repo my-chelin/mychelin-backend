@@ -1,6 +1,5 @@
 package com.a206.mychelin.web.dto;
 
-import com.a206.mychelin.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +19,4 @@ public class UserUpdateRequestDto {
         this.bio = bio;
         this.profile_image = profile_image;
     }
-
 }
