@@ -7,6 +7,8 @@ import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.PasswordChangeRequest;
 import io.jsonwebtoken.Claims;
+import com.a206.mychelin.service.UserService;
+import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ public class UserController {
     private final CustomAuthenticationProvider customAuthenticationProvider;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @PostMapping(value = "/signup")
     public ResponseEntity<Object> signUp(@RequestBody User user) {
@@ -78,6 +81,11 @@ public class UserController {
         user.changePassword(passwordEncoder.encode(passwordChangeRequest.getNewPassword()));
         userRepository.save(user);
         return new ResponseEntity<String>("비밀번호가 변경되었습니다.", HttpStatus.OK);
+    }
+
+    @PutMapping("/changeInfo/{id}")
+    public User updateInfo(@PathVariable String id, @RequestBody UserUpdateRequest requestDto){
+        return userService.update(id, requestDto);
     }
 
     @GetMapping("/profile")

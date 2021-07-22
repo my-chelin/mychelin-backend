@@ -25,7 +25,7 @@ public class Post {
     @Column(name="user_id", nullable = false)
     private String userId;
 
-    @Column(name="create_date", nullable = true)
+    @Column(name="create_date", insertable = false, updatable = false)
     private Date createDate;
 
     @Column(name="title", nullable = true)

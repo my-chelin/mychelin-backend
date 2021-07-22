@@ -42,6 +42,7 @@ public class UserRepositoryTest {
         //then
         if(!optionalUser.isPresent()){
 
+
         }else {
             User user = optionalUser.get();
             assertThat(user.getId()).isEqualTo(id);
