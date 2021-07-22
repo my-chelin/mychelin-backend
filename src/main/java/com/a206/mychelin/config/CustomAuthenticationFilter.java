@@ -2,10 +2,7 @@ package com.a206.mychelin.config;
 
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.exception.InputNotFoundException;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,10 +13,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 @Log4j2
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
-    public CustomAuthenticationFilter(final AuthenticationManager authenticationManager){
+    public CustomAuthenticationFilter(final AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);
     }
 
@@ -28,16 +25,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         final UsernamePasswordAuthenticationToken authRequst;
-        try{
+        try {
             // request에서 값 매핑?
-            final User user = new ObjectMapper().readValue(request.getInputStream(),User.class);
-
-            if(user.getId()==null || user.getPassword()==null){
+            final User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+            if (user.getId() == null || user.getPassword() == null) {
                 throw new InputNotFoundException();
             }
 
-
-            authRequst = new UsernamePasswordAuthenticationToken(user.getId(),user.getPassword());
+            authRequst = new UsernamePasswordAuthenticationToken(user.getId(), user.getPassword());
 //            System.out.println(user);
 //            System.out.println(authRequst.toString());
         } catch (IOException e) {
@@ -45,11 +40,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }
 
         // authRequst의 setDetails를 통해 detail에 request를 주입
-        setDetails(request,authRequst);
+        setDetails(request, authRequst);
 
         // 알맞는 Provider를 찾아 authenticate로직을 실행하고 성공과 실패 결과에 따른 추가적인 작업은Handler 등록을 통해 작업이 가능하다.
         return this.getAuthenticationManager().authenticate(authRequst);
     }
-
-
 }

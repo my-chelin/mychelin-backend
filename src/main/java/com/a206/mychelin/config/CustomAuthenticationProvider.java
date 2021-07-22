@@ -11,7 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -19,24 +18,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         // 필터에서 생성된 토큰으로부터 아이디와 비밀번호 조회
         final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
-
         final String id = token.getName();
-        final String userPw = (String)token.getCredentials();
-
+        final String userPw = (String) token.getCredentials();
         final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(id);
 
         // 비밀번호 검사 ?
         // matches(인코딩x, 인코딩o)
-        if(!passwordEncoder.matches(userPw,userDetails.getPassword())){
-            throw new BadCredentialsException(userDetails.getUsername()+"Invalid password");
+        if (!passwordEncoder.matches(userPw, userDetails.getPassword())) {
+            throw new BadCredentialsException(userDetails.getUsername() + "Invalid password");
         }
 //        if(!userPw.equals(userDetails.getPassword())){
 //            throw new BadCredentialsException(userDetails.getUsername()+"Invalid password");
 //        }
-
-        return new UsernamePasswordAuthenticationToken(userDetails,userPw,userDetails.getAuthorities());
-
-
+        return new UsernamePasswordAuthenticationToken(userDetails, userPw, userDetails.getAuthorities());
     }
 
     @Override

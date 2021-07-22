@@ -26,7 +26,6 @@ public class MyUserDetails implements UserDetails {
         return user.getPassword();
     }
 
-
     @Override
     public String getUsername() {
         return user.getId();
@@ -52,8 +51,3 @@ public class MyUserDetails implements UserDetails {
         return true;
     }
 }
-
-/*
-
-
- */
