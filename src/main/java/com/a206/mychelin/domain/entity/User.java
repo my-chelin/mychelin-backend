@@ -49,4 +49,10 @@ public class User  {
     @Column(name="role",nullable = true)
     private String role;
 
+    public void update(String nickname, String bio, String phone_number, String profile_image) {
+        this.nickname = nickname;
+        this.bio = bio;
+        this.phoneNumber = phone_number;
+        this.profileImage = profile_image;
+    }
 }
