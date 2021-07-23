@@ -11,7 +11,7 @@ public class AuthorizationCheck {
     private AuthorizationCheck() {
         tokenRequiredPathList = new ArrayList<>();
         tokenRequiredPathList.add("/user/profile");
-        tokenRequiredPathList.add("/user/loginSuccess");
+        tokenRequiredPathList.add("/user/changepwd");
     }
 
     public static AuthorizationCheck getObject() {
