@@ -1,6 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PasswordChangeRequest;
 import com.a206.mychelin.service.UserService;
 import com.a206.mychelin.web.dto.UserUpdateRequest;
@@ -18,18 +19,18 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(value = "/signup")
-    public ResponseEntity<String> signUp(@RequestBody User user) {
+    public ResponseEntity<CustomResponseEntity> signUp(@RequestBody User user) {
         return userService.signUp(user);
     }
 
     @PutMapping("/changepwd")
-    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
         return userService.changePassword(passwordChangeRequest, request);
     }
 
-    @PutMapping("/changeInfo/{id}")
-    public User updateInfo(@PathVariable String id, @RequestBody UserUpdateRequest requestDto){
-        return userService.update(id, requestDto);
+    @PutMapping("/changeInfo")
+    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest){
+        return userService.update(requestDto, httpRequest);
     }
 
     @GetMapping("/profile")
@@ -38,7 +39,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> deleteUser(HttpServletRequest request) {
         return userService.deleteUser(request);
     }
 }

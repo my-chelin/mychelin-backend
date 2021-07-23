@@ -1,11 +1,13 @@
 package com.a206.mychelin.web.dto;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.*;
 
-public class CustomResponseEntity extends ResponseEntity {
+@Getter
+@AllArgsConstructor
+@Builder
+public class CustomResponseEntity {
+    private int status;
+    private String message;
+    private Object data;
 
-    public CustomResponseEntity(HttpStatus status) {
-        super(status);
-    }
 }

@@ -57,7 +57,8 @@ public class User {
     @Column(name = "role", nullable = true)
     private String role;
 
-    public void update(String nickname, String bio, String phone_number, String profile_image) {
+    public void update(String id, String nickname, String bio, String phone_number, String profile_image) {
+        this.id = id;
         this.nickname = nickname;
         this.bio = bio;
         this.phoneNumber = phone_number;

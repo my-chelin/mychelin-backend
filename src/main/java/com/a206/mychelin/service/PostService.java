@@ -1,13 +1,11 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.config.AuthConstants;
-import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.PostUploadRequest;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.Map;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
