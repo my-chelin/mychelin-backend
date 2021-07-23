@@ -36,4 +36,9 @@ public class UserController {
     public ResponseEntity<String> getProfile() {
         return new ResponseEntity<String>("test", HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteUser(HttpServletRequest request) {
+        return userService.deleteUser(request);
+    }
 }

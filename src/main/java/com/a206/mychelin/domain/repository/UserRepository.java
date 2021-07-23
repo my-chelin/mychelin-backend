@@ -17,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findUserByPhoneNumber(String phone_number);
 
     String save(UserSaveRequest userSaveRequest);
+
+    void deleteUsersById(String id);
 }
