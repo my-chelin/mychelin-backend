@@ -2,6 +2,8 @@ package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Place;
 import com.a206.mychelin.domain.repository.PlaceRepository;
+import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,45 +26,50 @@ public class PlaceServiceImpl implements PlaceService{
         Optional<Place> placeObject =placeRepository.findPlacesById(Integer.parseInt(id));
 
         // 이 부분 Object는 나중에 객체로 변환
-        ResponseEntity<Object> result =null;
+        ResponseEntity<CustomResponseEntity> result =null;
         HttpStatus resultHttpStatus;
-
-        HashMap<Object,Object> hm = new HashMap<>();
+        CustomResponseEntity req ;
 
         if(!placeObject.isPresent()){
-            hm.put("status","400");
-            hm.put("data",null);
-
+            req = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("식당 id가 존재하지 않습니다.")
+                    .build();
             resultHttpStatus=HttpStatus.BAD_REQUEST;
         }
         else{
             resultHttpStatus=HttpStatus.ACCEPTED;
-            hm.put("status","200");
-            hm.put("data",placeObject.get());
+            req = CustomResponseEntity.builder()
+                    .status(200)
+                    .message("식당을 찾았습니다.")
+                    .data(placeObject.get())
+                    .build();
         }
 
-        return new ResponseEntity<Object>(hm,resultHttpStatus);
+        return new ResponseEntity<Object>(req,resultHttpStatus);
     }
 
     @Override
     public ResponseEntity getPlaceInfoByName(String name) {
         List<Place> placesArrayList = placeRepository.findPlacesByNameContains(name);
-
-        HashMap<Object,Object> hm = new HashMap<>();
-        hm.put("status","200");
-        hm.put("data",placesArrayList);
-
-        return new ResponseEntity<Object>(hm,HttpStatus.ACCEPTED);
+        CustomResponseEntity req = CustomResponseEntity.builder()
+                .status(200)
+                .message("이름으로 검색에 성공했습니다.")
+                .data(placesArrayList)
+                .build();
+        return new ResponseEntity<Object>(req,HttpStatus.ACCEPTED);
     }
 
     @Override
     public ResponseEntity getPlaceInfoByLocation(String location) {
         List<Place> placesArrayList = placeRepository.findPlacesByLocationContains(location);
 
-        HashMap<Object,Object> hm = new HashMap<>();
-        hm.put("status","200");
-        hm.put("data",placesArrayList);
+        CustomResponseEntity req = CustomResponseEntity.builder()
+                .status(200)
+                .message("위치로 검색에 성공했습니다.")
+                .data(placesArrayList)
+                .build();
 
-        return new ResponseEntity<Object>(hm,HttpStatus.ACCEPTED);
+        return new ResponseEntity<Object>(req,HttpStatus.ACCEPTED);
     }
 }
