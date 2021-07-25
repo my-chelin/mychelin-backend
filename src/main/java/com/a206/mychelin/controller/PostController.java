@@ -49,4 +49,10 @@ public class PostController {
         return postService.findPostsByUserId(postByUserRequest);
     }
 
+    @ApiOperation(value = "선택한 포스트를 삭제한다.")
+    @ApiImplicitParam(name = "id", value="포스트 고유 id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest){
+        return postService.delete(id, httpRequest);
+    }
 }

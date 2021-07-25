@@ -86,6 +86,33 @@ public class PostService {
         return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity<CustomResponseEntity> delete(@PathVariable int id, HttpServletRequest httpRequest) {
+        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+        String token = TokenUtils.getTokenFromHeader(header);
+        Claims claims = TokenUtils.getClaimsFormToken(token);
+        String user_id = (String) claims.get("id");
+
+        Post post = postRepository.findPostById(id).get();
+        if (user_id.equals(post.getUserId())) {
+            int delete_post_idx = postRepository.deletePostById(id);
+
+            CustomResponseEntity customResponse
+                    = CustomResponseEntity.builder()
+                    .status(200)
+                    .message(delete_post_idx + "번 게시물을 삭제했습니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+        }else {
+            CustomResponseEntity customResponse
+                    = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("권한이 없습니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     public ResponseEntity findPostsByUserId(@RequestBody PostByUserRequest postByUserRequest) {
         String user_id = postByUserRequest.getUser_id();
         List<Post> posts = postRepository.findPostsByUserIdOrderByCreateDateDesc(user_id);
