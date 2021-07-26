@@ -9,5 +9,4 @@ public class CustomResponseEntity {
     private int status;
     private String message;
     private Object data;
-
 }

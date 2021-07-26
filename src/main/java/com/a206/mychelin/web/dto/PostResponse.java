@@ -5,17 +5,15 @@ import lombok.Getter;
 
 @Getter
 public class PostResponse {
-
     private int id;
-    private String user_id;
+    private String userId;
     private String title;
     private String content;
 
-    public PostResponse(Post entity){
+    public PostResponse(Post entity) {
         this.id = entity.getId();
-        this.user_id = entity.getUserId();
+        this.userId = entity.getUserId();
         this.title = entity.getTitle();
         this.content = entity.getContent();
     }
-
 }

@@ -8,7 +8,6 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -18,10 +17,7 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Service
 public class PostService {
-    private final BCryptPasswordEncoder passwordEncoder;
-
     private final PostRepository postRepository;
-
 
     @Transactional
     public ResponseEntity<String> save(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
@@ -37,12 +33,10 @@ public class PostService {
             return new ResponseEntity<String>("토큰이 만료되었습니다.", HttpStatus.BAD_REQUEST);
         }
         Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-        postUploadRequest.setUser_id(user_id);
+        String userId = (String) claims.get("id");
+        postUploadRequest.setUserId(userId);
 
         int id = postRepository.save(postUploadRequest.toEntity()).getId();
         return new ResponseEntity<String>("게시글이 업로드되었습니다", HttpStatus.OK);
     }
-
-
 }

@@ -43,7 +43,7 @@ public class PostControllerTest {
         PostUploadRequest postUploadRequest = PostUploadRequest.builder()
                                                 .title(title)
                                                 .content(content)
-                                                .user_id("hi@naver.com")
+                                                .userId("hi@naver.com")
                                                 .build();
 
         String url = "http://localhost:" + port + "/post/upload";
