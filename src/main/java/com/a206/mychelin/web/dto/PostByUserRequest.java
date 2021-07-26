@@ -15,8 +15,7 @@ public class PostByUserRequest {
         this.user_id = user_id;
     }
 
-    public Post toEntity(){
+    public Post toEntity() {
         return Post.builder().build();
     }
-
 }

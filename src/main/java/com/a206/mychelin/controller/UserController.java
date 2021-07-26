@@ -6,12 +6,12 @@ import com.a206.mychelin.web.dto.PasswordChangeRequest;
 import com.a206.mychelin.service.UserService;
 import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin("*")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user")
@@ -29,13 +29,13 @@ public class UserController {
     }
 
     @PutMapping("/changeInfo")
-    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest){
+    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
         return userService.update(requestDto, httpRequest);
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<String> getProfile() {
-        return new ResponseEntity<String>("test", HttpStatus.OK);
+    public ResponseEntity<CustomResponseEntity> getProfile(HttpServletRequest request) {
+        return userService.getProfile(request);
     }
 
     @DeleteMapping("/delete")

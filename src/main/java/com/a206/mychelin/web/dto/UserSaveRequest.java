@@ -21,7 +21,7 @@ public class UserSaveRequest {
         this.phone_number = phone_number;
     }
 
-    public User toEntity(){
+    public User toEntity() {
         return User.builder()
                 .id(id)
                 .nickname(nickname)

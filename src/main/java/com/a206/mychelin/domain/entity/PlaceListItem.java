@@ -15,13 +15,11 @@ import javax.persistence.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="placelist_item")
+@Table(name = "placelist_item")
 @DynamicInsert
 public class PlaceListItem {
-
     @EmbeddedId
     private PlaceListItemPK placeListItemPK;
 
     private String contributorId;
-
 }

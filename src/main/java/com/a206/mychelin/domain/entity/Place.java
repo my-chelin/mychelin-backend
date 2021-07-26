@@ -14,10 +14,8 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Builder
 public class Place {
-
     @Id
     private int id;
-
     private String name;
     private String description;
     private double latitude;
@@ -26,5 +24,5 @@ public class Place {
     private String location;
     private String operationHours;
     private int categoryId;
-
+    private String image;
 }

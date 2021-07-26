@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/post")
 public class PostController {
-
     private final PostService postService;
 
     @ApiOperation(value="글만 있는 포스트를 업로드한다.")
@@ -36,21 +35,21 @@ public class PostController {
         return postService.addPostPlaceList(postRequest, request);
     }
 
-    @ApiOperation(value="선택한 포스트를 수정한다.")
-    @ApiImplicitParam(name="id", value="포스트 고유 id")
+    @ApiOperation(value = "선택한 포스트를 수정한다.")
+    @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         return postService.update(id, postUpdateRequest, httpRequest);
     }
 
-    @ApiOperation(value="선택한 포스트를 가져온다.")
-    @ApiImplicitParam(name="id", value="포스트 고유 id")
+    @ApiOperation(value = "선택한 포스트를 가져온다.")
+    @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @GetMapping("/{id}")
     public ResponseEntity load(@PathVariable int id) {
         return postService.findPostById(id);
     }
 
-    @ApiOperation(value="특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
+    @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
     @ApiImplicitParam(name = "user_id", value = "사용자 아이디(이메일)")
     @GetMapping("/list")
     public ResponseEntity findPostsByUserId(@RequestBody PostByUserRequest postByUserRequest) {
@@ -58,9 +57,9 @@ public class PostController {
     }
 
     @ApiOperation(value = "선택한 포스트를 삭제한다.")
-    @ApiImplicitParam(name = "id", value="포스트 고유 id")
+    @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest){
+    public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest) {
         return postService.delete(id, httpRequest);
     }
 

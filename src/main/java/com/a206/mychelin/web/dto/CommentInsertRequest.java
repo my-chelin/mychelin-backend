@@ -20,7 +20,7 @@ public class CommentInsertRequest {
         this.postId = postId;
     }
 
-    public Comment toEntity(){
+    public Comment toEntity() {
         return Comment.builder()
                 .writerId(writerId)
                 .message(message)
@@ -28,7 +28,11 @@ public class CommentInsertRequest {
                 .build();
     }
 
-    public void setWriterId(String writerId){
+    public void setWriterId(String writerId) {
         this.writerId = writerId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 }

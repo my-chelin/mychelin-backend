@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostUploadRequest {
-
     private String userId;
     private String title;
     private String content;
@@ -24,7 +23,7 @@ public class PostUploadRequest {
         this.userId = userId;
     }
 
-    public Post toEntity(){
+    public Post toEntity() {
         return Post.builder()
                     .userId(userId)
                     .title(title)

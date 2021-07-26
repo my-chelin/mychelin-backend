@@ -79,6 +79,7 @@ public class CommentService {
         Claims claims = TokenUtils.getClaimsFormToken(token);
         String user_id = (String) claims.get("id");
         commentRequest.setWriterId(user_id);
+        commentRequest.setPostId(id);
 
         String writerId = userRepository.getUserById(user_id).get().getNickname();
         Comment newComment = commentRequest.toEntity();

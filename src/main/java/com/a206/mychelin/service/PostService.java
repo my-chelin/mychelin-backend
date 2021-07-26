@@ -10,7 +10,6 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,9 +39,9 @@ public class PostService {
 //        postRepository.saveText(userId, postRequest.getTitle(), postRequest.getContent());
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
-                            .message("게시글이 업로드되었습니다")
-                            .status(200)
-                            .build();
+                .message("게시글이 업로드되었습니다")
+                .status(200)
+                .build();
 
         return new ResponseEntity(customResponse, HttpStatus.OK);
     }
@@ -90,32 +89,38 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponse;
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-
-        Post post = postRepository.findPostById(id).get();
-        if (user_id.equals(post.getUserId())) {
+        String userId = (String) claims.get("id");
+        Optional<Post> tempPost = postRepository.findPostById(id);
+        if (!tempPost.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("게시글이 없습니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        Post post = tempPost.get();
+        System.out.println(post.toString());
+        if (userId.equals(post.getUserId())) {
+            System.out.println("작성자 확인");
             post.update(postUpdateRequest.getTitle(), postUpdateRequest.getContent());
-
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
+            customResponse = CustomResponseEntity.builder()
                     .status(200)
                     .message(post.getId() + "번 게시글이 수정되었습니다.")
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-        }else{
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
-                        .status(400)
-                        .message("잘못된 접근입니다.")
-                        .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
         }
+        customResponse = CustomResponseEntity.builder()
+                .status(400)
+                .message("수정 권한이 없습니다.")
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    public ResponseEntity findPostById(@PathVariable int id){
+    public ResponseEntity findPostById(@PathVariable int id) {
         Optional<Post> entity = postRepository.findPostById(id);
 
         if(entity.isPresent()){
@@ -154,7 +159,7 @@ public class PostService {
                     .message(delete_post_idx + "번 게시물을 삭제했습니다.")
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-        }else {
+        } else {
             CustomResponseEntity customResponse
                     = CustomResponseEntity.builder()
                     .status(400)
@@ -176,31 +181,4 @@ public class PostService {
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
 
-    /*public ResponseEntity findAllCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest){
-        String writer_id = postRepository.findPostById(id).get().getUserId();
-        *//*
-        * 비공개계정이라면 현재 사용자가 글쓴이 팔로우 중인지 확인하는 부분
-        *//*
-
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-
-
-        //팔로우 상태 확인
-        //followRepository.findFollowingIdBy
-
-
-        //포스트 댓글 확인
-        List<Object> comments = commentRepository.findCommentsByPostId(id);
-
-        CustomResponseEntity customResponse
-                = CustomResponseEntity.builder()
-                .status(200)
-                .message("댓글을 불러왔습니다.")
-                .data(comments)
-                .build();
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-    }*/
 }

@@ -38,7 +38,6 @@ public class TokenUtils {
             Claims claims = getClaimsFormToken(token);
             log.info("expireTime : " + claims.getExpiration());
             log.info("id : " + claims.get("id"));
-            log.info("role : " + claims.get("role"));
             return true;
         } catch (ExpiredJwtException exception) {
             log.error("Token Expired");
@@ -77,8 +76,6 @@ public class TokenUtils {
     private static Map<String, Object> createClaims(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("id", user.getId());
-        claims.put("nickname", user.getNickname());
-        claims.put("role", user.getRole());
         return claims;
     }
 
@@ -98,17 +95,5 @@ public class TokenUtils {
     public static String getUserIdFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("id");
-    }
-
-    // Claims에서 user id 가져오기
-    public static String getUserNicknameFromToken(String token) {
-        Claims claims = getClaimsFormToken(token);
-        return (String) claims.get("nickname");
-    }
-
-    // Claims에서 user role 가져오기
-    public static String getRoleFromToken(String token) {
-        Claims claims = getClaimsFormToken(token);
-        return (String) claims.get("role");
     }
 }
