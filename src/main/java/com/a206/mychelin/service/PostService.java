@@ -52,7 +52,7 @@ public class PostService {
         Claims claims = TokenUtils.getClaimsFormToken(token);
         String userId = (String) claims.get("id");
         Optional<Post> tempPost = postRepository.findPostById(id);
-        if (tempPost == null) {
+        if (!tempPost.isPresent()) {
             customResponse = CustomResponseEntity.builder()
                     .status(400)
                     .message("게시글이 없습니다.")

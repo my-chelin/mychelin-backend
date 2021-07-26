@@ -19,4 +19,5 @@ public class PlaceListItemDetail {
     private String location;
     private String opertaionHours;
     private int category_id;
+    private String image;
 }

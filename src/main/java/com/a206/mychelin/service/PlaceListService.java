@@ -111,6 +111,7 @@ public class PlaceListService {
                     .location((String) item[8])
                     .opertaionHours((String) item[9])
                     .category_id((int) item[10])
+                    .image((String) item[11])
                     .build()
             );
         }
