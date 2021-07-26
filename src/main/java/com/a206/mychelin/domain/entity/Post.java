@@ -46,4 +46,8 @@ public class Post {
     @Column(name="placelist_id", nullable = true)
     private String placeListId;
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
