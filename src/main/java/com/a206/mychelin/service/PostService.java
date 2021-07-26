@@ -2,12 +2,10 @@ package com.a206.mychelin.service;
 
 import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.Post;
+import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.util.TokenUtils;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
-import com.a206.mychelin.web.dto.PostByUserRequest;
-import com.a206.mychelin.web.dto.PostUpdateRequest;
-import com.a206.mychelin.web.dto.PostUploadRequest;
+import com.a206.mychelin.web.dto.*;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,24 +23,67 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 public class PostService {
-    private final BCryptPasswordEncoder passwordEncoder;
-
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> save(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> addPostText(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-        postUploadRequest.setUser_id(user_id);
+        String userId = (String) claims.get("id");
+        postRequest.setUserId(userId);
 
-        int id = postRepository.save(postUploadRequest.toEntity()).getId();
+        System.out.println(postRequest.toEntity());
+
+        int id = postRepository.save(postRequest.toEntity()).getId();
+//        postRepository.saveText(userId, postRequest.getTitle(), postRequest.getContent());
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
                             .message("게시글이 업로드되었습니다")
                             .status(200)
                             .build();
+
+        return new ResponseEntity(customResponse, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<CustomResponseEntity> addPostPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest httpRequest) {
+        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+        String token = TokenUtils.getTokenFromHeader(header);
+        Claims claims = TokenUtils.getClaimsFormToken(token);
+        String userId = (String) claims.get("id");
+        postRequest.setUserId(userId);
+
+        System.out.println(postRequest.getPlaceId());
+
+        postRepository.save(postRequest.toEntity());
+        CustomResponseEntity customResponse
+                = CustomResponseEntity.builder()
+                .message("게시글이 업로드되었습니다")
+                .status(200)
+                .data(postRequest)
+                .build();
+
+        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity<CustomResponseEntity> addPostPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest httpRequest){
+        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+        String token = TokenUtils.getTokenFromHeader(header);
+        Claims claims = TokenUtils.getClaimsFormToken(token);
+        String userId = (String) claims.get("id");
+        postRequest.setUserId(userId);
+        System.out.println(postRequest.getPlacelistId());
+
+        postRepository.save(postRequest.toEntity());
+        CustomResponseEntity customResponse
+                = CustomResponseEntity.builder()
+                .message("게시글이 업로드되었습니다")
+                .status(200)
+                .data(postRequest)
+                .build();
 
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
@@ -76,14 +117,24 @@ public class PostService {
 
     public ResponseEntity findPostById(@PathVariable int id){
         Optional<Post> entity = postRepository.findPostById(id);
-        CustomResponseEntity customResponseEntity
-                = CustomResponseEntity.builder()
-                        .status(200)
-                        .message(id + "번게시글을 불러왔습니다.")
-                        .data(entity.get())
-                        .build();
 
-        return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+        if(entity.isPresent()){
+            CustomResponseEntity customResponseEntity
+                    = CustomResponseEntity.builder()
+                    .status(200)
+                    .message(id + "번게시글을 불러왔습니다.")
+                    .data(entity.get())
+                    .build();
+
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+        }else{
+            CustomResponseEntity customResponseEntity
+                    = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("게시글을 불러오지 못했습니다.")
+                    .build();
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Transactional
@@ -124,4 +175,32 @@ public class PostService {
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
+
+    /*public ResponseEntity findAllCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest){
+        String writer_id = postRepository.findPostById(id).get().getUserId();
+        *//*
+        * 비공개계정이라면 현재 사용자가 글쓴이 팔로우 중인지 확인하는 부분
+        *//*
+
+        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+        String token = TokenUtils.getTokenFromHeader(header);
+        Claims claims = TokenUtils.getClaimsFormToken(token);
+        String user_id = (String) claims.get("id");
+
+
+        //팔로우 상태 확인
+        //followRepository.findFollowingIdBy
+
+
+        //포스트 댓글 확인
+        List<Object> comments = commentRepository.findCommentsByPostId(id);
+
+        CustomResponseEntity customResponse
+                = CustomResponseEntity.builder()
+                .status(200)
+                .message("댓글을 불러왔습니다.")
+                .data(comments)
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+    }*/
 }

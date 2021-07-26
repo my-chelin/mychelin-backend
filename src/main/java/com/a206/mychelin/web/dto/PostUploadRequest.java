@@ -9,26 +9,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostUploadRequest {
 
-    private String user_id;
+    private String userId;
     private String title;
     private String content;
 
     @Builder
-    public PostUploadRequest(String user_id, String title, String content) {
-        this.user_id = user_id;
+    public PostUploadRequest(String userId, String title, String content) {
+        this.userId = userId;
         this.title = title;
         this.content = content;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Post toEntity(){
         return Post.builder()
-                    .userId(user_id)
+                    .userId(userId)
                     .title(title)
                     .content(content)
                     .build();
     }
 }
+

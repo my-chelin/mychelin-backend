@@ -1,10 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.PostService;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
-import com.a206.mychelin.web.dto.PostByUserRequest;
-import com.a206.mychelin.web.dto.PostUpdateRequest;
-import com.a206.mychelin.web.dto.PostUploadRequest;
+import com.a206.mychelin.web.dto.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +18,22 @@ public class PostController {
 
     private final PostService postService;
 
-    @ApiOperation(value="포스트를 업로드한다.")
-    @ApiImplicitParam(name="id", value="식당 고유 id")
-    @PostMapping("/upload")
-    public ResponseEntity<CustomResponseEntity> save(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request){
-        return postService.save(postUploadRequest, request);
+    @ApiOperation(value="글만 있는 포스트를 업로드한다.")
+    @PostMapping("/upload/text")
+    public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request){
+        return postService.addPostText(postUploadRequest, request);
+    }
+
+    @ApiOperation(value="장소를 포함한 포스트를 업로드한다.")
+    @PostMapping("/upload/tap")
+    public ResponseEntity<CustomResponseEntity> uploadTextPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest request){
+        return postService.addPostPlace(postRequest, request);
+    }
+
+    @ApiOperation(value="장소 리스트를 포함한 포스트를 업로드한다.")
+    @PostMapping("/upload/tapl")
+    public ResponseEntity<CustomResponseEntity> uploadTextPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest request){
+        return postService.addPostPlaceList(postRequest, request);
     }
 
     @ApiOperation(value="선택한 포스트를 수정한다.")
@@ -55,4 +63,11 @@ public class PostController {
     public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest){
         return postService.delete(id, httpRequest);
     }
+
+/*    @ApiOperation(value = "선택한 포스트의 댓글을 불러온다.")
+    @ApiImplicitParam(name="id", value="포스트 고유 id")
+    @GetMapping("/{id}/comments")
+    public ResponseEntity findAllCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest){
+        return postService.findAllCommentsByPostId(id, httpRequest);
+    }*/
 }
