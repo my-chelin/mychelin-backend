@@ -95,19 +95,19 @@ public class TokenUtils {
     }
 
     // Claims에서 user id 가져오기
-    private static String getUserIdFromToken(String token) {
+    public static String getUserIdFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("id");
     }
 
     // Claims에서 user id 가져오기
-    private static String getUserNicknameFromToken(String token) {
+    public static String getUserNicknameFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("nickname");
     }
 
     // Claims에서 user role 가져오기
-    private static String getRoleFromToken(String token) {
+    public static String getRoleFromToken(String token) {
         Claims claims = getClaimsFormToken(token);
         return (String) claims.get("role");
     }

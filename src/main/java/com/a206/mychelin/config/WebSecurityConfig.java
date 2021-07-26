@@ -28,7 +28,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().authorizeRequests()
+        // csrf().disable() => csrf 공격을 막기 위한 부분 제거
+        // 해당 작업 수행하지 않으면 에러 발생하기 때문에 disabled
+
+        // authorizeRequests => 인증을 처리하는 부분을 설정할 떄 사용용
+       http.csrf().disable().authorizeRequests()
                 // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 한다.
                 .anyRequest().permitAll()
                 .and()
