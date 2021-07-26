@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostUploadRequest {
-
     private String userId;
     private String title;
     private String content;

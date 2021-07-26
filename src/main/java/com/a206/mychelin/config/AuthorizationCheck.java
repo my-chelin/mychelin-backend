@@ -13,6 +13,8 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/user/profile");
         tokenRequiredPathList.add("/user/changepwd");
         tokenRequiredPathList.add("/user/delete");
+        tokenRequiredPathList.add("/placelist");
+        tokenRequiredPathList.add("/placelist/listitems/items");
     }
 
     public static AuthorizationCheck getObject() {

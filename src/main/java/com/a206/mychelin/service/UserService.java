@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -114,11 +115,20 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> getProfile(HttpServletRequest request) {
+        CustomResponseEntity customResponseEntity;
         String header = request.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
         String id = (String) claims.get("id");
-        User user = userRepository.findUserById(id).get();
+        Optional<User> tempUser = userRepository.findUserById(id);
+        if (tempUser == null) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 유저입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        }
+        User user = tempUser.get();
         int follow = followRepository.countByUserId(id);
         long like = postLikeRepository.getLikes(id);
         int follower = followRepository.countByFollowingId(id);
@@ -132,8 +142,7 @@ public class UserService {
                 .follower(follower)
                 .like(like)
                 .build();
-        CustomResponseEntity customResponseEntity
-                = CustomResponseEntity.builder()
+        customResponseEntity = CustomResponseEntity.builder()
                 .status(200)
                 .data(userProfileResponse)
                 .message("회원정보 출력")

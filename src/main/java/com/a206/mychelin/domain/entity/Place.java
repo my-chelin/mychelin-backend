@@ -24,4 +24,5 @@ public class Place {
     private String location;
     private String operationHours;
     private int categoryId;
+    private String image;
 }

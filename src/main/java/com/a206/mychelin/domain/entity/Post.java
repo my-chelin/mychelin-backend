@@ -11,7 +11,7 @@ import java.util.Date;
 
 
 @Getter
-@Table(name="post")
+@Table(name = "post")
 @ToString
 @DynamicUpdate
 @NoArgsConstructor
@@ -28,22 +28,26 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
 
-    @Column(name="create_date", insertable = false, updatable = false)
+    @Column(name = "create_date", insertable = false, updatable = false)
     private Date createDate;
 
-    @Column(name="title", nullable = true)
+    @Column(name = "title", nullable = true)
     private String title;
 
-    @Column(name="content", nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name="place_id", nullable = true)
-    private String placeId;
+    @Column(name = "place_id", nullable = true)
+    private Integer placeId;
 
-    @Column(name="placelist_id", nullable = true)
-    private String placeListId;
+    @Column(name = "placelist_id", nullable = true)
+    private Integer placeListId;
 
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }

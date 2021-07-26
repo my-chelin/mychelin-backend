@@ -1,6 +1,5 @@
 package com.a206.mychelin.domain.entity;
 
-import com.a206.mychelin.domain.PostLikePK;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

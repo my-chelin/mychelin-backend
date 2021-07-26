@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, String> {
     List<Post> getPostsByUserId(String userId);
 
-    List<Post> findPostsByUserId(String userId);
+    List<Post> findPostsByUserIdOrderByCreateDateDesc(String user_id);
 
-    Optional<Post> findPostsById(String id);//특정 포스트 정보 가지고오기
+    Optional<Post> findPostById(int id);//특정 포스트 정보 가지고오기
 
     List<Post> findPostsByTitleOrContentContains(String title, String content);
 
@@ -19,5 +19,5 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     List<Post> findPostsByContentContains(String content);
 
-    int countPostByUserId(String userId);
+    int deletePostById(int id);
 }
