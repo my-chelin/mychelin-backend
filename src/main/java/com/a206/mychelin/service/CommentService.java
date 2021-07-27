@@ -11,7 +11,6 @@ import com.a206.mychelin.web.dto.CommentResponse;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -120,9 +119,9 @@ public class CommentService {
         }
         CustomResponseEntity customResponseEntity
                 = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("작업을 수행할 수 없습니다.")
-                    .build();
+                .status(400)
+                .message("작업을 수행할 수 없습니다.")
+                .build();
         return new ResponseEntity(customResponseEntity, HttpStatus.BAD_REQUEST);
     }
 }

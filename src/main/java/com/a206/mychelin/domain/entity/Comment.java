@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Getter
-@Table(name="comment")
+@Table(name = "comment")
 @ToString
 @DynamicUpdate
 @NoArgsConstructor
@@ -22,11 +22,11 @@ public class Comment {
 
     private String writerId;
 
-    @Column(name="message", nullable = false)
+    @Column(name = "message", nullable = false)
     private String message;
 
 
-    @Column(name="create_date", insertable = false, updatable = false)
+    @Column(name = "create_date", insertable = false, updatable = false)
     private Date createDate;
 
     private int postId;

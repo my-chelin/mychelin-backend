@@ -17,21 +17,21 @@ import javax.servlet.http.HttpServletRequest;
 public class PostController {
     private final PostService postService;
 
-    @ApiOperation(value="글만 있는 포스트를 업로드한다.")
+    @ApiOperation(value = "글만 있는 포스트를 업로드한다.")
     @PostMapping("/upload/text")
-    public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request){
+    public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
         return postService.addPostText(postUploadRequest, request);
     }
 
-    @ApiOperation(value="장소를 포함한 포스트를 업로드한다.")
+    @ApiOperation(value = "장소를 포함한 포스트를 업로드한다.")
     @PostMapping("/upload/tap")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest request){
+    public ResponseEntity<CustomResponseEntity> uploadTextPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest request) {
         return postService.addPostPlace(postRequest, request);
     }
 
-    @ApiOperation(value="장소 리스트를 포함한 포스트를 업로드한다.")
+    @ApiOperation(value = "장소 리스트를 포함한 포스트를 업로드한다.")
     @PostMapping("/upload/tapl")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest request){
+    public ResponseEntity<CustomResponseEntity> uploadTextPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest request) {
         return postService.addPostPlaceList(postRequest, request);
     }
 

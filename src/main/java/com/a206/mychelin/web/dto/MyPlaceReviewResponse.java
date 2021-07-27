@@ -10,7 +10,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyPlaceReviewResponse {
-
     private int review_id;
     private float star_rate;
     private String content;
@@ -19,5 +18,4 @@ public class MyPlaceReviewResponse {
     private int place_id;
     private String place_name;
     private String place_image;
-
 }

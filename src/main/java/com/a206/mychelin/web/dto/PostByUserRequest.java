@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostByUserRequest {
-    private String user_id;
+    private String userId;
 
     @Builder
-    public PostByUserRequest(String user_id) {
-        this.user_id = user_id;
+    public PostByUserRequest(String userId) {
+        this.userId = userId;
     }
 
     public Post toEntity() {

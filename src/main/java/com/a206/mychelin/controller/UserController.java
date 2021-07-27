@@ -33,9 +33,9 @@ public class UserController {
         return userService.update(requestDto, httpRequest);
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<CustomResponseEntity> getProfile(HttpServletRequest request) {
-        return userService.getProfile(request);
+    @GetMapping("/{nickname}")
+    public ResponseEntity<CustomResponseEntity> getProfile(@PathVariable String nickname, HttpServletRequest request) {
+        return userService.getProfile(nickname, request);
     }
 
     @DeleteMapping("/delete")

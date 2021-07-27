@@ -10,7 +10,6 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceReviewAndUserResponse {
-
     private int review_id;
     private float star_rate;
     private String content;
@@ -18,5 +17,4 @@ public class PlaceReviewAndUserResponse {
     private Date craete_date;
     private String user_nickname;
     private String user_profile_image;
-
 }

@@ -3,7 +3,6 @@ package com.a206.mychelin.config;
 import com.a206.mychelin.domain.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -12,7 +11,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Getter
 public class MyUserDetails implements UserDetails {
-
     private final User user;
     private final Collection<? extends GrantedAuthority> authorities;
 

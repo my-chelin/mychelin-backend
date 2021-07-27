@@ -25,10 +25,9 @@ public class PostUploadRequest {
 
     public Post toEntity() {
         return Post.builder()
-                    .userId(userId)
-                    .title(title)
-                    .content(content)
-                    .build();
+                .userId(userId)
+                .title(title)
+                .content(content)
+                .build();
     }
 }
-

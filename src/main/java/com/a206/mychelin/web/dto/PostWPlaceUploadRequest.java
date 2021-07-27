@@ -25,7 +25,7 @@ public class PostWPlaceUploadRequest {
         this.placeId = placeId;
     }
 
-    public Post toEntity(){
+    public Post toEntity() {
         return Post.builder()
                 .userId(userId)
                 .title(title)

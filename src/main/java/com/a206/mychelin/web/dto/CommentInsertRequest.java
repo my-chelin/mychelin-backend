@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class CommentInsertRequest {
-
     private String writerId;
     private String message;
     private int postId;
