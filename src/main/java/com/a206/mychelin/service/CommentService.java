@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -34,7 +31,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     //특정 게시글의 모든 댓글 보기
-    public ResponseEntity findCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest){
+    public ResponseEntity findCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest) {
         String writer_id = postRepository.findPostById(id).get().getUserId();
         /*
          * 비공개계정이라면 현재 사용자가 글쓴이 팔로우 중인지 확인하는 부분
@@ -54,11 +51,11 @@ public class CommentService {
         for (Object[] item : comments) {
             arr.add(
                     CommentResponse.builder()
-                        .id((int) item[0])
-                        .writerNickname((String) item[1])
-                        .message((String) item[2])
-                        .createDate((Date) item[3])
-                        .build()
+                            .id((int) item[0])
+                            .writerNickname((String) item[1])
+                            .message((String) item[2])
+                            .createDate((Date) item[3])
+                            .build()
             );
         }
 
@@ -73,7 +70,7 @@ public class CommentService {
 
     // 특정 게시글에 댓글 달기
     @Transactional
-    public ResponseEntity addComment(@PathVariable int id, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest httpRequest){
+    public ResponseEntity addComment(@PathVariable int id, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest httpRequest) {
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
@@ -83,15 +80,49 @@ public class CommentService {
 
         String writerId = userRepository.getUserById(user_id).get().getNickname();
         Comment newComment = commentRequest.toEntity();
-        int comment_id = commentRepository.save(commentRequest.toEntity()).getId();
+        int comment_id = commentRepository.save(commentRequest.toEntity()).getCommentId();
 
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
-                    .status(200)
-                    .message("댓글을 달았습니다.")
-                    .data(newComment)
-                    .build();
+                .status(200)
+                .message("댓글을 달았습니다.")
+                .data(newComment)
+                .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
 
+    @Transactional
+    public ResponseEntity deleteComment(@PathVariable int commentId, HttpServletRequest httpRequest) {
+        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+        String token = TokenUtils.getTokenFromHeader(header);
+        Claims claims = TokenUtils.getClaimsFormToken(token);
+        String user_id = (String) claims.get("id");
+
+        Optional<Comment> comment = commentRepository.findCommentByCommentId(commentId);
+        if (comment.isPresent()) {
+            if (comment.get().getWriterId().equals(user_id)) {
+                commentRepository.deleteCommentByCommentId(commentId);
+
+                CustomResponseEntity customResponseEntity
+                        = CustomResponseEntity.builder()
+                        .status(200)
+                        .message("댓글을 삭제했습니다.")
+                        .build();
+                return new ResponseEntity(customResponseEntity, HttpStatus.OK);
+            }
+
+            CustomResponseEntity customResponseEntity
+                    = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("댓글 삭제 권한이 없습니다.")
+                    .build();
+            return new ResponseEntity(customResponseEntity, HttpStatus.UNAUTHORIZED);
+        }
+        CustomResponseEntity customResponseEntity
+                = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("작업을 수행할 수 없습니다.")
+                    .build();
+        return new ResponseEntity(customResponseEntity, HttpStatus.BAD_REQUEST);
+    }
 }

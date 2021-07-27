@@ -27,8 +27,16 @@ public class CommentController {
     }
 
     @ApiOperation(value = "특정 포스트에 댓글을 단다.")
-    @PostMapping("/{id}")
-    public ResponseEntity addComment(@PathVariable int id, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest httpRequest){
-        return commentService.addComment(id, commentRequest, httpRequest);
+    @ApiImplicitParam(name="id", value="포스트 고유 id")
+    @PostMapping("/{postId}")
+    public ResponseEntity addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest httpRequest){
+        return commentService.addComment(postId, commentRequest, httpRequest);
+    }
+
+    @ApiOperation(value = "특정 포스트에 남긴 특정 댓글을 삭제한다.")
+    @ApiImplicitParam(name="comment_id", value="댓글 고유 id")
+    @DeleteMapping("/{comment_id}")
+    public ResponseEntity deleteComment(@PathVariable int comment_id, HttpServletRequest httpRequest){
+        return commentService.deleteComment(comment_id, httpRequest);
     }
 }

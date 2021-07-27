@@ -18,9 +18,8 @@ import java.util.Date;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-//
-//    private int postId;
+    private int commentId;
+
     private String writerId;
 
     @Column(name="message", nullable = false)
@@ -30,10 +29,6 @@ public class Comment {
     @Column(name="create_date", insertable = false, updatable = false)
     private Date createDate;
 
-    //Parent 필드 추가
-//    @ManyToOne
-//    @JoinColumn(name="post_id")
-//    private Post post;
     private int postId;
 
     @Builder

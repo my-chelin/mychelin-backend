@@ -6,9 +6,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, String> {
     @Query(value = "SELECT c.comment_id, u.nickname, c.message, c.create_date FROM post p, comment c, user u WHERE p.id = c.post_id and p.id = :post_id and u.id = c.writer_id" , nativeQuery = true)
     List<Object[]> findCommentsByPostId(@Param("post_id") int postId);
+
+    Optional<Comment> findCommentByCommentId(@Param("comment_id") int comment_id);
+
+    int deleteCommentByCommentId(int comment_id);
 
 }

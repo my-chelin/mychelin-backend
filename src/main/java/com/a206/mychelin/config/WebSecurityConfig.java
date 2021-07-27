@@ -13,6 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 해당 작업 수행하지 않으면 에러 발생하기 때문에 disabled
 
         // authorizeRequests => 인증을 처리하는 부분을 설정할 떄 사용용
-        http.csrf().disable().authorizeRequests()
+        http.csrf().disable().cors().configurationSource(corsConfigurationSource()).and()
+                .authorizeRequests()
                 // 토큰을 활용하는 경우 모든 요청에 대해 접근이 가능하도록 한다.
                 .anyRequest().permitAll()
                 .and()
@@ -69,6 +73,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomAuthenticationProvider(userDetailsService, bCryptPasswordEncoder());
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource(){
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
     @Override
     protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) {
         authenticationManagerBuilder.authenticationProvider(customAuthenticationProvider());
