@@ -13,4 +13,9 @@ public class UserProfileResponse {
     private int follow;
     private int follower;
     private long like;
+    private Boolean isFollowing;
+
+    public void setIsFollower(boolean bool) {
+        this.isFollowing = bool;
+    }
 }

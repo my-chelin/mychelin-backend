@@ -27,33 +27,42 @@ public class UserService {
     private final FollowRepository followRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @Transactional
-    public ResponseEntity<CustomResponseEntity> update(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
+    private User getUser(HttpServletRequest request) {
+        String header = request.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
+        String id = (String) claims.get("id");
+        Optional<User> user = userRepository.findUserById(id);
+        if (!user.isPresent()) {
+            return null;
+        }
+        return user.get();
+    }
 
-        User user = userRepository.findUserById(user_id).get();
-        user.update(user_id, requestDto.getNickname(), requestDto.getBio(), requestDto.getPhone_number(), requestDto.getProfile_image());
-        customResponse
-                = CustomResponseEntity.builder()
+    @Transactional
+    public ResponseEntity<CustomResponseEntity> update(@RequestBody UserUpdateRequest requestDto, HttpServletRequest request) {
+        CustomResponseEntity customResponse;
+        User user = getUser(request);
+        if (user == null) {
+            customResponse = CustomResponseEntity.builder().status(400).message("유저가 존재하지 않습니다.").build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        user.update(user.getId(), requestDto.getNickname(), requestDto.getBio(), requestDto.getPhone_number(), requestDto.getProfile_image());
+        customResponse = CustomResponseEntity.builder()
                 .status(200)
                 .message("개인정보가 수정되었습니다.")
                 .build();
-
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> changePassword(PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
-        String header = request.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String id = (String) claims.get("id");
-        User user = userRepository.findUserById(id).get();
         CustomResponseEntity customResponse;
+        User user = getUser(request);
+        if (user == null) {
+            customResponse = CustomResponseEntity.builder().status(400).message("유저가 존재하지 않습니다.").build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
         if (!passwordEncoder.matches(passwordChangeRequest.getPassword(), user.getPassword())) {
             customResponse = CustomResponseEntity.builder()
                     .status(400)
@@ -100,28 +109,22 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> deleteUser(HttpServletRequest request) {
-        String header = request.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String id = (String) claims.get("id");
+        User user = getUser(request);
+        userRepository.deleteUsersById(user.getId());
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
                 .status(200)
                 .message("탈퇴가 완료되었습니다")
                 .build();
-        userRepository.deleteUsersById(id);
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> getProfile(HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> getProfile(String userId, HttpServletRequest request) {
         CustomResponseEntity customResponseEntity;
-        String header = request.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String id = (String) claims.get("id");
-        Optional<User> tempUser = userRepository.findUserById(id);
-        if (tempUser == null) {
+        UserProfileResponse userProfileResponse;
+        Optional<User> tempUser = userRepository.findUserById(userId);
+        if (!tempUser.isPresent()) {
             customResponseEntity = CustomResponseEntity.builder()
                     .status(400)
                     .message("존재하지 않는 유저입니다.")
@@ -129,19 +132,34 @@ public class UserService {
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
         }
         User user = tempUser.get();
-        int follow = followRepository.countByUserId(id);
-        long like = postLikeRepository.getLikes(id);
-        int follower = followRepository.countByFollowingId(id);
-        UserProfileResponse userProfileResponse
-                = UserProfileResponse.builder()
-                .id(id)
+        int follow = followRepository.countByUserId(userId);
+        int follower = followRepository.countByFollowingId(userId);
+        long like = postLikeRepository.getLikes(userId);
+        Boolean isFollower = null;
+        userProfileResponse = UserProfileResponse.builder()
+                .id(user.getId())
                 .nickname(user.getNickname())
                 .bio(user.getBio())
                 .profileImage(user.getProfileImage())
                 .follow(follow)
                 .follower(follower)
                 .like(like)
+                .isFollowing(isFollower)
                 .build();
+        User loginUser = getUser(request);
+        if (loginUser.getId().equals(userId)) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(200)
+                    .data(userProfileResponse)
+                    .message("회원정보 출력")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+        }
+        if (followRepository.countByUserIdAndFollowingId(loginUser.getId(), userId) > 0) {
+            userProfileResponse.setIsFollower(true);
+        } else {
+            userProfileResponse.setIsFollower(false);
+        }
         customResponseEntity = CustomResponseEntity.builder()
                 .status(200)
                 .data(userProfileResponse)

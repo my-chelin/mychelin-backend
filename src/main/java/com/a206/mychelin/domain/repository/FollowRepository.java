@@ -8,4 +8,6 @@ public interface FollowRepository extends JpaRepository<Follow, FollowPK> {
     int countByUserId(String userId);
 
     int countByFollowingId(String followingId);
+
+    int countByUserIdAndFollowingId(String userId, String followingId);
 }
