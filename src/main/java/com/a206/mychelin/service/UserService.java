@@ -120,10 +120,10 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> getProfile(String userId, HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> getProfile(String nickname, HttpServletRequest request) {
         CustomResponseEntity customResponseEntity;
         UserProfileResponse userProfileResponse;
-        Optional<User> tempUser = userRepository.findUserById(userId);
+        Optional<User> tempUser = userRepository.findUserByNickname(nickname);
         if (!tempUser.isPresent()) {
             customResponseEntity = CustomResponseEntity.builder()
                     .status(400)
@@ -132,12 +132,11 @@ public class UserService {
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
         }
         User user = tempUser.get();
-        int follow = followRepository.countByUserId(userId);
-        int follower = followRepository.countByFollowingId(userId);
-        long like = postLikeRepository.getLikes(userId);
+        int follow = followRepository.countByUserId(user.getId());
+        int follower = followRepository.countByFollowingId(user.getId());
+        long like = postLikeRepository.getLikes(user.getId());
         Boolean isFollower = null;
         userProfileResponse = UserProfileResponse.builder()
-                .id(user.getId())
                 .nickname(user.getNickname())
                 .bio(user.getBio())
                 .profileImage(user.getProfileImage())
@@ -147,7 +146,7 @@ public class UserService {
                 .isFollowing(isFollower)
                 .build();
         User loginUser = getUser(request);
-        if (loginUser.getId().equals(userId)) {
+        if (loginUser.getId().equals(user.getId())) {
             customResponseEntity = CustomResponseEntity.builder()
                     .status(200)
                     .data(userProfileResponse)
@@ -155,7 +154,7 @@ public class UserService {
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
         }
-        if (followRepository.countByUserIdAndFollowingId(loginUser.getId(), userId) > 0) {
+        if (followRepository.countByUserIdAndFollowingId(loginUser.getId(), user.getId()) > 0) {
             userProfileResponse.setIsFollower(true);
         } else {
             userProfileResponse.setIsFollower(false);

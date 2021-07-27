@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     Optional<User> findUserByIdAndPassword(String id, String password);
 
-    Optional<User> findUserByPhoneNumber(String phone_number);
+    Optional<User> findUserByNickname(String nickname);
 
     String save(UserSaveRequest userSaveRequest);
 
