@@ -3,7 +3,6 @@ package com.a206.mychelin.domain.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
@@ -43,10 +42,10 @@ public class Post {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name="place_id", nullable = true)
+    @Column(name = "place_id", nullable = true)
     private Integer placeId;
 
-    @Column(name="placelist_id", nullable = true)
+    @Column(name = "placelist_id", nullable = true)
     private Integer placelistId;
 
     public void update(String title, String content) {

@@ -31,5 +31,4 @@ public class Review {
     private Date createDate;
 
     private int placeId;
-
 }

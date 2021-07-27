@@ -62,13 +62,11 @@ public class PlaceServiceImpl implements PlaceService {
             hashMap.put("placeData", nowPlace);
             if (placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).isPresent()) {
                 hashMap.put("placeStarRate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
-
             } else {
                 hashMap.put("placeStarRate", null);
             }
             resultList.add(hashMap);
         }
-
         CustomResponseEntity req = CustomResponseEntity.builder()
                 .status(200)
                 .message("이름으로 검색에 성공했습니다.")
@@ -87,7 +85,6 @@ public class PlaceServiceImpl implements PlaceService {
             hashMap.put("placeData", nowPlace);
             if (placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).isPresent()) {
                 hashMap.put("placeStarRate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
-
             } else {
                 hashMap.put("placeStarRate", null);
             }

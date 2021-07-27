@@ -33,10 +33,6 @@ public class PostService {
         String userId = (String) claims.get("id");
         postRequest.setUserId(userId);
 
-        System.out.println(postRequest.toEntity());
-
-        int id = postRepository.save(postRequest.toEntity()).getId();
-//        postRepository.saveText(userId, postRequest.getTitle(), postRequest.getContent());
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
                 .message("게시글이 업로드되었습니다")
@@ -54,8 +50,6 @@ public class PostService {
         String userId = (String) claims.get("id");
         postRequest.setUserId(userId);
 
-        System.out.println(postRequest.getPlaceId());
-
         postRepository.save(postRequest.toEntity());
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
@@ -68,13 +62,12 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> addPostPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest httpRequest){
+    public ResponseEntity<CustomResponseEntity> addPostPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest httpRequest) {
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
         String userId = (String) claims.get("id");
         postRequest.setUserId(userId);
-        System.out.println(postRequest.getPlacelistId());
 
         postRepository.save(postRequest.toEntity());
         CustomResponseEntity customResponse
@@ -123,7 +116,7 @@ public class PostService {
     public ResponseEntity findPostById(@PathVariable int id) {
         Optional<Post> entity = postRepository.findPostById(id);
 
-        if(entity.isPresent()){
+        if (entity.isPresent()) {
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
                     .status(200)
@@ -132,14 +125,14 @@ public class PostService {
                     .build();
 
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
-        }else{
-            CustomResponseEntity customResponseEntity
-                    = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("게시글을 불러오지 못했습니다.")
-                    .build();
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
+        CustomResponseEntity customResponseEntity
+                = CustomResponseEntity.builder()
+                .status(400)
+                .message("게시글을 불러오지 못했습니다.")
+                .build();
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+
     }
 
     @Transactional
@@ -159,18 +152,18 @@ public class PostService {
                     .message(delete_post_idx + "번 게시물을 삭제했습니다.")
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-        } else {
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("권한이 없습니다.")
-                    .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
         }
+        CustomResponseEntity customResponse
+                = CustomResponseEntity.builder()
+                .status(400)
+                .message("권한이 없습니다.")
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
+
     }
 
     public ResponseEntity findPostsByUserId(@RequestBody PostByUserRequest postByUserRequest) {
-        String user_id = postByUserRequest.getUser_id();
+        String user_id = postByUserRequest.getUserId();
         List<Post> posts = postRepository.findPostsByUserIdOrderByCreateDateDesc(user_id);
 
         CustomResponseEntity customResponse = CustomResponseEntity.builder()
@@ -180,5 +173,4 @@ public class PostService {
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
     }
-
 }

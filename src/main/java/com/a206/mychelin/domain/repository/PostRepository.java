@@ -31,6 +31,6 @@ public interface PostRepository extends JpaRepository<Post, String> {
     @Query(value = "SELECT * FROM placelist pl WHERE e.place_id = ?1", nativeQuery = true)
     PlaceList getPlaceListInfoByPlaceListId(int placelist_id);
 
-    @Query(value = "INSERT INTO post (user_id, title, content) VALUES (:user_id, :title, :content)",nativeQuery = true)
-    Optional<Post> saveText(@Param("user_id") String user_id, @Param("title") String title,@Param("content") String content);
+    @Query(value = "INSERT INTO post (user_id, title, content) VALUES (:user_id, :title, :content)", nativeQuery = true)
+    Optional<Post> saveText(@Param("user_id") String user_id, @Param("title") String title, @Param("content") String content);
 }

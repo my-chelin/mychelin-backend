@@ -22,14 +22,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         final String userPw = (String) token.getCredentials();
         final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(id);
 
-        // 비밀번호 검사 ?
-        // matches(인코딩x, 인코딩o)
+        // 비밀번호 검사: matches
         if (!passwordEncoder.matches(userPw, userDetails.getPassword())) {
             throw new BadCredentialsException(userDetails.getUsername() + "Invalid password");
         }
-//        if(!userPw.equals(userDetails.getPassword())){
-//            throw new BadCredentialsException(userDetails.getUsername()+"Invalid password");
-//        }
         return new UsernamePasswordAuthenticationToken(userDetails, userPw, userDetails.getAuthorities());
     }
 

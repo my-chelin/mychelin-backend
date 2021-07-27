@@ -154,15 +154,13 @@ public class PlaceListService {
             message = "이미 리스트에 존재하는 식당입니다.";
             // 이미 리스트에 해당 맛집이 존재.
             return true;
-        } else {
-            status = 404;
-            message = "리스트에 존재하지 않는 식당입니다.";
-            return false;
         }
+        status = 404;
+        message = "리스트에 존재하지 않는 식당입니다.";
+        return false;
     }
 
     public ResponseEntity insertPlaceListItem(String userId, int listId, int placeId) {
-
         if (checkPlaceListId(listId) && checkPlaceId(placeId) && !checkPlaceIntoPlaceList(listId, placeId)) {
             PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
             // 식당에 추가 가능

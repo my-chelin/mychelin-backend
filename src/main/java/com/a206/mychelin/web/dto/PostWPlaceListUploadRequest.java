@@ -25,7 +25,7 @@ public class PostWPlaceListUploadRequest {
         this.placelistId = placelistId;
     }
 
-    public Post toEntity(){
+    public Post toEntity() {
         return Post.builder()
                 .userId(userId)
                 .title(title)
