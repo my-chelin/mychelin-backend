@@ -63,10 +63,8 @@ public class PostController {
         return postService.delete(id, httpRequest);
     }
 
-/*    @ApiOperation(value = "선택한 포스트의 댓글을 불러온다.")
-    @ApiImplicitParam(name="id", value="포스트 고유 id")
-    @GetMapping("/{id}/comments")
-    public ResponseEntity findAllCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest){
-        return postService.findAllCommentsByPostId(id, httpRequest);
-    }*/
+//    @GetMapping("/main")
+//    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
+//        return postService.findPostsByFollowingUsers(httpServletRequest);
+//    }
 }
