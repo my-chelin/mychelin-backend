@@ -18,7 +18,7 @@ public class HeaderFilter implements Filter {
                 "Access-Control-Allow-Headers",
                 "X-Requested-With, Content-Type, Authorization, X-XSRF-token"
         );
-        res.setHeader("Access-Control-Expose-Headers", "Refresh_token");
+        res.setHeader("Access-Control-Expose-Headers", "Authorization");
         res.setHeader("Access-Control-Allow-Credentials", "false");
         chain.doFilter(request, response);
     }
