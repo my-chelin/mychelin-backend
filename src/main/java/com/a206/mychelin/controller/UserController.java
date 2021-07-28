@@ -33,7 +33,7 @@ public class UserController {
         return userService.update(requestDto, httpRequest);
     }
 
-    @GetMapping("/{nickname}")
+    @GetMapping("/profile/{nickname}")
     public ResponseEntity<CustomResponseEntity> getProfile(@PathVariable String nickname, HttpServletRequest request) {
         return userService.getProfile(nickname, request);
     }

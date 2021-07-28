@@ -14,7 +14,8 @@ public class PlaceReviewAndUserResponse {
     private float star_rate;
     private String content;
     private String user_id;
-    private Date craete_date;
+    private String craete_date;
+    private String review_image;
     private String user_nickname;
     private String user_profile_image;
 }

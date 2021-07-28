@@ -14,7 +14,8 @@ public class MyPlaceReviewResponse {
     private float star_rate;
     private String content;
     private String user_id;
-    private Date craete_date;
+    private String craete_date;
+    private String review_image;
     private int place_id;
     private String place_name;
     private String place_image;
