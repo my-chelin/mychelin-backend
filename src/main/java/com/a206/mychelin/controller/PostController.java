@@ -62,9 +62,4 @@ public class PostController {
     public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest) {
         return postService.delete(id, httpRequest);
     }
-
-//    @GetMapping("/main")
-//    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
-//        return postService.findPostsByFollowingUsers(httpServletRequest);
-//    }
 }
