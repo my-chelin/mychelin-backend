@@ -33,4 +33,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query(value = "INSERT INTO post (user_id, title, content) VALUES (:user_id, :title, :content)", nativeQuery = true)
     Optional<Post> saveText(@Param("user_id") String user_id, @Param("title") String title, @Param("content") String content);
+
+    @Query(value = "select p.id, u.nickname, p.content, p.create_date, ifnull ((select count(user_id) from post_like where p.id = post_id and user_id is not null group by post_id), 0) ,(select count(message) from comment where p.id = comment.post_id ) from user u join follow f join post p where u.id = f.following_id and p.user_id = u.id and u.id in (select following_id from follow where user_id = :user_id) group by p.id order by p.create_date desc", nativeQuery = true)
+    List<Object[]> findPostsByFollowingUsersOrderByCreateDateDesc(String user_id);
 }

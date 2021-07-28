@@ -63,8 +63,8 @@ public class PostController {
         return postService.delete(id, httpRequest);
     }
 
-//    @GetMapping("/main")
-//    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
-//        return postService.findPostsByFollowingUsers(httpServletRequest);
-//    }
+    @GetMapping("/main")
+    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
+        return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
+    }
 }

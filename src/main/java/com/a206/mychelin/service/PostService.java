@@ -4,6 +4,8 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.Post;
 import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
+import com.a206.mychelin.util.TimestampToDateString;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.*;
 import io.jsonwebtoken.Claims;
@@ -16,8 +18,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -172,5 +178,42 @@ public class PostService {
                 .data(posts.toArray())
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponseEntity;
+        String userId = TokenToId.check(httpRequest);
+
+        List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId);
+        if(items.size() == 0){
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(200)
+                    .message("팔로우하는 친구의 소식을 기다려주세요!")
+                    .build();
+            return new ResponseEntity(HttpStatus.OK);
+        }
+
+        ArrayList<PostInfoResponse> arr = new ArrayList<>();
+
+        for(Object[] item : items){
+            System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4] + " " + item[5]);
+//            arr.add(item);
+            String dateDiff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
+            arr.add(PostInfoResponse.builder()
+                    .postId((int) item[0])
+                    .userNickname((String) item[1])
+                    .content((String) item[2])
+                    .createDate(dateDiff)
+                    .likeCnt(item[4])
+                    .commentCnt(item[5])
+                    .build()
+            );
+        }
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message("포스트를 불러옵니다.")
+                .data(arr).build();
+
+        return new ResponseEntity(customResponseEntity, HttpStatus.OK);
     }
 }
