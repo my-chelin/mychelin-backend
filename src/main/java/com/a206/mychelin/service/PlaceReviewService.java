@@ -134,7 +134,7 @@ public class PlaceReviewService {
                     .userId(userId)
                     .image(review.getImage())
                     .build();
-
+            placeReviewRepository.save(newReview);
             status=200;
             message="리뷰 추가에 성공하였습니다.";
             httpStatus=HttpStatus.OK;
