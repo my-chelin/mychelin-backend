@@ -99,7 +99,7 @@ public class PostService {
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
         }
         customResponse = CustomResponseEntity.builder()
-                .status(400)
+                .status(401)
                 .message("수정 권한이 없습니다.")
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
@@ -161,7 +161,7 @@ public class PostService {
         }
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
-                .status(400)
+                .status(401)
                 .message("권한이 없습니다.")
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);

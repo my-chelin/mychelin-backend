@@ -20,15 +20,15 @@ public class FollowController {
 
     @ApiOperation(value = "특정 사용자 팔로우 요청 보내기")
     @ApiImplicitParam(name = "user_id", value = "")
-    @PostMapping("user")
-    public ResponseEntity addFollowingUser(@RequestBody FollowAskRequest followRequest, HttpServletRequest httpRequest) {
-        return followService.addFollowingUser(followRequest, httpRequest);
+    @PostMapping("request/{userNickname}")
+    public ResponseEntity addFollowingUser(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+        return followService.addFollowingUser(userNickname, httpRequest);
     }
 
     @ApiOperation(value = "팔로우 요청을 수락한다.")
-    @PutMapping("accept")
-    public ResponseEntity acceptFollowingUser(@RequestBody FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
-        return followService.acceptFollowing(followAcceptRequest, httpRequest);
+    @PutMapping("accept/{userNickname}")
+    public ResponseEntity acceptFollowingUser(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+        return followService.acceptFollowing(userNickname, httpRequest);
     }
 
     @ApiOperation(value = "사용자의 팔로잉 목록을 확인한다.")

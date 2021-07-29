@@ -3,6 +3,7 @@ package com.a206.mychelin.service;
 import com.a206.mychelin.domain.entity.Follow;
 import com.a206.mychelin.domain.entity.FollowPK;
 import com.a206.mychelin.domain.repository.FollowRepository;
+import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.FollowAcceptRequest;
@@ -23,18 +24,20 @@ import java.util.Optional;
 @Service
 public class FollowService {
     private final FollowRepository followRepository;
+    private final UserRepository userRepository;
 
-    //추가하려는 상대방 아이디는 requestbody로 넘기고 나는 httpRequest에서 아이디를 받아온다.
+    //추가하려는 상대방 닉네임은 pathvariable로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity addFollowingUser(FollowAskRequest followRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity addFollowingUser(String userNickname, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
+        String getFollowingId = userRepository.findUserIdByNickname(userNickname);
 
-        Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(followRequest.getUserId()
-                , followRequest.getFollowingId());
-        System.out.println(findFollow.toString());
-        if (!findFollow.isPresent()) { // 두 유저 간의 팔로우 정보가 없다면 새로 요청받을 수 있도록 생성.
-            followRepository.save(followRequest.toEntity());
+        Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId( userId , getFollowingId);
+
+        if (!findFollow.isPresent()) { // 두 유저 간의 팔로우 내역이 없다면 새로 요청받을 수 있도록 생성.
+            Follow followRequest = Follow.builder().userId(userId).followingId(getFollowingId).build();
+            followRepository.save(followRequest);
 
             customResponse = CustomResponseEntity.builder()
                     .status(200)
@@ -48,7 +51,7 @@ public class FollowService {
         } else { // 기존에 요청이 존재함.
             customResponse = CustomResponseEntity.builder()
                     .status(400)
-                    .message("이미 팔로우 신청이 되었습니다.")
+                    .message("이미 팔로우 요청이 전송되었습니다.")
                     .build();
 
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
@@ -57,17 +60,18 @@ public class FollowService {
 
     //수락한 상대방의 아이디는 requestbody로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity acceptFollowing(FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity acceptFollowing(String userNickname, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
-        String userId = TokenToId.check(httpRequest);
+        String userId = TokenToId.check(httpRequest); //사용자 ID(허락해주는 사람)
+        String getFollowerId = userRepository.findUserIdByNickname(userNickname); //허락할 상대 아이디
 
-        if (followAcceptRequest.getFollowingId().equals(userId)) { //현재 사용자와 팔로우 수락할 사용자가 같은 경우
-            Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
+        Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(getFollowerId , userId);
+        if (checkFollow.isPresent()) {
 
             if (checkFollow.isPresent()) { //팔로우 신청이 존재
                 if (!checkFollow.get().isAccept()) {
                     Follow follow = checkFollow.get();
-                    follow.update(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
+                    follow.update( getFollowerId, userId);
 
                     customResponse = CustomResponseEntity.builder()
                             .status(200)
@@ -94,7 +98,7 @@ public class FollowService {
         }
 
         customResponse = CustomResponseEntity.builder()
-                .status(400)
+                .status(401)
                 .message("접근 권한이 없습니다.")
                 .build();
         return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);

@@ -106,7 +106,7 @@ public class CommentService {
 
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
-                    .status(400)
+                    .status(401)
                     .message("댓글 삭제 권한이 없습니다.")
                     .build();
             return new ResponseEntity(customResponseEntity, HttpStatus.UNAUTHORIZED);
