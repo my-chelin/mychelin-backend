@@ -61,13 +61,13 @@ public class FollowService {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
 
-        if (followAcceptRequest.getUserId().equals(userId)) { //현재 사용자와 로그인한 사용자가 같은경우
+        if (followAcceptRequest.getFollowingId().equals(userId)) { //현재 사용자와 팔로우 수락할 사용자가 같은 경우
             Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
 
             if (checkFollow.isPresent()) { //팔로우 신청이 존재
                 if (!checkFollow.get().isAccept()) {
                     Follow follow = checkFollow.get();
-                    follow.update(userId, followAcceptRequest.getFollowingId());
+                    follow.update(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
 
                     customResponse = CustomResponseEntity.builder()
                             .status(200)

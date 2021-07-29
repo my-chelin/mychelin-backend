@@ -13,14 +13,12 @@ import org.hibernate.annotations.DynamicInsert;
 public class PostWPlaceListUploadRequest {
     @Setter
     private String userId;
-    private String title;
     private String content;
     private int placelistId;
 
     @Builder
-    public PostWPlaceListUploadRequest(String userId, String title, String content, int placelistId) {
+    public PostWPlaceListUploadRequest(String userId, String content, int placelistId) {
         this.userId = userId;
-        this.title = title;
         this.content = content;
         this.placelistId = placelistId;
     }
@@ -28,7 +26,6 @@ public class PostWPlaceListUploadRequest {
     public Post toEntity() {
         return Post.builder()
                 .userId(userId)
-                .title(title)
                 .content(content)
                 .placelistId(placelistId)
                 .build();

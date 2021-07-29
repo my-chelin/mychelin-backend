@@ -13,14 +13,12 @@ import com.a206.mychelin.domain.entity.Post;
 public class PostWPlaceUploadRequest {
     @Setter
     private String userId;
-    private String title;
     private String content;
     private int placeId;
 
     @Builder
-    public PostWPlaceUploadRequest(String userId, String title, String content, int placeId) {
+    public PostWPlaceUploadRequest(String userId, String content, int placeId) {
         this.userId = userId;
-        this.title = title;
         this.content = content;
         this.placeId = placeId;
     }
@@ -28,7 +26,6 @@ public class PostWPlaceUploadRequest {
     public Post toEntity() {
         return Post.builder()
                 .userId(userId)
-                .title(title)
                 .content(content)
                 .placeId(placeId)
                 .build();

@@ -13,8 +13,12 @@ import java.util.Date;
 public class PostInfoResponse {
     private int postId;
     private String userNickname;
+    private Object userFollowerCnt;
     private String content;
     private String createDate;
     private Object likeCnt;
     private Object commentCnt;
+    private Object placeId;
+    private Object placelistId;
+    private String image;
 }

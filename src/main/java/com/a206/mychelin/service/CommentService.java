@@ -5,6 +5,7 @@ import com.a206.mychelin.domain.entity.Comment;
 import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
 import com.a206.mychelin.web.dto.CommentResponse;
@@ -31,15 +32,10 @@ public class CommentService {
 
     //특정 게시글의 모든 댓글 보기
     public ResponseEntity findCommentsByPostId(@PathVariable int id, HttpServletRequest httpRequest) {
-        String writer_id = postRepository.findPostById(id).get().getUserId();
+//        String writer_id = postRepository.findPostById(id).get().getUserId();
         /*
          * 비공개계정이라면 현재 사용자가 글쓴이 팔로우 중인지 확인하는 부분
          */
-
-//        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-//        String token = TokenUtils.getTokenFromHeader(header);
-//        Claims claims = TokenUtils.getClaimsFormToken(token);
-//        String user_id = (String) claims.get("id");
 
         //팔로우 상태 확인
         //followRepository.findFollowingIdBy
@@ -70,14 +66,12 @@ public class CommentService {
     // 특정 게시글에 댓글 달기
     @Transactional
     public ResponseEntity addComment(@PathVariable int id, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-        commentRequest.setWriterId(user_id);
+        String userId = TokenToId.check(httpRequest);
+
+        commentRequest.setWriterId(userId);
         commentRequest.setPostId(id);
 
-        String writerId = userRepository.getUserById(user_id).get().getNickname();
+        String writerId = userRepository.getUserById(userId).get().getNickname();
         Comment newComment = commentRequest.toEntity();
         int comment_id = commentRepository.save(commentRequest.toEntity()).getCommentId();
 
@@ -92,14 +86,11 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity deleteComment(@PathVariable int commentId, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
+        String userId = TokenToId.check(httpRequest);
 
         Optional<Comment> comment = commentRepository.findCommentByCommentId(commentId);
         if (comment.isPresent()) {
-            if (comment.get().getWriterId().equals(user_id)) {
+            if (comment.get().getWriterId().equals(userId)) {
                 commentRepository.deleteCommentByCommentId(commentId);
 
                 CustomResponseEntity customResponseEntity
