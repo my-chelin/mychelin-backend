@@ -15,6 +15,7 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/user/delete");
         tokenRequiredPathList.add("/placelist");
         tokenRequiredPathList.add("/placelist/listitems/items");
+        tokenRequiredPathList.add("/place/review");
     }
 
     public static AuthorizationCheck getObject() {

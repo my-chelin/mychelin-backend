@@ -8,6 +8,7 @@ import com.a206.mychelin.domain.repository.PlaceListItemRepository;
 import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.PlaceListCreateRequest;
 import com.a206.mychelin.web.dto.PlaceListItemDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,10 +32,18 @@ public class PlaceListService {
     private String message = null;
     private Object data = null;
 
-    public ResponseEntity createPlaceList(PlaceList placeList) {
+    private void init(){
+        httpStatus = HttpStatus.NOT_FOUND;
+        status = 404;
+        message = null;
+        data = null;
+    }
+
+    public ResponseEntity createPlaceList(PlaceListCreateRequest placeList) {
         CustomResponseEntity result;
-        placeList.clear();
-        PlaceList insertPlaceList = placeListRepository.save(placeList);
+        PlaceList newPlaceList = PlaceList.builder()
+                .title(placeList.getTitle()).build();
+        PlaceList insertPlaceList = placeListRepository.save(newPlaceList);
 
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("id", insertPlaceList.getId());
@@ -161,6 +170,8 @@ public class PlaceListService {
     }
 
     public ResponseEntity insertPlaceListItem(String userId, int listId, int placeId) {
+        init();
+
         if (checkPlaceListId(listId) && checkPlaceId(placeId) && !checkPlaceIntoPlaceList(listId, placeId)) {
             PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
             // 식당에 추가 가능
@@ -183,6 +194,7 @@ public class PlaceListService {
     }
 
     public ResponseEntity deletePlaceListItem(String userId, int listId, int placeId) {
+        init();
         if (checkPlaceListId(listId) && checkPlaceId(placeId) && checkPlaceIntoPlaceList(listId, placeId)) {
             PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
 
