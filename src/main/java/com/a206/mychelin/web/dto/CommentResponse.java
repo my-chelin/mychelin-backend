@@ -13,5 +13,5 @@ public class CommentResponse {
     private int id;
     private String writerNickname;
     private String message;
-    private Date createDate;
+    private String createDate;
 }

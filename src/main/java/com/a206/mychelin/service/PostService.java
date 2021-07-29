@@ -1,14 +1,11 @@
 package com.a206.mychelin.service;
 
-import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.Post;
 import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
-import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.*;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,19 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.math.BigInteger;
-import java.sql.Array;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class PostService {
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> addPostText(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
@@ -63,7 +54,7 @@ public class PostService {
                 .data(postRequest)
                 .build();
 
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+        return new ResponseEntity(customResponse, HttpStatus.OK);
     }
 
     @Transactional

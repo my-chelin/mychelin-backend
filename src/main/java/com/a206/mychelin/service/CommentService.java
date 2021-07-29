@@ -5,6 +5,7 @@ import com.a206.mychelin.domain.entity.Comment;
 import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -44,12 +46,13 @@ public class CommentService {
         List<Object[]> comments = commentRepository.findCommentsByPostId(id);
         ArrayList<CommentResponse> arr = new ArrayList<>();
         for (Object[] item : comments) {
+            String diff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
             arr.add(
                     CommentResponse.builder()
                             .id((int) item[0])
                             .writerNickname((String) item[1])
                             .message((String) item[2])
-                            .createDate((Date) item[3])
+                            .createDate(diff)
                             .build()
             );
         }
