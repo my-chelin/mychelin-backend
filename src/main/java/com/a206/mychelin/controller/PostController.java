@@ -31,17 +31,17 @@ public class PostController {
     }
 
     @ApiOperation(value = "선택한 포스트를 가져온다.")
-    @ApiImplicitParam(name = "id", value = "포스트 고유 id")
-    @GetMapping("/{id}")
-    public ResponseEntity load(@PathVariable int id) {
-        return postService.getPost(id);
+    @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
+    @GetMapping("/{postId}")
+    public ResponseEntity load(@PathVariable int postId) {
+        return postService.getPostByPostId(postId);
     }
 
     @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
-    @ApiImplicitParam(name = "user_id", value = "사용자 아이디(이메일)")
-    @GetMapping("/list/{userId}")
-    public ResponseEntity findPostsByUserId(@PathVariable String userId) {
-        return postService.getPostByUserId(userId);
+    @ApiImplicitParam(name = "userNickname", value = "사용자 닉네임")
+    @GetMapping("/list/{userNickname}")
+    public ResponseEntity findPostsByUserId(@PathVariable String userNickname) {
+        return postService.findPostsByUserNickname(userNickname);
     }
 
     @ApiOperation(value = "선택한 포스트를 삭제한다.")
@@ -49,5 +49,10 @@ public class PostController {
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest) {
         return postService.delete(id, httpRequest);
+    }
+
+    @GetMapping("/main")
+    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
+        return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
     }
 }

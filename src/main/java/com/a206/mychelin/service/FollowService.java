@@ -45,7 +45,7 @@ public class FollowService {
             사용자에게 알림 보내는 로직이 필요하다면 여기서 처리할 것.
             */
             return new ResponseEntity(customResponse, HttpStatus.OK);
-        }else{ // 기존에 요청이 존재함.
+        } else { // 기존에 요청이 존재함.
             customResponse = CustomResponseEntity.builder()
                     .status(400)
                     .message("이미 팔로우 신청이 되었습니다.")
@@ -61,13 +61,13 @@ public class FollowService {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
 
-        if (followAcceptRequest.getUserId().equals(userId)) { //현재 사용자와 로그인한 사용자가 같은경우
+        if (followAcceptRequest.getFollowingId().equals(userId)) { //현재 사용자와 팔로우 수락할 사용자가 같은 경우
             Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
 
-            if(checkFollow.isPresent()){ //팔로우 신청이 존재
-                if(!checkFollow.get().isAccept()){
+            if (checkFollow.isPresent()) { //팔로우 신청이 존재
+                if (!checkFollow.get().isAccept()) {
                     Follow follow = checkFollow.get();
-                    follow.update(userId, followAcceptRequest.getFollowingId());
+                    follow.update(followAcceptRequest.getUserId(), followAcceptRequest.getFollowingId());
 
                     customResponse = CustomResponseEntity.builder()
                             .status(200)

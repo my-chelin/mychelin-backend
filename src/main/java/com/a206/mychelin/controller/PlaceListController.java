@@ -4,6 +4,7 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.PlaceList;
 import com.a206.mychelin.service.PlaceListService;
 import com.a206.mychelin.util.TokenUtils;
+import com.a206.mychelin.web.dto.PlaceListCreateRequest;
 import com.a206.mychelin.web.dto.PlaceListItemRequest;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -20,8 +21,8 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트 생성")
     @PostMapping
-    public ResponseEntity createPlaceList(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody PlaceList placeList) {
-        return placeListService.createPlaceList(placeList);
+    public ResponseEntity createPlaceList(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody PlaceListCreateRequest placeListCreateRequest) {
+        return placeListService.createPlaceList(placeListCreateRequest);
     }
 
     @ApiOperation(value = "맛집 리스트 id로 검색 => 리스트의 상세 정보는 안나옵니다!")
