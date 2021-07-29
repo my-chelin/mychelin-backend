@@ -33,7 +33,7 @@ public class FollowController {
 
     @ApiOperation(value = "사용자의 팔로잉 목록을 확인한다.")
     @GetMapping("list/{userNickname}")
-    public ResponseEntity findFollowingList(@PathVariable String userNickname){
+    public ResponseEntity findFollowingList(@PathVariable String userNickname) {
         return followService.findFollowingList(userNickname);
     }
 }

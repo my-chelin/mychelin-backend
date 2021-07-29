@@ -1,7 +1,6 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.config.AuthConstants;
-import com.a206.mychelin.domain.entity.PlaceList;
 import com.a206.mychelin.service.PlaceListService;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.PlaceListCreateRequest;
@@ -21,7 +20,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트 생성")
     @PostMapping
-    public ResponseEntity createPlaceList(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody PlaceListCreateRequest placeListCreateRequest) {
+    public ResponseEntity createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest) {
         return placeListService.createPlaceList(placeListCreateRequest);
     }
 

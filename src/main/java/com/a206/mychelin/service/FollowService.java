@@ -1,7 +1,6 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Follow;
-import com.a206.mychelin.domain.entity.FollowPK;
 import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
@@ -103,8 +102,6 @@ public class FollowService {
     @Transactional
     public ResponseEntity findFollowingList(String userNickname) {
         CustomResponseEntity customResponse;
-//        String userId = TokenToId.check(httpServletRequest);
-
         List<Object[]> followInfo = followRepository.findFollowsByUserNickname(userNickname);
         ArrayList<FollowingResponse> array = new ArrayList<>();
         for (Object[] followItem : followInfo) {

@@ -17,7 +17,7 @@ public class FollowAskRequest {
         this.followingId = followingId;
     }
 
-    public Follow toEntity(){
+    public Follow toEntity() {
         return Follow.builder()
                 .userId(userId)
                 .followingId(followingId)

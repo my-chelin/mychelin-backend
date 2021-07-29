@@ -32,7 +32,7 @@ public class PlaceListService {
     private String message = null;
     private Object data = null;
 
-    private void init(){
+    private void init() {
         httpStatus = HttpStatus.NOT_FOUND;
         status = 404;
         message = null;
@@ -50,7 +50,7 @@ public class PlaceListService {
 
         result = CustomResponseEntity.builder()
                 .status(200)
-                .message("플레이 리스트 생성에 성공했습니다.")
+                .message("맛집 리스트 생성에 성공했습니다.")
                 .data(hashMap)
                 .build();
         return new ResponseEntity(result, HttpStatus.OK);
@@ -64,14 +64,14 @@ public class PlaceListService {
         if (!placeList.isPresent()) {
             result = CustomResponseEntity.builder()
                     .status(404)
-                    .message("플레이리스트 번호 " + id + " 검색 실패.")
+                    .message("맛집 리스트 번호 " + id + " 검색 실패.")
                     .data(null)
                     .build();
             httpStatus = HttpStatus.NOT_FOUND;
         } else {
             result = CustomResponseEntity.builder()
                     .status(200)
-                    .message("플레이리스트 번호 " + id + " 검색 성공.")
+                    .message("맛집 리스트 번호 " + id + " 검색 성공.")
                     .data(placeList.get())
                     .build();
             httpStatus = HttpStatus.OK;

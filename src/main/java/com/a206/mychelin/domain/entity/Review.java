@@ -34,11 +34,10 @@ public class Review {
 
     private String image;
 
-    public void editReview(ReviewEditRequest reviewEditRequest){
+    public void editReview(ReviewEditRequest reviewEditRequest) {
         this.star_rate = reviewEditRequest.getStar_rate();
         this.content = reviewEditRequest.getContent();
         this.createDate = new Date();
         this.image = reviewEditRequest.getImage();
     }
-
 }

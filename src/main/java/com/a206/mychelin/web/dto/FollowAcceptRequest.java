@@ -3,7 +3,6 @@ package com.a206.mychelin.web.dto;
 import com.a206.mychelin.domain.entity.Follow;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
@@ -20,12 +19,11 @@ public class FollowAcceptRequest {
         this.accept = accept;
     }
 
-    public Follow toEntity(){
+    public Follow toEntity() {
         return Follow.builder()
                 .userId(userId)
                 .followingId(followingId)
                 .accept(accept)
                 .build();
     }
-
 }

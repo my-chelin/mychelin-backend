@@ -2,7 +2,6 @@ package com.a206.mychelin.domain.entity;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 

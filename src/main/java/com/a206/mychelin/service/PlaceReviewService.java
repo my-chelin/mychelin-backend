@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +29,7 @@ public class PlaceReviewService {
     private String message = null;
     private Object data = null;
 
-    private void init(){
+    private void init() {
         httpStatus = HttpStatus.NOT_FOUND;
         status = 404;
         message = null;
@@ -123,10 +122,9 @@ public class PlaceReviewService {
 
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserById(userId);
-        if(!user.isPresent()){
-            message="해당 유저가 존재하지 않습니다.";
-        }
-        else{
+        if (!user.isPresent()) {
+            message = "해당 유저가 존재하지 않습니다.";
+        } else {
             Review newReview = Review.builder()
                     .star_rate(review.getStar_rate())
                     .content(review.getContent())
@@ -135,9 +133,9 @@ public class PlaceReviewService {
                     .image(review.getImage())
                     .build();
             placeReviewRepository.save(newReview);
-            status=200;
-            message="리뷰 추가에 성공하였습니다.";
-            httpStatus=HttpStatus.OK;
+            status = 200;
+            message = "리뷰 추가에 성공하였습니다.";
+            httpStatus = HttpStatus.OK;
         }
 
         result = CustomResponseEntity.builder()
@@ -146,7 +144,7 @@ public class PlaceReviewService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity(result,httpStatus);
+        return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity editPlaceReviews(String userId, ReviewEditRequest review) {
@@ -156,25 +154,21 @@ public class PlaceReviewService {
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 
-        if(!findReview.isPresent()){
-            message="해당 리뷰가 존재하지 않습니다.";
-        }
-        else if(!user.isPresent()){
-            message="해당 유저가 존재하지 않습니다.";
-        }
-        else if(!findReview.get().getUserId().equals(userId)){
-            message="리뷰 작성한 사람과 수정하려는 사람이 일치하지 않습니다.";
-        }
-        else if(findReview.get().getPlaceId()!= review.getPlace_id()){
-            message="맛집 장소가 일치하지 않습니다.";
-        }
-        else{
+        if (!findReview.isPresent()) {
+            message = "해당 리뷰가 존재하지 않습니다.";
+        } else if (!user.isPresent()) {
+            message = "해당 유저가 존재하지 않습니다.";
+        } else if (!findReview.get().getUserId().equals(userId)) {
+            message = "리뷰 작성한 사람과 수정하려는 사람이 일치하지 않습니다.";
+        } else if (findReview.get().getPlaceId() != review.getPlace_id()) {
+            message = "맛집 장소가 일치하지 않습니다.";
+        } else {
             findReview.get().editReview(review);
             placeReviewRepository.save(findReview.get());
 
-            status=200;
-            message="리뷰 수정에 성공하였습니다.";
-            httpStatus=HttpStatus.OK;
+            status = 200;
+            message = "리뷰 수정에 성공하였습니다.";
+            httpStatus = HttpStatus.OK;
         }
 
         result = CustomResponseEntity.builder()
@@ -183,32 +177,28 @@ public class PlaceReviewService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity(result,httpStatus);
+        return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity deletePlaceReviews(String userId, ReviewDeleteRequest review) {
-
         init();
 
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 
-        if(!findReview.isPresent()){
-            message="해당 리뷰가 존재하지 않습니다.";
-        }
-        else if(!user.isPresent()){
-            message="해당 유저가 존재하지 않습니다.";
-        }
-        else if(!findReview.get().getUserId().equals(userId)){
-            message="리뷰 작성한 사람과 삭제하려는 사람이 일치하지 않습니다.";
-        }
-        else{
+        if (!findReview.isPresent()) {
+            message = "해당 리뷰가 존재하지 않습니다.";
+        } else if (!user.isPresent()) {
+            message = "해당 유저가 존재하지 않습니다.";
+        } else if (!findReview.get().getUserId().equals(userId)) {
+            message = "리뷰 작성한 사람과 삭제하려는 사람이 일치하지 않습니다.";
+        } else {
             placeReviewRepository.delete(findReview.get());
 
-            status=200;
-            message="리뷰 삭제에 성공하였습니다.";
-            httpStatus=HttpStatus.OK;
+            status = 200;
+            message = "리뷰 삭제에 성공하였습니다.";
+            httpStatus = HttpStatus.OK;
         }
 
         result = CustomResponseEntity.builder()
@@ -217,6 +207,6 @@ public class PlaceReviewService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity(result,httpStatus);
+        return new ResponseEntity(result, httpStatus);
     }
 }

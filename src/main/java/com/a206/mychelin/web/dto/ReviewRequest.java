@@ -11,7 +11,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class ReviewRequest {
-
     @ApiModelProperty(example = "평점")
     private float star_rate;
 
@@ -23,5 +22,4 @@ public class ReviewRequest {
 
     @ApiModelProperty(example = "이미지, 없으면 null")
     private String image;
-
 }
