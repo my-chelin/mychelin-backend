@@ -1,12 +1,11 @@
 package com.a206.mychelin.service;
 
-import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.Post;
-import com.a206.mychelin.domain.repository.CommentRepository;
+import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.PostRepository;
-import com.a206.mychelin.util.TokenUtils;
+import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +22,19 @@ import java.util.Optional;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> addPostText(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String userId = (String) claims.get("id");
-        postRequest.setUserId(userId);
+    public ResponseEntity<CustomResponseEntity> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
+        String userId = TokenToId.check(httpRequest);
+        Post newPost = Post.builder()
+                .userId(userId)
+                .content(postRequest.getContent())
+                .placeId(postRequest.getPlaceId())
+                .placelistId(postRequest.getPlacelistId())
+                .build();
+        System.out.println(newPost.toString());
+        postRepository.save(newPost);
 
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
@@ -43,50 +46,9 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> addPostPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String userId = (String) claims.get("id");
-        postRequest.setUserId(userId);
-
-        postRepository.save(postRequest.toEntity());
-        CustomResponseEntity customResponse
-                = CustomResponseEntity.builder()
-                .message("게시글이 업로드되었습니다")
-                .status(200)
-                .data(postRequest)
-                .build();
-
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<CustomResponseEntity> addPostPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String userId = (String) claims.get("id");
-        postRequest.setUserId(userId);
-
-        postRepository.save(postRequest.toEntity());
-        CustomResponseEntity customResponse
-                = CustomResponseEntity.builder()
-                .message("게시글이 업로드되었습니다")
-                .status(200)
-                .data(postRequest)
-                .build();
-
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
-    }
-
-    @Transactional
     public ResponseEntity<CustomResponseEntity> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String userId = (String) claims.get("id");
+        String userId = TokenToId.check(httpRequest);
         Optional<Post> tempPost = postRepository.findPostById(id);
         if (!tempPost.isPresent()) {
             customResponse = CustomResponseEntity.builder()
@@ -99,7 +61,7 @@ public class PostService {
         System.out.println(post.toString());
         if (userId.equals(post.getUserId())) {
             System.out.println("작성자 확인");
-            post.update(postUpdateRequest.getTitle(), postUpdateRequest.getContent());
+            post.update(postUpdateRequest.getContent());
             customResponse = CustomResponseEntity.builder()
                     .status(200)
                     .message(post.getId() + "번 게시글이 수정되었습니다.")
@@ -107,15 +69,14 @@ public class PostService {
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
         }
         customResponse = CustomResponseEntity.builder()
-                .status(400)
+                .status(401)
                 .message("수정 권한이 없습니다.")
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    public ResponseEntity findPostById(@PathVariable int id) {
+    public ResponseEntity getPost(@PathVariable int id) {
         Optional<Post> entity = postRepository.findPostById(id);
-
         if (entity.isPresent()) {
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
@@ -137,38 +98,38 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> delete(@PathVariable int id, HttpServletRequest httpRequest) {
-        String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String user_id = (String) claims.get("id");
-
+        String userId = TokenToId.check(httpRequest);
         Post post = postRepository.findPostById(id).get();
-        if (user_id.equals(post.getUserId())) {
-            int delete_post_idx = postRepository.deletePostById(id);
-
+        if (userId.equals(post.getUserId())) {
+            postRepository.deletePostById(id);
             CustomResponseEntity customResponse
                     = CustomResponseEntity.builder()
                     .status(200)
-                    .message(delete_post_idx + "번 게시물을 삭제했습니다.")
+                    .message(id + "번 게시물을 삭제했습니다.")
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
         }
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
-                .status(400)
+                .status(401)
                 .message("권한이 없습니다.")
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
-
     }
 
-    public ResponseEntity findPostsByUserId(@RequestBody PostByUserRequest postByUserRequest) {
-        String user_id = postByUserRequest.getUserId();
-        List<Post> posts = postRepository.findPostsByUserIdOrderByCreateDateDesc(user_id);
-
+    public ResponseEntity getPostByUserId(@RequestBody String userId) {
+        Optional<User> user = userRepository.findUserById(userId);
+        if (!user.isPresent()) {
+            CustomResponseEntity customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message(userId + "존재하지 않는 유저입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        List<Post> posts = postRepository.findPostsByUserIdOrderByCreateDateDesc(userId);
         CustomResponseEntity customResponse = CustomResponseEntity.builder()
                 .status(200)
-                .message(user_id + "의 게시글을 불러왔습니다.")
+                .message(userId + "의 게시글을 불러왔습니다.")
                 .data(posts.toArray())
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);

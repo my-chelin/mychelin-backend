@@ -8,19 +8,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PostUpdateRequest {
-    private String title;
     private String content;
+    private Integer placeId;
+    private Integer placelistId;
 
     @Builder
-    public PostUpdateRequest(String title, String content) {
-        this.title = title;
+    public PostUpdateRequest(String content, Integer placeId, Integer placelistId) {
         this.content = content;
-    }
-
-    public Post toEntity() {
-        return Post.builder()
-                .title(title)
-                .content(content)
-                .build();
+        this.placeId = placeId;
+        this.placelistId = placelistId;
     }
 }

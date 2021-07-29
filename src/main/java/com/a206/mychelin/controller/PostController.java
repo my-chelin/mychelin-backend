@@ -17,22 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 public class PostController {
     private final PostService postService;
 
-    @ApiOperation(value = "글만 있는 포스트를 업로드한다.")
-    @PostMapping("/upload/text")
+    @ApiOperation(value = "포스트를 업로드한다.")
+    @PostMapping("/upload")
     public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
-        return postService.addPostText(postUploadRequest, request);
-    }
-
-    @ApiOperation(value = "장소를 포함한 포스트를 업로드한다.")
-    @PostMapping("/upload/tap")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest request) {
-        return postService.addPostPlace(postRequest, request);
-    }
-
-    @ApiOperation(value = "장소 리스트를 포함한 포스트를 업로드한다.")
-    @PostMapping("/upload/tapl")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest request) {
-        return postService.addPostPlaceList(postRequest, request);
+        return postService.addPost(postUploadRequest, request);
     }
 
     @ApiOperation(value = "선택한 포스트를 수정한다.")
@@ -46,14 +34,14 @@ public class PostController {
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @GetMapping("/{id}")
     public ResponseEntity load(@PathVariable int id) {
-        return postService.findPostById(id);
+        return postService.getPost(id);
     }
 
     @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
     @ApiImplicitParam(name = "user_id", value = "사용자 아이디(이메일)")
-    @GetMapping("/list")
-    public ResponseEntity findPostsByUserId(@RequestBody PostByUserRequest postByUserRequest) {
-        return postService.findPostsByUserId(postByUserRequest);
+    @GetMapping("/list/{userId}")
+    public ResponseEntity findPostsByUserId(@PathVariable String userId) {
+        return postService.getPostByUserId(userId);
     }
 
     @ApiOperation(value = "선택한 포스트를 삭제한다.")
