@@ -17,22 +17,10 @@ import javax.servlet.http.HttpServletRequest;
 public class PostController {
     private final PostService postService;
 
-    @ApiOperation(value = "글만 있는 포스트를 업로드한다.")
-    @PostMapping("/upload/text")
+    @ApiOperation(value = "포스트를 업로드한다.")
+    @PostMapping("/upload")
     public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
-        return postService.addPostText(postUploadRequest, request);
-    }
-
-    @ApiOperation(value = "장소를 포함한 포스트를 업로드한다.")
-    @PostMapping("/upload/tap")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlace(@RequestBody PostWPlaceUploadRequest postRequest, HttpServletRequest request) {
-        return postService.addPostPlace(postRequest, request);
-    }
-
-    @ApiOperation(value = "장소 리스트를 포함한 포스트를 업로드한다.")
-    @PostMapping("/upload/tapl")
-    public ResponseEntity<CustomResponseEntity> uploadTextPlaceList(@RequestBody PostWPlaceListUploadRequest postRequest, HttpServletRequest request) {
-        return postService.addPostPlaceList(postRequest, request);
+        return postService.addPost(postUploadRequest, request);
     }
 
     @ApiOperation(value = "선택한 포스트를 수정한다.")
@@ -46,7 +34,7 @@ public class PostController {
     @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
     @GetMapping("/{postId}")
     public ResponseEntity load(@PathVariable int postId) {
-        return postService.findPostByPostId(postId);
+        return postService.getPostByPostId(postId);
     }
 
     @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")

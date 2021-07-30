@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 public class CommentResponse {
     private int id;
-    private String writerNickname;
+    private String writerId;
     private String message;
     private String createDate;
 }

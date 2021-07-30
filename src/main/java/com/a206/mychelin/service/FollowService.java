@@ -1,18 +1,18 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Follow;
-import com.a206.mychelin.domain.entity.FollowPK;
+import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.FollowAcceptRequest;
-import com.a206.mychelin.web.dto.FollowAskRequest;
 import com.a206.mychelin.web.dto.FollowingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
@@ -28,12 +28,12 @@ public class FollowService {
 
     //추가하려는 상대방 닉네임은 pathvariable로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity addFollowingUser(String userNickname, HttpServletRequest httpRequest) {
+    public ResponseEntity addFollowingUser(@RequestBody String userNickname, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         String getFollowingId = userRepository.findUserIdByNickname(userNickname);
 
-        Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId( userId , getFollowingId);
+        Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(userId, getFollowingId);
 
         if (!findFollow.isPresent()) { // 두 유저 간의 팔로우 내역이 없다면 새로 요청받을 수 있도록 생성.
             Follow followRequest = Follow.builder().userId(userId).followingId(getFollowingId).build();
@@ -45,7 +45,7 @@ public class FollowService {
                     .build();
 
             /*
-            사용자에게 알림 보내는 로직이 필요하다면 여기서 처리할 것.
+            상대방에게 알림 보내는 로직이 필요하다면 여기서 처리할 것.
             */
             return new ResponseEntity(customResponse, HttpStatus.OK);
         } else { // 기존에 요청이 존재함.
@@ -58,20 +58,27 @@ public class FollowService {
         }
     }
 
-    //수락한 상대방의 아이디는 requestbody로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity acceptFollowing(String userNickname, HttpServletRequest httpRequest) {
+    public ResponseEntity acceptFollowing(@RequestBody FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
-        String userId = TokenToId.check(httpRequest); //사용자 ID(허락해주는 사람)
-        String getFollowerId = userRepository.findUserIdByNickname(userNickname); //허락할 상대 아이디
+        String userId = TokenToId.check(httpRequest); //사용자 ID(허락해주는 사람.)
+        Optional<User> user = userRepository.findUserByNickname(followAcceptRequest.getUserNickname()); //허락할 상대 아이디
+        String getFollowerId = user.get().getId();
 
-        Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(getFollowerId , userId);
-        if (checkFollow.isPresent()) {
+        if (userId.equals(getFollowerId)) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("잘못된 접근입니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        if (userId != null) {
+            Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(getFollowerId, userId);
 
             if (checkFollow.isPresent()) { //팔로우 신청이 존재
                 if (!checkFollow.get().isAccept()) {
                     Follow follow = checkFollow.get();
-                    follow.update( getFollowerId, userId);
+                    follow.update(getFollowerId, userId);
 
                     customResponse = CustomResponseEntity.builder()
                             .status(200)

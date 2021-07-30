@@ -45,19 +45,19 @@ public class PostControllerTest {
         //given
         String title = "오늘 점심 메뉴는";
         String content = "점심은 아무래도 볶음밥을 먹어야겠다";
-        PostUploadRequest postUploadRequest = PostUploadRequest.builder()
-                .content(content)
-                .userId("hi@naver.com")
-                .build();
+//        PostUploadRequest postUploadRequest = PostUploadRequest.builder()
+//                .content(content)
+//                .userId("hi@naver.com")
+//                .build();
 
         String url = "http://localhost:" + port + "/post/upload";
 
         //when
-        ResponseEntity<Integer> responseEntity = restTemplate.postForEntity(url, postUploadRequest, Integer.class);
+        //ResponseEntity<Integer> responseEntity = restTemplate.postForEntity(url, postUploadRequest, Integer.class);
 
         //then
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0);
+//        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        assertThat(responseEntity.getBody()).isGreaterThan(0);
 
         List<Post> allPosts = postRepository.findAll();
         assertThat(allPosts.get(0).getContent()).isEqualTo(content);

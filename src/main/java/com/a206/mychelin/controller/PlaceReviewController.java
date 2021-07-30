@@ -27,14 +27,12 @@ public class PlaceReviewController {
         return placeReviewService.getPlaceReviewsByUser(nickName);
     }
 
-
     @ApiOperation(value = "식당 모든 리뷰 가져오기(최신순)")
     @ApiImplicitParam(name = "placeId", value = "식당 고유 번호")
     @GetMapping("/{placeId}")
     public ResponseEntity getPlaceReviewsByUser(@PathVariable int placeId) {
         return placeReviewService.getPlaceAllReviewsByPlaceId(placeId);
     }
-
 
     @ApiOperation(value = "식당 리뷰 추가")
     @PostMapping

@@ -21,5 +21,4 @@ public interface PlaceReviewRepository extends JpaRepository<Review, Integer> {
     List<Review> findByPlaceIdOrderByIdDesc(int placeId);
 
     Optional<Review> findById(int id);
-
 }

@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "from user u join post p where p.user_id = u.id and p.id = :postId", nativeQuery = true)
     List<Object[]> findPostInfoByPostId(@Param("postId") int postId);//특정 포스트 정보 가지고오기
 
-    Optional<Post> findPostById(int post_id);
+    Optional<Post> findPostById(int postId);
 
     List<Post> findPostsByContentContains(String content);
 

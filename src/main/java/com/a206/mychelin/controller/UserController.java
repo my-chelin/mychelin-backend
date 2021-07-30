@@ -1,9 +1,9 @@
 package com.a206.mychelin.controller;
 
-import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PasswordChangeRequest;
 import com.a206.mychelin.service.UserService;
+import com.a206.mychelin.web.dto.UserSaveRequest;
 import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(value = "/signup")
-    public ResponseEntity<CustomResponseEntity> signUp(@RequestBody User user) {
-        return userService.signUp(user);
+    public ResponseEntity<CustomResponseEntity> signUp(@RequestBody UserSaveRequest userSaveRequest) {
+        return userService.signUp(userSaveRequest);
     }
 
     @PutMapping("/changepwd")
@@ -28,7 +28,7 @@ public class UserController {
         return userService.changePassword(passwordChangeRequest, request);
     }
 
-    @PutMapping("/changeInfo")
+    @PutMapping("/changeinfo")
     public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
         return userService.update(requestDto, httpRequest);
     }

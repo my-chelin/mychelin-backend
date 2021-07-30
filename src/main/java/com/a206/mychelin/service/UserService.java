@@ -79,13 +79,10 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity signUp(User user) {
+    public ResponseEntity signUp(UserSaveRequest userSaveRequest) {
         CustomResponseEntity customResponse;
-        String id = user.getId();
-        String password = user.getPassword();
-        String nickname = user.getNickname();
-        String phone_number = user.getPhoneNumber();
-
+        String id = userSaveRequest.getId();
+        String nickname = userSaveRequest.getNickname();
         if (userRepository.findUserById(id).isPresent()) {
             customResponse = CustomResponseEntity.builder()
                     .status(400)
@@ -93,13 +90,21 @@ public class UserService {
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
         }
-        User newUser = User.builder()
+        if (userRepository.findUserByNickname(nickname).isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("이미 존재하는 닉네임입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        userSaveRequest.setPassword(passwordEncoder.encode(userSaveRequest.getPassword()));
+        User user = User.builder()
                 .id(id)
+                .password(userSaveRequest.getPassword())
                 .nickname(nickname)
-                .phoneNumber(phone_number)
-                .password(passwordEncoder.encode(password))
+                .phoneNumber(userSaveRequest.getPhoneNumber())
                 .build();
-        userRepository.save(newUser);
+        userRepository.save(user);
         customResponse = CustomResponseEntity.builder()
                 .status(200)
                 .message("회원가입이 완료 되었습니다.")
