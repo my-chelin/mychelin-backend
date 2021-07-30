@@ -137,8 +137,8 @@ public class UserService {
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
         }
         User user = tempUser.get();
-        int follow = followRepository.countByUserId(user.getId());
-        int follower = followRepository.countByFollowingId(user.getId());
+        int follow = followRepository.countByUserIdAndAccept(user.getId(), true);
+        int follower = followRepository.countByFollowingIdAndAccept(user.getId(), true);
         long like = postLikeRepository.getLikes(user.getId());
         Boolean isFollower = null;
         userProfileResponse = UserProfileResponse.builder()
@@ -159,7 +159,7 @@ public class UserService {
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
         }
-        if (followRepository.countByUserIdAndFollowingId(loginUser.getId(), user.getId()) > 0) {
+        if (followRepository.countFollow(loginUser.getId(), user.getId()) > 0) {
             userProfileResponse.setIsFollower(true);
         } else {
             userProfileResponse.setIsFollower(false);

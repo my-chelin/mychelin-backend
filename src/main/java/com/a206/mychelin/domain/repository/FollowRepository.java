@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, FollowPK> {
-    int countByUserId(String userId);
+    int countByUserIdAndAccept(String userId, boolean accept);
 
-    int countByFollowingId(String followingId);
+    int countByFollowingIdAndAccept(String followingId, boolean accept);
 
     @Query(value = "select u.profile_image , u.nickname, f.following_id, u.bio from user u, follow f where f.following_id = u.id and f.user_id = :user_id and f.accept = true", nativeQuery = true)
     ArrayList<Object[]> findFollowsByUserId(@Param("user_id") String userId); //유저가 팔로우하는 팔로워 목록
@@ -22,6 +22,7 @@ public interface FollowRepository extends JpaRepository<Follow, FollowPK> {
     @Query(value = "select u.profile_image, u.nickname, f.following_id, u.bio from user u, follow f where f.following_id = u.id and f.user_id = ( select id from user where nickname = :nickname) and f.accept = true", nativeQuery = true)
     ArrayList<Object[]> findFollowsByUserNickname(@Param("nickname") String userNickname);
 
-    int countByUserIdAndFollowingId(String userId, String followingId);
+    @Query(value = "select count(*) from follow where user_id = :user_id and following_id = :following_id and accept = true;", nativeQuery = true)
+    int countFollow(@Param("user_id") String userId, @Param("following_id") String followingId);
 
 }
