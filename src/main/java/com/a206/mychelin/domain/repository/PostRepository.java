@@ -3,7 +3,6 @@ package com.a206.mychelin.domain.repository;
 import com.a206.mychelin.domain.entity.Place;
 import com.a206.mychelin.domain.entity.PlaceList;
 import com.a206.mychelin.domain.entity.Post;
-import com.a206.mychelin.web.dto.PostInfoResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

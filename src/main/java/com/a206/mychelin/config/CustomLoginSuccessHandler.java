@@ -19,5 +19,8 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         final User user = ((MyUserDetails) authentication.getPrincipal()).getUser();
         final String token = TokenUtils.generateJwtToken(user);
         response.addHeader(AuthConstants.AUTH_HEADER, AuthConstants.TOKEN_TYPE + " " + token);
+        response.setCharacterEncoding("utf-8");
+        response.setContentType("application/json");
+        response.getWriter().printf("{\"nickname\":\"%s\"}", user.getNickname());
     }
 }

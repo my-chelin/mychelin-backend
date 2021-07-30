@@ -52,7 +52,7 @@ public class PostController {
     }
 
     @GetMapping("/main")
-    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest){
+    public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
         return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
     }
 }

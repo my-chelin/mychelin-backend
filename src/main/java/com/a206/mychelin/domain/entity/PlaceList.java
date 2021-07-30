@@ -1,6 +1,5 @@
 package com.a206.mychelin.domain.entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
@@ -18,7 +17,6 @@ import java.util.Date;
 public class PlaceList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private int id;
 
     private String title;

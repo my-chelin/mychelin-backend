@@ -14,6 +14,6 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
 
     List<Place> findPlacesByLocationContains(String location);
 
-    @Query(value = "SELECT AVG(e.star_rate) FROM review e WHERE e.place_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT ROUND(AVG(e.star_rate),1) FROM review e WHERE e.place_id = ?1", nativeQuery = true)
     Optional<Double> getStartRateById(String id);
 }

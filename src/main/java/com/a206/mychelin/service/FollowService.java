@@ -7,6 +7,7 @@ import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.FollowAcceptRequest;
+import com.a206.mychelin.web.dto.FollowAskRequest;
 import com.a206.mychelin.web.dto.FollowingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,11 @@ public class FollowService {
 
     //추가하려는 상대방 닉네임은 pathvariable로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity addFollowingUser(@RequestBody String userNickname, HttpServletRequest httpRequest) {
+    public ResponseEntity addFollowingUser(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
-        String getFollowingId = userRepository.findUserIdByNickname(userNickname);
+        Optional<User> user = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
+        String getFollowingId = user.get().getId();
 
         Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(userId, getFollowingId);
 
@@ -63,6 +65,13 @@ public class FollowService {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest); //사용자 ID(허락해주는 사람.)
         Optional<User> user = userRepository.findUserByNickname(followAcceptRequest.getUserNickname()); //허락할 상대 아이디
+        if (!user.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 사용자입니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        }
         String getFollowerId = user.get().getId();
 
         if (userId.equals(getFollowerId)) {
@@ -114,8 +123,6 @@ public class FollowService {
     @Transactional
     public ResponseEntity findFollowingList(String userNickname) {
         CustomResponseEntity customResponse;
-//        String userId = TokenToId.check(httpServletRequest);
-
         List<Object[]> followInfo = followRepository.findFollowsByUserNickname(userNickname);
         ArrayList<FollowingResponse> array = new ArrayList<>();
         for (Object[] followItem : followInfo) {

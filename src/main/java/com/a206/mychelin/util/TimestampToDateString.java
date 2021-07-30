@@ -2,13 +2,11 @@ package com.a206.mychelin.util;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class TimestampToDateString {
     public static String getPassedTime(Timestamp writtenTime) {
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY년 MM월 dd일");
-        Calendar calendar = Calendar.getInstance();
         Date date = new Date();
         Timestamp timestamp = new Timestamp(date.getTime());
 

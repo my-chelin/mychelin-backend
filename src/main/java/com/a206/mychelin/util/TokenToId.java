@@ -6,7 +6,7 @@ import io.jsonwebtoken.Claims;
 import javax.servlet.http.HttpServletRequest;
 
 public class TokenToId {
-    public static String check(HttpServletRequest httpRequest){
+    public static String check(HttpServletRequest httpRequest) {
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
         if (header == null) {
             return null;

@@ -19,10 +19,10 @@ public class FollowController {
     private final FollowService followService;
 
     @ApiOperation(value = "특정 사용자 팔로우 요청 보내기")
-    @ApiImplicitParam(name = "user_id", value = "")
+    @ApiImplicitParam(name = "userNickname", value = "팔로우하고자 하는 사용자 닉네임")
     @PostMapping("/request")
-    public ResponseEntity addFollowingUser(@RequestBody String userNickname, HttpServletRequest httpRequest) {
-        return followService.addFollowingUser(userNickname, httpRequest);
+    public ResponseEntity addFollowingUser(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
+        return followService.addFollowingUser(followAskRequest, httpRequest);
     }
 
     @ApiOperation(value = "팔로우 요청을 수락한다.")
@@ -34,7 +34,7 @@ public class FollowController {
 
     @ApiOperation(value = "사용자의 팔로잉 목록을 확인한다.")
     @GetMapping("list/{userNickname}")
-    public ResponseEntity findFollowingList(@PathVariable String userNickname){
+    public ResponseEntity findFollowingList(@PathVariable String userNickname) {
         return followService.findFollowingList(userNickname);
     }
 }

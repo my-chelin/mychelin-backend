@@ -11,7 +11,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class ReviewEditRequest {
-
     @ApiModelProperty(example = "리뷰 아이디")
     private int id;
 
@@ -26,5 +25,4 @@ public class ReviewEditRequest {
 
     @ApiModelProperty(example = "리뷰 이미지, 없으면 null")
     private String image;
-
 }
