@@ -159,7 +159,7 @@ public class UserService {
                     .build();
             return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
         }
-        if (followRepository.countFollow(loginUser.getId(), user.getId()) > 0) {
+        if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
             userProfileResponse.setIsFollower(true);
         } else {
             userProfileResponse.setIsFollower(false);
