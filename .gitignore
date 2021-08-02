@@ -44,3 +44,4 @@ config/application.properties
 
 ### properties ###
 application-email.properties
+application.yml

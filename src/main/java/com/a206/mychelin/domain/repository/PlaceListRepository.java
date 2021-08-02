@@ -12,7 +12,13 @@ import java.util.Optional;
 public interface PlaceListRepository extends JpaRepository<PlaceList, Integer> {
     Optional<PlaceList> findById(int id);
 
-    List<PlaceList> findByTitleContainsOrderById(String title, Pageable pageable);
+    @Query(value = "SELECT *\n" +
+            ",(select u.nickname from user u where u.id=pl.user_id) as nickname \n" +
+            ", (select count(*) from placelist_item pi where pi.placelist_id=pl.id) as total_item_cnt \n" +
+            "FROM placelist pl where pl.title like :title order by pl.id"
+            ,countQuery = "SELECT count(*)FROM placelist pl where pl.title like :title"
+            , nativeQuery = true)
+    List<Object[]> getPlaceListTitleContainsOrderById(String title, Pageable pageable);
     long countByTitleContains(String title);
 
     @Query(value = "select pi.placelist_id, pi.place_id, pi.contributor_id, " +

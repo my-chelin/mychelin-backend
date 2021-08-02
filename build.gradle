@@ -37,6 +37,10 @@ dependencies {
 
     //	이메일 기능 추가
     implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // AWS S3
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
+    implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.37'
 }
 
 test {

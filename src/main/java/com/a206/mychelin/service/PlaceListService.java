@@ -6,16 +6,15 @@ import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
-import com.a206.mychelin.web.dto.PlaceListCreateRequest;
-import com.a206.mychelin.web.dto.PlaceListITemsByNicknameResponse;
-import com.a206.mychelin.web.dto.PlaceListItemDetail;
+import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -92,10 +91,25 @@ public class PlaceListService {
         linkedHashMap.put("nowPageSize",pageSize);
 
         PageRequest pageRequest = PageRequest.of(page-1, pageSize);
-        List<PlaceList> placeListList=placeListRepository.findByTitleContainsOrderById(title,pageRequest);
+        List<Object[]> placeListList=placeListRepository.getPlaceListTitleContainsOrderById("%"+title+"%",pageRequest);
 
+        List<PlaceListByTitle> resultList = new ArrayList<>();
 
-        linkedHashMap.put("placelist",placeListList);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+
+        for(Object[] item : placeListList){
+            String format = formatter.format(item[2]);
+            resultList.add(PlaceListByTitle.builder()
+                    .id((int) item[0])
+                    .title((String) item[1])
+                    .create_date(format)
+                    .user_id((String) item[3])
+                    .nickname((String) item[4])
+                    .total_item_cnt((BigInteger) item[5])
+            .build());
+        }
+
+        linkedHashMap.put("placelist",resultList);
 
         result = CustomResponseEntity.builder()
                 .status(200)
@@ -286,12 +300,17 @@ public class PlaceListService {
        List<Object[]> list = placeListItemRepository.getMyPlacelistByContributorIdOrderByPlaceId(user.get().getId(),pageRequest);
 
        List<PlaceListITemsByNicknameResponse> placeListITemsByNicknameResponses = new ArrayList<>();
+       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
        for(Object[] item : list){
+           String format = formatter.format(item[5]);
            placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
                    .placelist_id((int)item[0])
                    .title((String)item[1])
                    .contributor_id((String)item[2])
+                   .contrubute_item_cnt((BigInteger)item[3])
+                   .total_item_cnt((BigInteger)item[4])
+                   .create_date(format)
                    .build()
            );
        }
