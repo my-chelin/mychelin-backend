@@ -8,14 +8,13 @@ import com.a206.mychelin.domain.repository.PlaceReviewRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +35,7 @@ public class PlaceReviewService {
         data = null;
     }
 
-    public ResponseEntity getPlaceReviewsByUser(String nickName) {
+    public ResponseEntity getPlaceReviewsByUser(String nickName,int page,int pageSize) {
         init();
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserByNickname(nickName);
@@ -47,7 +46,18 @@ public class PlaceReviewService {
             httpStatus = HttpStatus.OK;
             status = 200;
             message = nickName + "의 리뷰 목록 조회에 성공했습니다.";
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId());
+            PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+
+            int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumById(user.get().getId());
+
+            HashMap<String,Object> hashMap = new LinkedHashMap<>();
+
+            hashMap.put("totalPageItemCnt",totalPageItemCnt);
+            hashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+            hashMap.put("nowPage",page);
+            hashMap.put("nowPageSize",pageSize);
+
+            List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId(),pageRequest);
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
             ArrayList<MyPlaceReviewResponse> arr = new ArrayList<>();
@@ -65,7 +75,9 @@ public class PlaceReviewService {
                         .place_image((String) item[8])
                         .build());
             }
-            data = arr;
+            hashMap.put("reviews",arr);
+
+            data = hashMap;
         }
         result = CustomResponseEntity.builder()
                 .status(status)
@@ -76,7 +88,7 @@ public class PlaceReviewService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity getPlaceAllReviewsByPlaceId(int placeId) {
+    public ResponseEntity getPlaceAllReviewsByPlaceId(int placeId,int page,int pageSize) {
         init();
 
         CustomResponseEntity result;
@@ -89,7 +101,26 @@ public class PlaceReviewService {
             status = 200;
             message = placeId + "의 모든 리뷰 목록 조회에 성공했습니다.";
 
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId);
+            int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumByPlaceId(placeId);
+
+            HashMap<String,Object> hashMap = new LinkedHashMap<>();
+
+            hashMap.put("totalPageItemCnt",totalPageItemCnt);
+            hashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+            hashMap.put("nowPage",page);
+            hashMap.put("nowPageSize",pageSize);
+
+            Optional<Float> totalStarRate = placeReviewRepository.getPlaceReviewsAVGByPlaceId(placeId);
+            if(totalStarRate.isPresent()) {
+                hashMap.put("total_star_rate",totalStarRate.get());
+            }
+            else{
+                hashMap.put("total_star_rate",null);
+
+            }
+
+            PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+            List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId,pageRequest);
             ArrayList<PlaceReviewAndUserResponse> arr = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
@@ -106,7 +137,9 @@ public class PlaceReviewService {
                         .user_profile_image((String) item[7])
                         .build());
             }
-            data = arr;
+            hashMap.put("reviews",arr);
+
+            data = hashMap;
         }
         result = CustomResponseEntity.builder()
                 .status(status)

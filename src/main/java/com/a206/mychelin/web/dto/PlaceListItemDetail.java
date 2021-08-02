@@ -20,4 +20,5 @@ public class PlaceListItemDetail {
     private String opertaionHours;
     private int category_id;
     private String image;
+    private Double star_rate;
 }

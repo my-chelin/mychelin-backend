@@ -1,10 +1,7 @@
 package com.a206.mychelin.controller;
 
-import com.a206.mychelin.web.dto.CustomResponseEntity;
-import com.a206.mychelin.web.dto.PasswordChangeRequest;
+import com.a206.mychelin.web.dto.*;
 import com.a206.mychelin.service.UserService;
-import com.a206.mychelin.web.dto.UserSaveRequest;
-import com.a206.mychelin.web.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,4 +39,15 @@ public class UserController {
     public ResponseEntity<CustomResponseEntity> deleteUser(HttpServletRequest request) {
         return userService.deleteUser(request);
     }
+
+    @PostMapping("/check/email")
+    public ResponseEntity checkEmail(@RequestBody EmailRequest emailRequest){
+        return userService.checkEmail(emailRequest);
+    }
+
+    @PostMapping("/check/emailToken")
+    public ResponseEntity checkEmailToken(@RequestBody EmailTokenRequest emailTokenRequest){
+        return userService.checkEmailToken(emailTokenRequest);
+    }
+
 }
