@@ -55,4 +55,5 @@ public class PostController {
     public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
         return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
     }
+
 }
