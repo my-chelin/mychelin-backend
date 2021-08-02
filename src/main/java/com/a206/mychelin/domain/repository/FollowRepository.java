@@ -16,11 +16,11 @@ public interface FollowRepository extends JpaRepository<Follow, FollowPK> {
 
     int countByUserIdAndFollowingIdAndAccept(String userId, String followingId, boolean accept);
 
-    @Query(value = "select u.profile_image , u.nickname, f.following_id, u.bio from user u, follow f where f.following_id = u.id and f.user_id = :user_id and f.accept = true", nativeQuery = true)
-    ArrayList<Object[]> findFollowsByUserId(@Param("user_id") String userId); //유저가 팔로우하는 팔로워 목록
-
     Optional<Follow> findFollowByUserIdAndFollowingId(@Param("user_id") String userId, @Param("following_id") String followingId);
 
-    @Query(value = "select u.profile_image, u.nickname, f.following_id, u.bio from user u, follow f where f.following_id = u.id and f.user_id = ( select id from user where nickname = :nickname) and f.accept = true", nativeQuery = true)
-    ArrayList<Object[]> findFollowsByUserNickname(@Param("nickname") String userNickname);
+    @Query(value = "select u.profile_image, u.nickname, u.bio from user u, follow f where f.following_id = u.id and f.user_id = ( select id from user where nickname = :nickname) and f.accept = true", nativeQuery = true)
+    ArrayList<Object[]> findFollowingByUserNickname(@Param("nickname") String userNickname);
+
+    @Query(value = "select u.profile_image, u.nickname, u.bio from user u, follow f where f.user_id = u.id and f.following_id = ( select id from user where nickname = :nickname) and f.accept = true", nativeQuery = true)
+    ArrayList<Object[]> findFollowerByUserNickname(@Param("nickname") String userNickname);
 }

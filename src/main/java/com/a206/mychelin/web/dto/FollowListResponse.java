@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FollowingResponse {
-    private String userProfileImage;
-    private String userNickname;
-    private String followingId;
-    private String userBio;
+public class FollowListResponse {
+    private String profileImage;
+    private String nickname;
+    private String bio;
 }
