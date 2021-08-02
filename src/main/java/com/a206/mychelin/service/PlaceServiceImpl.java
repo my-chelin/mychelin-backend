@@ -3,15 +3,14 @@ package com.a206.mychelin.service;
 import com.a206.mychelin.domain.entity.Place;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.PlaceAndStarRateByCoordinate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,9 +38,9 @@ public class PlaceServiceImpl implements PlaceService {
             hashMap.put("placeData", placeObject.get());
 
             if (placeRepository.getStartRateById(id).isPresent()) {
-                hashMap.put("placeStarRate", placeRepository.getStartRateById(id).get());
+                hashMap.put("star_rate", placeRepository.getStartRateById(id).get());
             } else {
-                hashMap.put("placeStarRate", null);
+                hashMap.put("star_rate", null);
             }
             req = CustomResponseEntity.builder()
                     .status(200)
@@ -53,48 +52,110 @@ public class PlaceServiceImpl implements PlaceService {
     }
 
     @Override
-    public ResponseEntity getPlaceInfoByName(String name) {
-        List<Place> placesArrayList = placeRepository.findPlacesByNameContains(name);
+    public ResponseEntity getPlaceInfoByName(String name,int page,int pageSize) {
+
+        long totalPageItemCnt = placeRepository.countByNameContains(name);
+
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+
+        List<Place> placesArrayList = placeRepository.findPlacesByNameContainsOrderById(name,pageRequest);
+
         List<HashMap<String, Object>> resultList = new ArrayList<>();
 
         for (Place nowPlace : placesArrayList) {
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("placeData", nowPlace);
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+
             if (placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).isPresent()) {
-                hashMap.put("placeStarRate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
+                hashMap.put("star_rate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
             } else {
-                hashMap.put("placeStarRate", null);
+                hashMap.put("star_rate", null);
             }
+            hashMap.put("placeData", nowPlace);
             resultList.add(hashMap);
+
         }
+        linkedHashMap.put("data",resultList);
         CustomResponseEntity req = CustomResponseEntity.builder()
                 .status(200)
                 .message("이름으로 검색에 성공했습니다.")
-                .data(resultList)
+                .data(linkedHashMap)
                 .build();
         return new ResponseEntity<Object>(req, HttpStatus.ACCEPTED);
     }
 
     @Override
-    public ResponseEntity getPlaceInfoByLocation(String location) {
-        List<Place> placesArrayList = placeRepository.findPlacesByLocationContains(location);
+    public ResponseEntity getPlaceInfoByLocation(String location,int page,int pageSize) {
+
+        long totalPageItemCnt = placeRepository.countByLocationContains(location);
+
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+
+
+        List<Place> placesArrayList = placeRepository.findPlacesByLocationContainsOrderById(location,pageRequest);
         List<HashMap<String, Object>> resultList = new ArrayList<>();
 
         for (Place nowPlace : placesArrayList) {
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("placeData", nowPlace);
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+
             if (placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).isPresent()) {
-                hashMap.put("placeStarRate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
+                hashMap.put("star_rate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
             } else {
-                hashMap.put("placeStarRate", null);
+                hashMap.put("star_rate", null);
             }
+            hashMap.put("placeData", nowPlace);
             resultList.add(hashMap);
+        }
+
+        linkedHashMap.put("data",resultList);
+
+        CustomResponseEntity req = CustomResponseEntity.builder()
+                .status(200)
+                .message("장소로 검색에 성공했습니다.")
+                .data(linkedHashMap)
+                .build();
+        return new ResponseEntity<Object>(req, HttpStatus.ACCEPTED);
+    }
+
+    @Override
+    public ResponseEntity getPlaceByCoordinate(float lat, float lng, float distance) {
+        List<Object[]> placeList = placeRepository.getPlaceByCoordinate(lat,lng,distance);
+        List<PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
+        for(Object[] objects : placeList){
+            resultList.add(PlaceAndStarRateByCoordinate.builder()
+                            .distance((double) objects[0])
+                            .id((int) objects[1])
+                            .name((String) objects[2])
+                            .descrption((String) objects[3])
+                            .lattitude((float) objects[4])
+                            .longitude((float) objects[5])
+                            .phone((String) objects[6])
+                            .location((String) objects[7])
+                            .operation_hours((String) objects[8])
+                            .category_id((int) objects[9])
+                            .image((String) objects[10])
+                            .star_rate((Double) objects[11])
+                            .build()
+            );
         }
         CustomResponseEntity req = CustomResponseEntity.builder()
                 .status(200)
-                .message("위치로 검색에 성공했습니다.")
+                .message("위치 기반 맛집 검색에 성공했습니다.")
                 .data(resultList)
                 .build();
-        return new ResponseEntity<Object>(req, HttpStatus.ACCEPTED);
+        return new ResponseEntity<CustomResponseEntity>(req,HttpStatus.OK);
     }
 }

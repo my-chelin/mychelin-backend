@@ -34,6 +34,9 @@ dependencies {
 
     // jwt 토큰 인증 추가
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    //	이메일 기능 추가
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 test {

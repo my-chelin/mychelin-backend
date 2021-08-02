@@ -7,18 +7,17 @@ import com.a206.mychelin.domain.entity.PlaceListItemPK;
 import com.a206.mychelin.domain.repository.PlaceListItemRepository;
 import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
+import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PlaceListCreateRequest;
 import com.a206.mychelin.web.dto.PlaceListItemDetail;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -79,20 +78,35 @@ public class PlaceListService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity searchPlaceListByTitle(String title) {
+    public ResponseEntity searchPlaceListByTitle(String title,int page,int pageSize) {
         CustomResponseEntity result;
         HttpStatus httpStatus;
-        List<PlaceList> placeListList = placeListRepository.findByTitleContains(title);
+
+        long totalPageItemCnt = placeListRepository.countByTitleContains(title);
+
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+        List<PlaceList> placeListList=placeListRepository.findByTitleContainsOrderById(title,pageRequest);
+
+
+        linkedHashMap.put("placelist",placeListList);
+
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message("맛집 리스트 제목 " + title + " 검색 성공.")
-                .data(placeListList)
+                .data(linkedHashMap)
                 .build();
         httpStatus = HttpStatus.OK;
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity getPlaceListItemByTitle(int listId) {
+    public ResponseEntity getPlaceListItemByTitle(int listId,int page,int pageSize) {
         CustomResponseEntity result;
         Optional<PlaceList> placeList = placeListRepository.findById(listId);
         if (!placeList.isPresent()) {
@@ -104,10 +118,27 @@ public class PlaceListService {
             return new ResponseEntity(result, HttpStatus.NOT_FOUND);
         }
 
-        List<Object[]> items = placeListRepository.getPlaceListItemsById(listId);
-        System.out.println(items.size());
+        long totalPageItemCnt = placeListRepository.getPlaceListItemsNumById(listId);
+
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+
+        List<Object[]> items = placeListRepository.getPlaceListItemsById(listId,pageRequest);
+
         ArrayList<PlaceListItemDetail> arr = new ArrayList<>();
         for (Object[] item : items) {
+            Optional<Double> starRateOptional=placeRepository.getStartRateById(String.valueOf((int) item[1]));
+            Double starRate=null;
+            if(starRateOptional.isPresent()){
+                starRate = starRateOptional.get();
+            }
+
             arr.add(PlaceListItemDetail.builder()
                     .placelistId((int) item[0])
                     .placeId((int) item[1])
@@ -121,13 +152,15 @@ public class PlaceListService {
                     .opertaionHours((String) item[9])
                     .category_id((int) item[10])
                     .image((String) item[11])
+                    .star_rate(starRate)
                     .build()
             );
         }
+        linkedHashMap.put("place_list_item",arr);
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message(listId + "의 맛집 정보를 가져오는데 성공했습니다.")
-                .data(arr)
+                .data(linkedHashMap)
                 .build();
         return new ResponseEntity(result, HttpStatus.OK);
     }
