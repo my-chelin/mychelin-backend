@@ -33,14 +33,20 @@ public class FollowController {
     }
 
     @ApiOperation(value = "사용자의 팔로잉 목록을 확인한다.")
-    @GetMapping("following/{userNickname}")
+    @GetMapping("/following/{userNickname}")
     public ResponseEntity findFollowingList(@PathVariable String userNickname) {
         return followService.findFollowingList(userNickname);
     }
 
     @ApiOperation(value = "사용자의 팔로워 목록을 확인한다.")
-    @GetMapping("follower/{userNickname}")
+    @GetMapping("/follower/{userNickname}")
     public ResponseEntity findFollowerList(@PathVariable String userNickname) {
         return followService.findFollowerList(userNickname);
+    }
+
+    @ApiOperation(value = "팔로우 요청을 확인한다.")
+    @GetMapping("/requests")
+    public ResponseEntity findFollowerList(HttpServletRequest request) {
+        return followService.getFollowRequest(request);
     }
 }

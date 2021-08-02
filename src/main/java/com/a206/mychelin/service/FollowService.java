@@ -5,10 +5,7 @@ import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenToId;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
-import com.a206.mychelin.web.dto.FollowAcceptRequest;
-import com.a206.mychelin.web.dto.FollowAskRequest;
-import com.a206.mychelin.web.dto.FollowListResponse;
+import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -165,6 +162,27 @@ public class FollowService {
         customResponseEntity = CustomResponseEntity.builder()
                 .status(200)
                 .message(nickname + "의 팔로워 목록")
+                .data(list)
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+    }
+
+    public ResponseEntity getFollowRequest(HttpServletRequest request) {
+        CustomResponseEntity customResponseEntity;
+        User user = userRepository.findUserById(TokenToId.check(request)).get();
+        List<String[]> requests = followRepository.findUserIdByUserId(user.getId());
+        ArrayList<FollowRequestResponse> list = new ArrayList<>();
+        for (String[] item : requests) {
+            System.out.println(item[0] + " " + item[1]);
+            list.add(FollowRequestResponse.builder()
+                    .nickname(item[0])
+                    .profileImage(item[1])
+                    .build()
+            );
+        }
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message(user.getNickname() + "의 팔로워 요청 목록")
                 .data(list)
                 .build();
         return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
