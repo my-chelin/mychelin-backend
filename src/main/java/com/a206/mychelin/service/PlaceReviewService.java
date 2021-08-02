@@ -6,13 +6,16 @@ import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.PlaceReviewRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.ImageServer;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -27,6 +30,9 @@ public class PlaceReviewService {
     private int status = 404;
     private String message = null;
     private Object data = null;
+
+    // 이미지 저장을 위해 선언
+    private final ImageServer s3Service;
 
     private void init() {
         httpStatus = HttpStatus.NOT_FOUND;
@@ -232,6 +238,42 @@ public class PlaceReviewService {
             status = 200;
             message = "리뷰 삭제에 성공하였습니다.";
             httpStatus = HttpStatus.OK;
+        }
+
+        result = CustomResponseEntity.builder()
+                .status(status)
+                .message(message)
+                .data(data)
+                .build();
+
+        return new ResponseEntity(result, httpStatus);
+    }
+
+    public ResponseEntity saveReviewImage(MultipartFile file, String userId, int reviewId) throws IOException {
+        init();
+
+        CustomResponseEntity result;
+        Optional<Review> findReview = placeReviewRepository.findById(reviewId);
+        Optional<User> user = userRepository.findUserById(userId);
+
+        if (!findReview.isPresent()) {
+            message = "해당 리뷰가 존재하지 않습니다.";
+        } else if (!user.isPresent()) {
+            message = "해당 유저가 존재하지 않습니다.";
+        } else if (!findReview.get().getUserId().equals(userId)) {
+            message = "리뷰 작성한 사람과 이미지 추가하려는 사람이 일치하지 않습니다.";
+        } else {
+            Review newReview = findReview.get();
+            String imgPath = s3Service.upload(file);
+            newReview.reviewImageUpdate(imgPath);
+            placeReviewRepository.save(newReview);
+
+            status = 200;
+            message = "리뷰 이미지 추가에 성공하였습니다.";
+            httpStatus = HttpStatus.OK;
+            HashMap<String,String> hashMap = new LinkedHashMap<>();
+            hashMap.put("image",imgPath);
+            data=hashMap;
         }
 
         result = CustomResponseEntity.builder()

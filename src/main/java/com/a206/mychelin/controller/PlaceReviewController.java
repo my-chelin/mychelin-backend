@@ -13,6 +13,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @CrossOrigin("*")
 @RestController
@@ -81,5 +85,14 @@ public class PlaceReviewController {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.deletePlaceReviews(userId, review);
+    }
+
+    @ApiOperation(value = "리뷰 이미지 추가")
+    @ApiImplicitParam(name = "file", value = "이미지 파일")
+    @PostMapping("/image/{reviewId}")
+    public ResponseEntity saveReviewImage(@RequestParam MultipartFile file, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken,@PathVariable int reviewId)throws IOException {
+        String token = TokenUtils.getTokenFromHeader(myToken);
+        String userId = TokenUtils.getUserIdFromToken(token);
+        return placeReviewService.saveReviewImage(file, userId,reviewId);
     }
 }

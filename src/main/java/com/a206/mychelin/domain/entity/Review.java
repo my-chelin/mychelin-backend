@@ -40,4 +40,8 @@ public class Review {
         this.createDate = new Date();
         this.image = reviewEditRequest.getImage();
     }
+
+    public void reviewImageUpdate(String imagePath){
+        this.image = imagePath;
+    }
 }

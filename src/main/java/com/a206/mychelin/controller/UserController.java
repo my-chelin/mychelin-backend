@@ -57,6 +57,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "유저 프로필 이미지 저장")
+    @ApiImplicitParam(name = "file", value = "이미지 파일")
     @PostMapping("/profile/image")
     public ResponseEntity saveUserProfileImage(@RequestParam MultipartFile file,HttpServletRequest request)throws IOException {
         System.out.println(file.getSize());
