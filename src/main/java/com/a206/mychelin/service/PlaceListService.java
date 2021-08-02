@@ -291,17 +291,7 @@ public class PlaceListService {
            placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
                    .placelist_id((int)item[0])
                    .title((String)item[1])
-                   .place_id((int)item[2])
-                   .name((String)item[3])
-                   .description((String)item[4])
-                   .lattitude((Float)item[5])
-                   .longitude((Float)item[6])
-                   .phone((String)item[7])
-                   .location((String)item[8])
-                   .operation_hours((String)item[9])
-                   .category_id((int)item[10])
-                   .image((String)item[11])
-                   .contributor_id((String)item[12])
+                   .contributor_id((String)item[2])
                    .build()
            );
        }

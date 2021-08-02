@@ -16,13 +16,14 @@ public interface PlaceListItemRepository extends JpaRepository<PlaceListItem, Pl
 
     Optional<PlaceListItem> findByPlaceListItemPKAndContributorId(PlaceListItemPK placeListItemPK, String ContributorId);
 
-    @Query(value = "SELECT pi.placelist_id, pl.title, pi.place_id, p.name, p.description,p.latitude,p.longitude,p.phone,p.location,p.operation_hours, p.category_id,p.image,pi.contributor_id \n" +
-            " FROM placelist_item pi, placelist pl,place p  where pi.contributor_id=:contributorId and pi.placelist_id=pl.id and p.id=pi.place_id order by placelist_id, place_id"
-            ,countQuery = "SELECT count(*) FROM placelist_item pi, placelist pl,place p  where pi.contributor_id=:contributorId and pi.placelist_id=pl.id and p.id=pi.place_id"
+    @Query(value = "SELECT distinct pi.placelist_id, pl.title, pi.contributor_id FROM placelist_item pi, placelist pl where pi.placelist_id = pl.id and pi.contributor_id=:contributorId order by pi.placelist_id"
+            ,countQuery = "select count(*)\n" +
+            "from (SELECT distinct pi.placelist_id, pl.title, pi.contributor_id FROM placelist_item pi, placelist pl where pi.placelist_id = pl.id and pi.contributor_id=:contributorId) as data"
             , nativeQuery = true)
     List<Object[]> getMyPlacelistByContributorIdOrderByPlaceId(String contributorId, Pageable pageable);
 
-    @Query(value = "SELECT count(*) FROM placelist_item pi, placelist pl,place p  where pi.contributor_id=:contributorId and pi.placelist_id=pl.id and p.id=pi.place_id"
+    @Query(value = "select count(*)\n" +
+            "from (SELECT distinct pi.placelist_id, pl.title, pi.contributor_id FROM placelist_item pi, placelist pl where pi.placelist_id = pl.id and pi.contributor_id=:contributorId) as data;"
             , nativeQuery = true)
     long getCountByContributorId(String contributorId);
 }

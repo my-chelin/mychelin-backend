@@ -227,10 +227,17 @@ public class UserService {
 
             javaMailSender.send(emailMessage);
 
-            UserEmailCheck userEmailCheck = UserEmailCheck.builder()
-                    .userId(emailRequest.getEmail())
-                    .token(token.toString())
-                    .build();
+            Optional<UserEmailCheck> userEmailCheckOptional = userEmailCheckRepository.findByUserId(emailRequest.getEmail());
+            UserEmailCheck userEmailCheck=null;
+            if(userEmailCheckOptional.isPresent()){
+                userEmailCheck = userEmailCheckOptional.get();
+            }
+            else{
+                userEmailCheck = UserEmailCheck.builder()
+                        .userId(emailRequest.getEmail())
+                        .token(token.toString())
+                        .build();
+            }
 
             userEmailCheckRepository.save(userEmailCheck);
 
