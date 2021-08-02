@@ -8,7 +8,7 @@ import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.FollowAcceptRequest;
 import com.a206.mychelin.web.dto.FollowAskRequest;
-import com.a206.mychelin.web.dto.FollowingResponse;
+import com.a206.mychelin.web.dto.FollowListResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,26 +121,53 @@ public class FollowService {
     }
 
     @Transactional
-    public ResponseEntity findFollowingList(String userNickname) {
+    public ResponseEntity findFollowingList(String nickname) {
         CustomResponseEntity customResponse;
-        List<Object[]> followInfo = followRepository.findFollowsByUserNickname(userNickname);
-        ArrayList<FollowingResponse> array = new ArrayList<>();
-        for (Object[] followItem : followInfo) {
-            array.add(FollowingResponse.builder()
-                    .userProfileImage((String) followItem[0])
-                    .userNickname((String) followItem[1])
-                    .followingId((String) followItem[2])
-                    .userBio((String) followItem[3])
+        List<Object[]> following = followRepository.findFollowingByUserNickname(nickname);
+        ArrayList<FollowListResponse> list = new ArrayList<>();
+        for (Object[] followItem : following) {
+            list.add(FollowListResponse.builder()
+                    .profileImage((String) followItem[0])
+                    .nickname((String) followItem[1])
+                    .bio((String) followItem[2])
                     .build()
             );
         }
 
         customResponse = CustomResponseEntity.builder()
                 .status(200)
-                .message("팔로잉 목록을 불러왔습니다.")
-                .data(array)
+                .message(nickname + "의 팔로잉 목록")
+                .data(list)
                 .build();
         return new ResponseEntity(customResponse, HttpStatus.OK);
+    }
+
+    public ResponseEntity findFollowerList(String nickname) {
+        CustomResponseEntity customResponseEntity;
+        Optional<User> optionalUser = userRepository.findUserByNickname(nickname);
+        if (!optionalUser.isPresent()) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 유저입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        }
+        List<Object[]> follower = followRepository.findFollowerByUserNickname(nickname);
+        ArrayList<FollowListResponse> list = new ArrayList<>();
+        for (Object[] followItem : follower) {
+            list.add(FollowListResponse.builder()
+                    .profileImage((String) followItem[0])
+                    .nickname((String) followItem[1])
+                    .bio((String) followItem[2])
+                    .build()
+            );
+        }
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message(nickname + "의 팔로워 목록")
+                .data(list)
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
     }
 
     //언팔하기 - 유저가 더 이상 followingId를 팔로우하지 않는다. => userId, followingId, false로 바꾸기
