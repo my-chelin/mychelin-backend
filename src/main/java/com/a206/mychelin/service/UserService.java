@@ -42,9 +42,6 @@ public class UserService {
     private final JavaMailSender javaMailSender;
     private final UserEmailCheckRepository userEmailCheckRepository;
 
-    // 이미지 저장을 위해 선언
-    private final ImageServer s3Service;
-
 
     private User getUser(HttpServletRequest request) {
         String header = request.getHeader(AuthConstants.AUTH_HEADER);
@@ -310,19 +307,16 @@ public class UserService {
         return new ResponseEntity<CustomResponseEntity>(result,httpStatus);
     }
 
-    public ResponseEntity saveUserProfileImage(MultipartFile file, HttpServletRequest request) throws IOException {
+    public ResponseEntity saveUserProfileImage(ImageRequest image, HttpServletRequest request)  {
         User user = getUser(request);
 
-        String imgPath = s3Service.upload(file);
-        user.userImageUpdate(imgPath);
+        user.userImageUpdate(image.getImage());
 
         userRepository.save(user);
         HashMap<String,String> hashMap=new LinkedHashMap<>();
-        hashMap.put("profile_image",imgPath);
         CustomResponseEntity result = CustomResponseEntity.builder()
                 .status(200)
                 .message("프로필 이미지 저장에 성공했습니다.")
-                .data(hashMap)
                 .build();
 
         return  new ResponseEntity<CustomResponseEntity>(result,HttpStatus.OK);

@@ -75,7 +75,7 @@ public class PlaceReviewService {
                         .content((String) item[2])
                         .user_id((String) item[3])
                         .craete_date(format)
-                        .place_image((String) item[5])
+                        .review_image((String) item[5])
                         .place_id((int) item[6])
                         .place_name((String) item[7])
                         .place_image((String) item[8])
@@ -249,7 +249,7 @@ public class PlaceReviewService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity saveReviewImage(MultipartFile file, String userId, int reviewId) throws IOException {
+    public ResponseEntity saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) throws IOException {
         init();
 
         CustomResponseEntity result;
@@ -264,16 +264,12 @@ public class PlaceReviewService {
             message = "리뷰 작성한 사람과 이미지 추가하려는 사람이 일치하지 않습니다.";
         } else {
             Review newReview = findReview.get();
-            String imgPath = s3Service.upload(file);
-            newReview.reviewImageUpdate(imgPath);
+            newReview.reviewImageUpdate(imageRequest.getImage());
             placeReviewRepository.save(newReview);
 
             status = 200;
             message = "리뷰 이미지 추가에 성공하였습니다.";
             httpStatus = HttpStatus.OK;
-            HashMap<String,String> hashMap = new LinkedHashMap<>();
-            hashMap.put("image",imgPath);
-            data=hashMap;
         }
 
         result = CustomResponseEntity.builder()

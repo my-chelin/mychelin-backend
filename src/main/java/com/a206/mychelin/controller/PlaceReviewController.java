@@ -4,6 +4,7 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceReviewService;
 import com.a206.mychelin.util.TokenUtils;
+import com.a206.mychelin.web.dto.ImageRequest;
 import com.a206.mychelin.web.dto.ReviewDeleteRequest;
 import com.a206.mychelin.web.dto.ReviewEditRequest;
 import com.a206.mychelin.web.dto.ReviewRequest;
@@ -88,11 +89,10 @@ public class PlaceReviewController {
     }
 
     @ApiOperation(value = "리뷰 이미지 추가")
-    @ApiImplicitParam(name = "file", value = "이미지 파일")
     @PostMapping("/image/{reviewId}")
-    public ResponseEntity saveReviewImage(@RequestParam MultipartFile file, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken,@PathVariable int reviewId)throws IOException {
+    public ResponseEntity saveReviewImage(@RequestBody ImageRequest imageRequest, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int reviewId)throws IOException {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
-        return placeReviewService.saveReviewImage(file, userId,reviewId);
+        return placeReviewService.saveReviewImage(imageRequest, userId,reviewId);
     }
 }

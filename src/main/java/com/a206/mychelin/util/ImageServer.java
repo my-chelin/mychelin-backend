@@ -1,5 +1,6 @@
 package com.a206.mychelin.util;
 
+import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -9,12 +10,16 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 @Service
@@ -46,9 +51,7 @@ public class ImageServer {
 
     public String upload(MultipartFile file) throws IOException {
         Date time = new Date();
-        if(file==null){
-            System.out.println("!!!");
-        }
+
         System.out.println(file.getName());
         String strFileName=file.getOriginalFilename();
         int pos = strFileName.lastIndexOf( "." );
@@ -82,5 +85,18 @@ public class ImageServer {
             }
         }
         return token.toString();
+    }
+
+    public ResponseEntity registerImageIntoServer(MultipartFile file) throws IOException {
+        String imagePath = upload(file);
+        HashMap<String,String >hashMap = new LinkedHashMap<>();
+        hashMap.put("image",imagePath);
+        CustomResponseEntity result = CustomResponseEntity.builder()
+                .status(200)
+                .message("이미지를 서버에 성공적으로 저장했습니다.")
+                .data(hashMap)
+                .build();
+
+        return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.OK);
     }
 }
