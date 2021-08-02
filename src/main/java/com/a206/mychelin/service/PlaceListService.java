@@ -1,15 +1,14 @@
 package com.a206.mychelin.service;
 
-import com.a206.mychelin.domain.entity.Place;
-import com.a206.mychelin.domain.entity.PlaceList;
-import com.a206.mychelin.domain.entity.PlaceListItem;
-import com.a206.mychelin.domain.entity.PlaceListItemPK;
+import com.a206.mychelin.domain.entity.*;
 import com.a206.mychelin.domain.repository.PlaceListItemRepository;
 import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
+import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PlaceListCreateRequest;
+import com.a206.mychelin.web.dto.PlaceListITemsByNicknameResponse;
 import com.a206.mychelin.web.dto.PlaceListItemDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -25,6 +24,7 @@ public class PlaceListService {
     final private PlaceListRepository placeListRepository;
     final private PlaceListItemRepository placeListItemRepository;
     final private PlaceRepository placeRepository;
+    final private UserRepository userRepository;
 
     private HttpStatus httpStatus = HttpStatus.NOT_FOUND;
     private int status = 0;
@@ -252,5 +252,66 @@ public class PlaceListService {
                 .data(data)
                 .build();
         return new ResponseEntity(result, httpStatus);
+    }
+
+    //  닉네임으로 가져오기기
+   public ResponseEntity getPlaceListItemByNickname(String nickname, int page, int pageSize) {
+        init();
+        CustomResponseEntity result;
+
+        Optional<User> user = userRepository.findUserByNickname(nickname);
+
+        if (!user.isPresent()) {
+            result = CustomResponseEntity.builder()
+                    .status(404)
+                    .message(nickname+" 유저는 존재하지 않습니다.")
+                    .data(null)
+                    .build();
+            return new ResponseEntity(result, HttpStatus.NOT_FOUND);
+        }
+
+
+
+       long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId());
+
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+
+       List<Object[]> list = placeListItemRepository.getMyPlacelistByContributorIdOrderByPlaceId(user.get().getId(),pageRequest);
+
+       List<PlaceListITemsByNicknameResponse> placeListITemsByNicknameResponses = new ArrayList<>();
+
+       for(Object[] item : list){
+           placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
+                   .placelist_id((int)item[0])
+                   .title((String)item[1])
+                   .place_id((int)item[2])
+                   .name((String)item[3])
+                   .description((String)item[4])
+                   .lattitude((Float)item[5])
+                   .longitude((Float)item[6])
+                   .phone((String)item[7])
+                   .location((String)item[8])
+                   .operation_hours((String)item[9])
+                   .category_id((int)item[10])
+                   .image((String)item[11])
+                   .contributor_id((String)item[12])
+                   .build()
+           );
+       }
+
+        linkedHashMap.put("place_list_item",placeListITemsByNicknameResponses);
+        result = CustomResponseEntity.builder()
+                .status(200)
+                .message(nickname + "의 맛집 정보를 가져오는데 성공했습니다.")
+                .data(linkedHashMap)
+                .build();
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

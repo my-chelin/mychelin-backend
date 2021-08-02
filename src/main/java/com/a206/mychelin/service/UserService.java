@@ -40,6 +40,9 @@ public class UserService {
 
     private User getUser(HttpServletRequest request) {
         String header = request.getHeader(AuthConstants.AUTH_HEADER);
+        if (header == null) {
+            return null;
+        }
         String token = TokenUtils.getTokenFromHeader(header);
         Claims claims = TokenUtils.getClaimsFormToken(token);
         String id = (String) claims.get("id");
