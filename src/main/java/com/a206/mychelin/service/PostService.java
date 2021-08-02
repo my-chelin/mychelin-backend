@@ -1,6 +1,7 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Post;
+import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TimestampToDateString;
@@ -21,9 +22,10 @@ import java.util.*;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         Post newPost = Post.builder()
                 .userId(userId)
@@ -41,7 +43,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         Optional<Post> tempPost = postRepository.findPostById(id);
@@ -51,7 +53,7 @@ public class PostService {
                     .status(400)
                     .message("게시글이 없습니다.")
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
         Post post = tempPost.get();
         System.out.println(post.toString());
@@ -62,33 +64,20 @@ public class PostService {
                     .status(200)
                     .message(post.getId() + "번 게시글이 수정되었습니다.")
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+            return new ResponseEntity(customResponse, HttpStatus.OK);
         }
         customResponse = CustomResponseEntity.builder()
                 .status(401)
                 .message("수정 권한이 없습니다.")
                 .build();
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
     public ResponseEntity getPostByPostId(@PathVariable int postId) {
         List<Object[]> entity = postRepository.findPostInfoByPostId(postId);
+
         if (entity.size() > 0) {
-            Object[] item = entity.get(0);
-            String dateDiff = TimestampToDateString.getPassedTime((Timestamp) item[4]);
-            PostInfoResponse postInfo
-                    = PostInfoResponse.builder()
-                    .postId((int) item[0])
-                    .userNickname((String) item[1])
-                    .userFollowerCnt(item[2])
-                    .content((String) item[3])
-                    .createDate(dateDiff)
-                    .likeCnt(item[5])
-                    .commentCnt(item[6])
-                    .placeId(item[7])
-                    .placelistId(item[8])
-                    .image((String) item[9])
-                    .build();
+            PostInfoResponse postInfo = extractPosts(entity).get(0);
 
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
@@ -96,7 +85,7 @@ public class PostService {
                     .message(postId + "번 게시글을 불러왔습니다.")
                     .data(postInfo)
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+            return new ResponseEntity(customResponseEntity, HttpStatus.OK);
         }
         CustomResponseEntity customResponseEntity
                 = CustomResponseEntity.builder()
@@ -107,7 +96,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> delete(@PathVariable int id, HttpServletRequest httpRequest) {
+    public ResponseEntity delete(@PathVariable int id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
             CustomResponseEntity customResponse
@@ -115,7 +104,7 @@ public class PostService {
                     .status(401)
                     .message("로그인 후 이용해주세요.")
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
         }
         Optional<Post> entity = postRepository.findPostById(id);
         if (!entity.isPresent()) {
@@ -124,7 +113,7 @@ public class PostService {
                     .status(400)
                     .message("게시글이 없습니다.")
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
         Post post = entity.get();
         if (userId.equals(post.getUserId())) {
@@ -134,14 +123,14 @@ public class PostService {
                     .status(200)
                     .message(id + "번 게시물을 삭제했습니다.")
                     .build();
-            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+            return new ResponseEntity(customResponse, HttpStatus.OK);
         }
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
                 .status(401)
                 .message("삭제 권한이 없습니다.")
                 .build();
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
     public ResponseEntity findPostsByUserNickname(@PathVariable String userNickname) {
@@ -154,7 +143,7 @@ public class PostService {
                 .message(userNickname + "의 게시글을 불러왔습니다.")
                 .data(arr)
                 .build();
-        return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.OK);
+        return new ResponseEntity(customResponse, HttpStatus.OK);
     }
 
     public ResponseEntity findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest) {
@@ -184,6 +173,22 @@ public class PostService {
         ArrayList<PostInfoResponse> arr = new ArrayList<>();
         for (Object[] post : posts) {
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
+            List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
+            ArrayList<CommentResponse> commArr = new ArrayList<>();
+            int len = comments.size();
+            for (int i = len - 1; i >= 0; i--) {
+                Object[] item = comments.get(i);
+                String diff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
+                commArr.add(
+                        CommentResponse.builder()
+                                .id((int) item[0])
+                                .writerId((String) item[1])
+                                .message((String) item[2])
+                                .createDate(diff)
+                                .build()
+                );
+            }
+
             arr.add(PostInfoResponse.builder()
                     .postId((int) post[0])
                     .userNickname((String) post[1])
@@ -195,6 +200,7 @@ public class PostService {
                     .placeId(post[7])
                     .placelistId(post[8])
                     .image((String) post[9])
+                    .comments(commArr)
                     .build());
         }
         return arr;
