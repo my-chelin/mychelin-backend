@@ -55,4 +55,11 @@ public class PostController {
     public ResponseEntity findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
         return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
     }
+
+    @ApiOperation(value = "선택한 포스트에 좋아요 표시를 한다.")
+    @ApiImplicitParam(name="postId", value = "포스트 고유 id")
+    @PutMapping("/like")
+    public ResponseEntity likePost(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
+        return postService.likePost(postLikeRequest, httpRequest);
+    }
 }

@@ -1,7 +1,9 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Post;
+import com.a206.mychelin.domain.entity.PostLike;
 import com.a206.mychelin.domain.repository.CommentRepository;
+import com.a206.mychelin.domain.repository.PostLikeRepository;
 import com.a206.mychelin.domain.repository.PostRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TimestampToDateString;
@@ -22,6 +24,7 @@ import java.util.*;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
 
     @Transactional
@@ -204,5 +207,56 @@ public class PostService {
                     .build());
         }
         return arr;
+    }
+
+    @Transactional
+    public ResponseEntity likePost(PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponse;
+        String userId = TokenToId.check(httpRequest);
+        if (userId == null) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(401)
+                    .message("로그인 후 이용해주세요.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+        }
+        Optional<Post> post = postRepository.findPostById(postLikeRequest.getPostId());
+        if (!post.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 게시글입니다.")
+                    .build();
+
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        System.out.println(">>>>>> " + post.get().getContent());
+        Optional<PostLike> postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postLikeRequest.getPostId(), userId);
+        System.out.println(userId + "  " + postLikeRequest.getPostId());
+        if (!postLike.isPresent()) { // 없으면 좋아요 추가
+            PostLike newLike = PostLike.builder()
+                    .postId(postLikeRequest.getPostId())
+                    .userId(userId)
+                    .build();
+
+            postLikeRepository.save(newLike);
+            customResponse = CustomResponseEntity.builder()
+                    .status(200)
+                    .message("좋아요가 반영되었습니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.OK);
+        }
+        // 있으면 좋아요 취소하기.
+        PostLike cancelLike = PostLike.builder()
+                .postId(postLikeRequest.getPostId())
+                .userId(userId)
+                .build();
+        postLikeRepository.delete(cancelLike);
+
+        customResponse = CustomResponseEntity.builder()
+                .status(200)
+                .message("좋아요가 취소되었습니다.")
+                .build();
+
+        return new ResponseEntity(customResponse, HttpStatus.OK);
     }
 }

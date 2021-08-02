@@ -22,8 +22,8 @@ public class PostLike implements Serializable {
     private String userId;
 
     @Builder
-    public PostLike(int postId, String user_id) {
+    public PostLike(int postId, String userId) {
         this.postId = postId;
-        this.userId = user_id;
+        this.userId = userId;
     }
 }
