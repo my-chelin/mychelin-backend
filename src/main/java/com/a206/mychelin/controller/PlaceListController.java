@@ -70,6 +70,24 @@ public class PlaceListController {
         }
     }
 
+    @ApiOperation(value = "맛집 리스트 작성한 사람 기준으로 가져오기")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "nickname", value = "맛집 리스트 작성한 닉네임"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    @GetMapping("/listitems/user/{nickname}")
+    public ResponseEntity getPlaceListItemByNickname(@PathVariable String nickname
+            , @RequestParam(defaultValue = "1") int page
+            , @RequestParam(defaultValue = "10") int pagesize)  throws PageIndexLessThanZeroException{
+        try{
+            return placeListService.getPlaceListItemByNickname(nickname,page,pagesize);
+        }
+        catch (ArithmeticException | IllegalArgumentException e){
+            throw new PageIndexLessThanZeroException();
+        }
+    }
+
     @ApiOperation(value = "맛집 리스트의 맛집 추가")
     @PostMapping("/listitems/items")
     public ResponseEntity insertPlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody PlaceListItemRequest placeListItemRequest) {
