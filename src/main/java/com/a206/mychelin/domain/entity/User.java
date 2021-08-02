@@ -65,6 +65,10 @@ public class User {
         this.profileImage = profile_image;
     }
 
+    public void userImageUpdate(String imagePath){
+        this.profileImage = imagePath;
+    }
+
     public void changePassword(String password) {
         this.password = password;
     }

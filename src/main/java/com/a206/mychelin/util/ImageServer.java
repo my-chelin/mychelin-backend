@@ -46,6 +46,10 @@ public class ImageServer {
 
     public String upload(MultipartFile file) throws IOException {
         Date time = new Date();
+        if(file==null){
+            System.out.println("!!!");
+        }
+        System.out.println(file.getName());
         String strFileName=file.getOriginalFilename();
         int pos = strFileName.lastIndexOf( "." );
         String ext = strFileName.substring( pos + 1 );

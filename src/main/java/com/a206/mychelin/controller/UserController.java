@@ -7,8 +7,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @CrossOrigin("*")
 @RequiredArgsConstructor
@@ -52,6 +54,13 @@ public class UserController {
     @PostMapping("/check/emailToken")
     public ResponseEntity checkEmailToken(@RequestBody EmailTokenRequest emailTokenRequest){
         return userService.checkEmailToken(emailTokenRequest);
+    }
+
+    @ApiOperation(value = "유저 프로필 이미지 저장")
+    @PostMapping("/profile/image")
+    public ResponseEntity saveUserProfileImage(@RequestParam MultipartFile file,HttpServletRequest request)throws IOException {
+        System.out.println(file.getSize());
+        return userService.saveUserProfileImage(file, request);
     }
 
 }

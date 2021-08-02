@@ -7,6 +7,7 @@ import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.domain.repository.PostLikeRepository;
 import com.a206.mychelin.domain.repository.UserEmailCheckRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.ImageServer;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.*;
 import io.jsonwebtoken.Claims;
@@ -18,9 +19,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Optional;
 import java.util.Random;
 
@@ -36,6 +41,9 @@ public class UserService {
     // 이메일 보내기 위해 선언, JavaMailSender를 구현한 Bean 객체 주입
     private final JavaMailSender javaMailSender;
     private final UserEmailCheckRepository userEmailCheckRepository;
+
+    // 이미지 저장을 위해 선언
+    private final ImageServer s3Service;
 
 
     private User getUser(HttpServletRequest request) {
@@ -300,5 +308,24 @@ public class UserService {
                 .build();
 
         return new ResponseEntity<CustomResponseEntity>(result,httpStatus);
+    }
+
+    public ResponseEntity saveUserProfileImage(MultipartFile file, HttpServletRequest request) throws IOException {
+        User user = getUser(request);
+
+        String imgPath = s3Service.upload(file);
+        user.userImageUpdate(imgPath);
+
+        userRepository.save(user);
+        HashMap<String,String> hashMap=new LinkedHashMap<>();
+        hashMap.put("profile_image",imgPath);
+        CustomResponseEntity result = CustomResponseEntity.builder()
+                .status(200)
+                .message("프로필 이미지 저장에 성공했습니다.")
+                .data(hashMap)
+                .build();
+
+        return  new ResponseEntity<CustomResponseEntity>(result,HttpStatus.OK);
+
     }
 }
