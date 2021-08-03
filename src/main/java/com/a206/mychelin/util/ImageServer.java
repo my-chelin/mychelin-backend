@@ -27,10 +27,10 @@ import java.util.Random;
 public class ImageServer {
     private AmazonS3 s3Client;
 
-    @Value("${cloud.aws.credentials.accessKey}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
 
-    @Value("${cloud.aws.credentials.secretKey}")
+    @Value("${cloud.aws.credentials.secret-key}")
     private String secretKey;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -53,18 +53,18 @@ public class ImageServer {
         Date time = new Date();
 
         System.out.println(file.getName());
-        String strFileName=file.getOriginalFilename();
-        int pos = strFileName.lastIndexOf( "." );
-        String ext = strFileName.substring( pos + 1 );
+        String strFileName = file.getOriginalFilename();
+        int pos = strFileName.lastIndexOf(".");
+        String ext = strFileName.substring(pos + 1);
 
-        String fileName = Long.toString(time.getTime())+randomToken()+"."+ext;
+        String fileName = Long.toString(time.getTime()) + randomToken() + "." + ext;
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, fileName).toString();
     }
 
-    private String randomToken(){
+    private String randomToken() {
         StringBuffer token = new StringBuffer();
         Random rnd = new Random();
         for (int i = 0; i < 10; i++) {
@@ -89,8 +89,8 @@ public class ImageServer {
 
     public ResponseEntity registerImageIntoServer(MultipartFile file) throws IOException {
         String imagePath = upload(file);
-        HashMap<String,String >hashMap = new LinkedHashMap<>();
-        hashMap.put("image",imagePath);
+        HashMap<String, String> hashMap = new LinkedHashMap<>();
+        hashMap.put("image", imagePath);
         CustomResponseEntity result = CustomResponseEntity.builder()
                 .status(200)
                 .message("이미지를 서버에 성공적으로 저장했습니다.")

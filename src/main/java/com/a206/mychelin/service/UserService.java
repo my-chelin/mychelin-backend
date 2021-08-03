@@ -193,15 +193,14 @@ public class UserService {
 
     public ResponseEntity checkEmail(EmailRequest emailRequest) {
         Optional<User> user = userRepository.findUserById(emailRequest.getEmail());
-        int status=404;
-        String message="";
-        Object data=null;
-        HttpStatus httpStatus=HttpStatus.NOT_FOUND;
+        int status = 404;
+        String message = "";
+        Object data = null;
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
-        if(user.isPresent()){
-            message="이미 가입된 이메일입니다.";
-        }
-        else{
+        if (user.isPresent()) {
+            message = "이미 가입된 이메일입니다.";
+        } else {
             SimpleMailMessage emailMessage = new SimpleMailMessage();
 
             StringBuffer token = new StringBuffer();
@@ -227,17 +226,17 @@ public class UserService {
             emailMessage.setTo(emailRequest.getEmail());
             emailMessage.setSubject("가입 인증 메일입니다.");
             emailMessage.setText("안녕하세요 Mychelin 입니다.\n\n" +
-                    "가입 인증 토큰 : "+token.toString()+" 입니다.\n\n"+
+                    "가입 인증 토큰 : " + token.toString() + " 입니다.\n\n" +
                     "감사합니다.");
 
             javaMailSender.send(emailMessage);
 
             Optional<UserEmailCheck> userEmailCheckOptional = userEmailCheckRepository.findByUserId(emailRequest.getEmail());
-            UserEmailCheck userEmailCheck=null;
-            if(userEmailCheckOptional.isPresent()){
+            UserEmailCheck userEmailCheck;
+            if (userEmailCheckOptional.isPresent()) { // 여러번 요청할 때
                 userEmailCheck = userEmailCheckOptional.get();
-            }
-            else{
+                userEmailCheck.changeToken(token.toString());
+            } else { // 처음 요청할 때
                 userEmailCheck = UserEmailCheck.builder()
                         .userId(emailRequest.getEmail())
                         .token(token.toString())
@@ -247,9 +246,9 @@ public class UserService {
             userEmailCheckRepository.save(userEmailCheck);
 
             // 이메일 전송
-            status=200;
-            message=emailRequest.getEmail()+"로 인증 번호를 전송하였습니다.";
-            httpStatus=HttpStatus.OK;
+            status = 200;
+            message = emailRequest.getEmail() + "로 인증 번호를 전송하였습니다.";
+            httpStatus = HttpStatus.OK;
         }
 
         CustomResponseEntity result = CustomResponseEntity.builder()
@@ -258,21 +257,20 @@ public class UserService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity<CustomResponseEntity>(result,httpStatus);
+        return new ResponseEntity<CustomResponseEntity>(result, httpStatus);
 
 
     }
 
     public ResponseEntity checkEmailToken(EmailTokenRequest emailTokenRequest) {
         Optional<User> user = userRepository.findUserById(emailTokenRequest.getEmail());
-        int status=404;
-        String message="";
-        Object data=null;
-        HttpStatus httpStatus=HttpStatus.NOT_FOUND;
-        if(user.isPresent()){
-            message="이미 가입된 이메일입니다.";
-        }
-        else{
+        int status = 404;
+        String message = "";
+        Object data = null;
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        if (user.isPresent()) {
+            message = "이미 가입된 이메일입니다.";
+        } else {
             /*
                 1. token DB에 저장되어 있는지 확인
                 2. 없다면, 없다고 리턴
@@ -283,18 +281,16 @@ public class UserService {
 
             Optional<UserEmailCheck> userEmailCheck = userEmailCheckRepository.findByUserId(emailTokenRequest.getEmail());
 
-            if(!userEmailCheck.isPresent()){
-                message="인증 번호 요청이 되지 않은 이메일입니다.";
-            }
-            else if(!userEmailCheck.get().getToken().equals(emailTokenRequest.getToken())){
-                status=401;
-                httpStatus=HttpStatus.UNAUTHORIZED;
-                message="인증 번호가 일치하지 않습니다.";
-            }
-            else{
-                status=200;
-                httpStatus=HttpStatus.OK;
-                message="인증되었습니다.";
+            if (!userEmailCheck.isPresent()) {
+                message = "인증 번호 요청이 되지 않은 이메일입니다.";
+            } else if (!userEmailCheck.get().getToken().equals(emailTokenRequest.getToken())) {
+                status = 401;
+                httpStatus = HttpStatus.UNAUTHORIZED;
+                message = "인증 번호가 일치하지 않습니다.";
+            } else {
+                status = 200;
+                httpStatus = HttpStatus.OK;
+                message = "인증되었습니다.";
             }
         }
 
@@ -304,22 +300,22 @@ public class UserService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity<CustomResponseEntity>(result,httpStatus);
+        return new ResponseEntity<CustomResponseEntity>(result, httpStatus);
     }
 
-    public ResponseEntity saveUserProfileImage(ImageRequest image, HttpServletRequest request)  {
+    public ResponseEntity saveUserProfileImage(ImageRequest image, HttpServletRequest request) {
         User user = getUser(request);
 
         user.userImageUpdate(image.getImage());
 
         userRepository.save(user);
-        HashMap<String,String> hashMap=new LinkedHashMap<>();
+        HashMap<String, String> hashMap = new LinkedHashMap<>();
         CustomResponseEntity result = CustomResponseEntity.builder()
                 .status(200)
                 .message("프로필 이미지 저장에 성공했습니다.")
                 .build();
 
-        return  new ResponseEntity<CustomResponseEntity>(result,HttpStatus.OK);
+        return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.OK);
 
     }
 }

@@ -23,4 +23,8 @@ public class UserEmailCheck {
 
     private String token;
 
+    public void changeToken(String token) {
+        this.token = token;
+    }
+
 }
