@@ -8,15 +8,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserUpdateRequest {
     private String nickname;
-    private String phone_number;
+    private String phoneNumber;
     private String bio;
-    private String profile_image;
+    private String profileImage;
 
     @Builder
-    public UserUpdateRequest(String id, String nickname, String phone_number, String bio, String profile_image) {
+    public UserUpdateRequest(String id, String nickname, String phoneNumber, String bio, String profileImage) {
         this.nickname = nickname;
-        this.phone_number = phone_number;
+        this.phoneNumber = phoneNumber;
         this.bio = bio;
-        this.profile_image = profile_image;
+        this.profileImage = profileImage;
     }
 }

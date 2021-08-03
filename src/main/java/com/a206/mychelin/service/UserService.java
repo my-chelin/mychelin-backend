@@ -7,6 +7,7 @@ import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.domain.repository.PostLikeRepository;
 import com.a206.mychelin.domain.repository.UserEmailCheckRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.*;
 import io.jsonwebtoken.Claims;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -54,14 +56,14 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> update(@RequestBody UserUpdateRequest requestDto, HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> update(@RequestBody UserDto.UserUpdateRequest requestDto, HttpServletRequest request) {
         CustomResponseEntity customResponse;
         User user = getUser(request);
         if (user == null) {
             customResponse = CustomResponseEntity.builder().status(400).message("유저가 존재하지 않습니다.").build();
             return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
         }
-        user.update(user.getId(), requestDto.getNickname(), requestDto.getBio(), requestDto.getPhone_number(), requestDto.getProfile_image());
+        user.update(user.getId(), requestDto.getNickname(), requestDto.getBio(), requestDto.getPhoneNumber(), requestDto.getProfileImage());
         customResponse = CustomResponseEntity.builder()
                 .status(200)
                 .message("개인정보가 수정되었습니다.")
@@ -302,5 +304,71 @@ public class UserService {
                 .message("프로필 이미지 저장에 성공했습니다.")
                 .build();
         return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity updateBio(@RequestBody UserDto.BioUpdateRequest updateRequest, HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponse;
+        String userId = TokenToId.check(httpRequest);
+        if(userId == null) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(401)
+                    .message("로그인 후 사용가능합니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> user = userRepository.findUserById(userId);
+        if (!user.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 사용자입니다.").build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        user.get().updateBio(updateRequest.getBio());
+        userRepository.findAll();
+        customResponse = CustomResponseEntity.builder()
+                .status(200)
+                .message("바이오가 변경되었습니다.")
+                .data(updateRequest.getBio())
+                .build();
+        return new ResponseEntity(customResponse, HttpStatus.OK);
+    }
+
+    @Transactional
+    public ResponseEntity updateNickname(@RequestBody UserDto.NicknameUpdateRequest updateRequest, HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponse;
+        String userId = TokenToId.check(httpRequest);
+        if(userId == null) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(401)
+                    .message("로그인 후 사용가능합니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> user = userRepository.findUserById(userId);
+        if (!user.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("유효하지 않은 계정입니다.").build();
+            return new ResponseEntity<CustomResponseEntity>(customResponse, HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<User> findNickname = userRepository.findUserByNickname(updateRequest.getNickname());
+        if (!findNickname.isPresent()) {
+            user.get().updateNickname(updateRequest.getNickname());
+            userRepository.findAll();
+            customResponse = CustomResponseEntity.builder()
+                    .status(200)
+                    .message("닉네임이 변경되었습니다.")
+                    .data(updateRequest.getNickname())
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.OK);
+        }
+        customResponse = CustomResponseEntity.builder()
+                .status(400)
+                .message("이미 사용 중인 닉네임입니다.")
+                .build();
+
+        return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
     }
 }

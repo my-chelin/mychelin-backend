@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PutMapping("/changeinfo")
-    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserDto.UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
         return userService.update(requestDto, httpRequest);
     }
 
@@ -58,5 +58,17 @@ public class UserController {
     @PostMapping("/profile/image")
     public ResponseEntity saveUserProfileImage(@RequestBody ImageRequest imageRequest, HttpServletRequest request) throws IOException {
         return userService.saveUserProfileImage(imageRequest, request);
+    }
+
+    @ApiOperation(value = "유저 닉네임 변경")
+    @PutMapping("/profile/nickname")
+    public ResponseEntity updateNickname(@RequestBody UserDto.NicknameUpdateRequest updateRequest, HttpServletRequest httpRequest) {
+        return userService.updateNickname(updateRequest, httpRequest);
+    }
+
+    @ApiOperation(value = "유저 바이오 변경")
+    @PutMapping("/profile/bio")
+    public ResponseEntity updateBio(@RequestBody UserDto.BioUpdateRequest updateRequest, HttpServletRequest httpRequest) {
+        return userService.updateBio(updateRequest, httpRequest);
     }
 }

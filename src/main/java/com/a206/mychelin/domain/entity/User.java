@@ -69,6 +69,14 @@ public class User {
         this.profileImage = imagePath;
     }
 
+    public void updateBio(String bio) {
+        this.bio = bio;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public void changePassword(String password) {
         this.password = password;
     }
