@@ -1,8 +1,7 @@
 package com.a206.mychelin.domain.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -10,8 +9,9 @@ import javax.persistence.*;
 @Getter
 @Table(name = "bookmark_place")
 @ToString
+@DynamicInsert
 @DynamicUpdate
-@NoArgsConstructor
+@RequiredArgsConstructor
 @Entity
 public class BookmarkPlace {
     @Id
@@ -20,4 +20,18 @@ public class BookmarkPlace {
     private String userId;
     private int placeId;
     private String addDate;
+
+    @Builder
+    public BookmarkPlace(String userId, int placeId) {
+        this.userId = userId;
+        this.placeId = placeId;
+    }
+
+    @Builder
+    public BookmarkPlace(int id, String userId, int placeId, String addDate) {
+        this.id = id;
+        this.userId = userId;
+        this.placeId = placeId;
+        this.addDate = addDate;
+    }
 }

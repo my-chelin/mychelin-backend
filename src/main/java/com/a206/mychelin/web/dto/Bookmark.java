@@ -3,6 +3,7 @@ package com.a206.mychelin.web.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class Bookmark {
     @Getter
@@ -31,9 +32,40 @@ public class Bookmark {
     }
 
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class PlaceRequest {
-        private PlaceInfo info;
+        private int placeId;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PlacelistRequest {
+        private int placelistId;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class PlaceResponse {
+        private int placeId;
+        private String placeName;
+        private String placeDescription;
+        private String location;
+        private String image;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class PlacelistResponse {
+        private int placelistId;
+        private String userNickname;
+        private String placelistName;
+        private Object placeCnt;
+        private String addDate;
     }
 }
