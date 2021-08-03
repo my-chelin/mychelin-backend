@@ -16,17 +16,18 @@ public interface PlaceListRepository extends JpaRepository<PlaceList, Integer> {
             ",(select u.nickname from user u where u.id=pl.user_id) as nickname \n" +
             ", (select count(*) from placelist_item pi where pi.placelist_id=pl.id) as total_item_cnt \n" +
             "FROM placelist pl where pl.title like :title order by pl.id"
-            ,countQuery = "SELECT count(*)FROM placelist pl where pl.title like :title"
+            , countQuery = "SELECT count(*)FROM placelist pl where pl.title like :title"
             , nativeQuery = true)
     List<Object[]> getPlaceListTitleContainsOrderById(String title, Pageable pageable);
+
     long countByTitleContains(String title);
 
     @Query(value = "select pi.placelist_id, pi.place_id, pi.contributor_id, " +
             "p.name, p.description, p.latitude, p.longitude, p.phone, p.location,operation_hours, p.category_id, p.image " +
             "from placelist_item pi, place p where pi.placelist_id=:id and pi.place_id=p.id order by p.id"
-            ,countQuery = "SELECT COUNT(*) from placelist_item pi, place p where pi.placelist_id=:id and pi.place_id=p.id order by p.id"
+            , countQuery = "SELECT COUNT(*) from placelist_item pi, place p where pi.placelist_id=:id and pi.place_id=p.id order by p.id"
             , nativeQuery = true)
-    List<Object[]> getPlaceListItemsById(@Param("id") int id,Pageable pageable);
+    List<Object[]> getPlaceListItemsById(@Param("id") int id, Pageable pageable);
 
     @Query(value = "SELECT COUNT(*) from placelist_item pi, place p where pi.placelist_id=:id and pi.place_id=p.id order by p.id"
             , nativeQuery = true)

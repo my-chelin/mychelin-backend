@@ -33,13 +33,11 @@ public class PlaceController {
     public ResponseEntity getPlaceInfoByName(@PathVariable String name
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        try{
-            return placeService.getPlaceInfoByName(name,page ,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+        try {
+            return placeService.getPlaceInfoByName(name, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
-
     }
 
     @ApiOperation(value = "장소를 이용하여 식당 정보 조회")
@@ -52,26 +50,24 @@ public class PlaceController {
     public ResponseEntity getPlaceInfoByLocation(@PathVariable String location
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        try{
-            return placeService.getPlaceInfoByLocation(location,page ,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+        try {
+            return placeService.getPlaceInfoByLocation(location, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
-
     }
 
     @ApiOperation(value = "위치 정보를 이용하여, 해당 위치 주변 맛집 조회")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "lat", value = "위도",required = true),
-            @ApiImplicitParam(name = "lng", value = "경도",required = true),
+            @ApiImplicitParam(name = "lat", value = "위도", required = true),
+            @ApiImplicitParam(name = "lng", value = "경도", required = true),
             @ApiImplicitParam(name = "distance", value = "거리(km), 기본 값 : 0.5km", required = false, dataType = "float", paramType = "query", defaultValue = "0.5"),
     })
     @GetMapping("coordinate")
     public ResponseEntity getPlaceByCoordinate(
             @RequestParam(required = true) float lat
             , @RequestParam(required = true) float lng
-    ,@RequestParam(defaultValue = "0.5", required = false) float distance) {
-        return placeService.getPlaceByCoordinate(lat,lng,distance);
+            , @RequestParam(defaultValue = "0.5", required = false) float distance) {
+        return placeService.getPlaceByCoordinate(lat, lng, distance);
     }
 }

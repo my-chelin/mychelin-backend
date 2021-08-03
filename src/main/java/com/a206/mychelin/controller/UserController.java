@@ -2,12 +2,10 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.web.dto.*;
 import com.a206.mychelin.service.UserService;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -46,20 +44,19 @@ public class UserController {
 
     @ApiOperation(value = "이메일 확인로 인증 메일 전송")
     @PostMapping("/check/email")
-    public ResponseEntity checkEmail(@RequestBody EmailRequest emailRequest){
+    public ResponseEntity checkEmail(@RequestBody EmailRequest emailRequest) {
         return userService.checkEmail(emailRequest);
     }
-    
+
     @ApiOperation(value = "이메일로 전송된 인증 토큰 확인")
     @PostMapping("/check/emailToken")
-    public ResponseEntity checkEmailToken(@RequestBody EmailTokenRequest emailTokenRequest){
+    public ResponseEntity checkEmailToken(@RequestBody EmailTokenRequest emailTokenRequest) {
         return userService.checkEmailToken(emailTokenRequest);
     }
 
     @ApiOperation(value = "유저 프로필 이미지 저장")
     @PostMapping("/profile/image")
-    public ResponseEntity saveUserProfileImage(@RequestBody ImageRequest imageRequest,HttpServletRequest request)throws IOException {
+    public ResponseEntity saveUserProfileImage(@RequestBody ImageRequest imageRequest, HttpServletRequest request) throws IOException {
         return userService.saveUserProfileImage(imageRequest, request);
     }
-
 }

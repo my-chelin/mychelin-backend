@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -41,7 +40,7 @@ public class PlaceReviewService {
         data = null;
     }
 
-    public ResponseEntity getPlaceReviewsByUser(String nickName,int page,int pageSize) {
+    public ResponseEntity getPlaceReviewsByUser(String nickName, int page, int pageSize) {
         init();
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserByNickname(nickName);
@@ -52,18 +51,17 @@ public class PlaceReviewService {
             httpStatus = HttpStatus.OK;
             status = 200;
             message = nickName + "의 리뷰 목록 조회에 성공했습니다.";
-            PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+            PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
             int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumById(user.get().getId());
 
-            HashMap<String,Object> hashMap = new LinkedHashMap<>();
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("totalPageItemCnt", totalPageItemCnt);
+            hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+            hashMap.put("nowPage", page);
+            hashMap.put("nowPageSize", pageSize);
 
-            hashMap.put("totalPageItemCnt",totalPageItemCnt);
-            hashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
-            hashMap.put("nowPage",page);
-            hashMap.put("nowPageSize",pageSize);
-
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId(),pageRequest);
+            List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId(), pageRequest);
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
             ArrayList<MyPlaceReviewResponse> arr = new ArrayList<>();
@@ -81,8 +79,7 @@ public class PlaceReviewService {
                         .place_image((String) item[8])
                         .build());
             }
-            hashMap.put("reviews",arr);
-
+            hashMap.put("reviews", arr);
             data = hashMap;
         }
         result = CustomResponseEntity.builder()
@@ -94,9 +91,8 @@ public class PlaceReviewService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity getPlaceAllReviewsByPlaceId(int placeId,int page,int pageSize) {
+    public ResponseEntity getPlaceAllReviewsByPlaceId(int placeId, int page, int pageSize) {
         init();
-
         CustomResponseEntity result;
         Optional<Place> place = placeRepository.findPlacesById(placeId);
 
@@ -109,24 +105,21 @@ public class PlaceReviewService {
 
             int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumByPlaceId(placeId);
 
-            HashMap<String,Object> hashMap = new LinkedHashMap<>();
-
-            hashMap.put("totalPageItemCnt",totalPageItemCnt);
-            hashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
-            hashMap.put("nowPage",page);
-            hashMap.put("nowPageSize",pageSize);
+            HashMap<String, Object> hashMap = new LinkedHashMap<>();
+            hashMap.put("totalPageItemCnt", totalPageItemCnt);
+            hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+            hashMap.put("nowPage", page);
+            hashMap.put("nowPageSize", pageSize);
 
             Optional<Float> totalStarRate = placeReviewRepository.getPlaceReviewsAVGByPlaceId(placeId);
-            if(totalStarRate.isPresent()) {
-                hashMap.put("total_star_rate",totalStarRate.get());
-            }
-            else{
-                hashMap.put("total_star_rate",null);
-
+            if (totalStarRate.isPresent()) {
+                hashMap.put("total_star_rate", totalStarRate.get());
+            } else {
+                hashMap.put("total_star_rate", null);
             }
 
-            PageRequest pageRequest = PageRequest.of(page-1, pageSize);
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId,pageRequest);
+            PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+            List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId, pageRequest);
             ArrayList<PlaceReviewAndUserResponse> arr = new ArrayList<>();
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
@@ -143,8 +136,7 @@ public class PlaceReviewService {
                         .user_profile_image((String) item[7])
                         .build());
             }
-            hashMap.put("reviews",arr);
-
+            hashMap.put("reviews", arr);
             data = hashMap;
         }
         result = CustomResponseEntity.builder()
@@ -152,13 +144,11 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity addPlaceReviews(String userId, ReviewRequest review) {
         init();
-
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserById(userId);
         if (!user.isPresent()) {
@@ -182,13 +172,11 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity editPlaceReviews(String userId, ReviewEditRequest review) {
         init();
-
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
@@ -204,7 +192,6 @@ public class PlaceReviewService {
         } else {
             findReview.get().editReview(review);
             placeReviewRepository.save(findReview.get());
-
             status = 200;
             message = "리뷰 수정에 성공하였습니다.";
             httpStatus = HttpStatus.OK;
@@ -215,13 +202,11 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity deletePlaceReviews(String userId, ReviewDeleteRequest review) {
         init();
-
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
@@ -234,7 +219,6 @@ public class PlaceReviewService {
             message = "리뷰 작성한 사람과 삭제하려는 사람이 일치하지 않습니다.";
         } else {
             placeReviewRepository.delete(findReview.get());
-
             status = 200;
             message = "리뷰 삭제에 성공하였습니다.";
             httpStatus = HttpStatus.OK;
@@ -245,13 +229,11 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity(result, httpStatus);
     }
 
     public ResponseEntity saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) throws IOException {
         init();
-
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(reviewId);
         Optional<User> user = userRepository.findUserById(userId);
@@ -266,7 +248,6 @@ public class PlaceReviewService {
             Review newReview = findReview.get();
             newReview.reviewImageUpdate(imageRequest.getImage());
             placeReviewRepository.save(newReview);
-
             status = 200;
             message = "리뷰 이미지 추가에 성공하였습니다.";
             httpStatus = HttpStatus.OK;
@@ -277,7 +258,6 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity(result, httpStatus);
     }
 }

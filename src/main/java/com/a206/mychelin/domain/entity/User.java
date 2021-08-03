@@ -65,7 +65,7 @@ public class User {
         this.profileImage = profile_image;
     }
 
-    public void userImageUpdate(String imagePath){
+    public void userImageUpdate(String imagePath) {
         this.profileImage = imagePath;
     }
 

@@ -28,5 +28,5 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "FROM place\n" +
             ") DATA\n" +
             "WHERE DATA.distance < :distance order by DATA.distance", nativeQuery = true)
-    List<Object[]> getPlaceByCoordinate(float lat,float lng, float distance);
+    List<Object[]> getPlaceByCoordinate(float lat, float lng, float distance);
 }

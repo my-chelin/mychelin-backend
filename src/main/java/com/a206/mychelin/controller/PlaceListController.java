@@ -43,13 +43,11 @@ public class PlaceListController {
     public ResponseEntity searchPlaceListByTitle(@PathVariable String title
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        try{
-            return placeListService.searchPlaceListByTitle(title,page,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+        try {
+            return placeListService.searchPlaceListByTitle(title, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
-
     }
 
     @ApiOperation(value = "맛집 리스트의 상세 맛집 정보")
@@ -61,11 +59,10 @@ public class PlaceListController {
     @GetMapping("/listitems/{listId}")
     public ResponseEntity getPlaceListItemByTitle(@PathVariable int listId
             , @RequestParam(defaultValue = "1") int page
-            , @RequestParam(defaultValue = "10") int pagesize)  throws PageIndexLessThanZeroException{
-        try{
-            return placeListService.getPlaceListItemByTitle(listId,page,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+            , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
+        try {
+            return placeListService.getPlaceListItemByTitle(listId, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
     }
@@ -79,11 +76,10 @@ public class PlaceListController {
     @GetMapping("/listitems/user/{nickname}")
     public ResponseEntity getPlaceListItemByNickname(@PathVariable String nickname
             , @RequestParam(defaultValue = "1") int page
-            , @RequestParam(defaultValue = "10") int pagesize)  throws PageIndexLessThanZeroException{
-        try{
-            return placeListService.getPlaceListItemByNickname(nickname,page,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+            , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
+        try {
+            return placeListService.getPlaceListItemByNickname(nickname, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
     }

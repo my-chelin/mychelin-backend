@@ -7,7 +7,6 @@ import com.a206.mychelin.domain.repository.FollowRepository;
 import com.a206.mychelin.domain.repository.PostLikeRepository;
 import com.a206.mychelin.domain.repository.UserEmailCheckRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
-import com.a206.mychelin.util.ImageServer;
 import com.a206.mychelin.util.TokenUtils;
 import com.a206.mychelin.web.dto.*;
 import io.jsonwebtoken.Claims;
@@ -19,11 +18,9 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -37,11 +34,9 @@ public class UserService {
     private final FollowRepository followRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     // 이메일 보내기 위해 선언, JavaMailSender를 구현한 Bean 객체 주입
     private final JavaMailSender javaMailSender;
     private final UserEmailCheckRepository userEmailCheckRepository;
-
 
     private User getUser(HttpServletRequest request) {
         String header = request.getHeader(AuthConstants.AUTH_HEADER);
@@ -202,7 +197,6 @@ public class UserService {
             message = "이미 가입된 이메일입니다.";
         } else {
             SimpleMailMessage emailMessage = new SimpleMailMessage();
-
             StringBuffer token = new StringBuffer();
             Random rnd = new Random();
             for (int i = 0; i < 10; i++) {
@@ -228,7 +222,6 @@ public class UserService {
             emailMessage.setText("안녕하세요 Mychelin 입니다.\n\n" +
                     "가입 인증 토큰 : " + token.toString() + " 입니다.\n\n" +
                     "감사합니다.");
-
             javaMailSender.send(emailMessage);
 
             Optional<UserEmailCheck> userEmailCheckOptional = userEmailCheckRepository.findByUserId(emailRequest.getEmail());
@@ -256,10 +249,7 @@ public class UserService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity<CustomResponseEntity>(result, httpStatus);
-
-
     }
 
     public ResponseEntity checkEmailToken(EmailTokenRequest emailTokenRequest) {
@@ -299,23 +289,18 @@ public class UserService {
                 .message(message)
                 .data(data)
                 .build();
-
         return new ResponseEntity<CustomResponseEntity>(result, httpStatus);
     }
 
     public ResponseEntity saveUserProfileImage(ImageRequest image, HttpServletRequest request) {
         User user = getUser(request);
-
         user.userImageUpdate(image.getImage());
-
         userRepository.save(user);
         HashMap<String, String> hashMap = new LinkedHashMap<>();
         CustomResponseEntity result = CustomResponseEntity.builder()
                 .status(200)
                 .message("프로필 이미지 저장에 성공했습니다.")
                 .build();
-
         return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.OK);
-
     }
 }

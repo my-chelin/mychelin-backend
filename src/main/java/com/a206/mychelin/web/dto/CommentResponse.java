@@ -2,8 +2,6 @@ package com.a206.mychelin.web.dto;
 
 import lombok.*;
 
-import java.util.Date;
-
 @ToString
 @Data
 @NoArgsConstructor

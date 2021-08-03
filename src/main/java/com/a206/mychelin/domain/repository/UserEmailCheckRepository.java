@@ -5,8 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserEmailCheckRepository extends JpaRepository<UserEmailCheck,Integer> {
-
+public interface UserEmailCheckRepository extends JpaRepository<UserEmailCheck, Integer> {
     Optional<UserEmailCheck> findByUserId(String userId);
-
 }

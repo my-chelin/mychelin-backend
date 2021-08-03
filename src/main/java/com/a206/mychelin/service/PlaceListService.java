@@ -5,7 +5,6 @@ import com.a206.mychelin.domain.repository.PlaceListItemRepository;
 import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
-import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -77,27 +76,26 @@ public class PlaceListService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity searchPlaceListByTitle(String title,int page,int pageSize) {
+    public ResponseEntity searchPlaceListByTitle(String title, int page, int pageSize) {
         CustomResponseEntity result;
         HttpStatus httpStatus;
 
         long totalPageItemCnt = placeListRepository.countByTitleContains(title);
 
-        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
 
-        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
-        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
-        linkedHashMap.put("nowPage",page);
-        linkedHashMap.put("nowPageSize",pageSize);
+        linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        linkedHashMap.put("nowPageSize", pageSize);
 
-        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
-        List<Object[]> placeListList=placeListRepository.getPlaceListTitleContainsOrderById("%"+title+"%",pageRequest);
-
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Object[]> placeListList = placeListRepository.getPlaceListTitleContainsOrderById("%" + title + "%", pageRequest);
         List<PlaceListByTitle> resultList = new ArrayList<>();
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
-        for(Object[] item : placeListList){
+        for (Object[] item : placeListList) {
             String format = formatter.format(item[2]);
             resultList.add(PlaceListByTitle.builder()
                     .id((int) item[0])
@@ -106,10 +104,10 @@ public class PlaceListService {
                     .user_id((String) item[3])
                     .nickname((String) item[4])
                     .total_item_cnt((BigInteger) item[5])
-            .build());
+                    .build());
         }
 
-        linkedHashMap.put("placelist",resultList);
+        linkedHashMap.put("placelist", resultList);
 
         result = CustomResponseEntity.builder()
                 .status(200)
@@ -120,7 +118,7 @@ public class PlaceListService {
         return new ResponseEntity(result, httpStatus);
     }
 
-    public ResponseEntity getPlaceListItemByTitle(int listId,int page,int pageSize) {
+    public ResponseEntity getPlaceListItemByTitle(int listId, int page, int pageSize) {
         CustomResponseEntity result;
         Optional<PlaceList> placeList = placeListRepository.findById(listId);
         if (!placeList.isPresent()) {
@@ -134,22 +132,22 @@ public class PlaceListService {
 
         long totalPageItemCnt = placeListRepository.getPlaceListItemsNumById(listId);
 
-        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
 
-        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
-        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
-        linkedHashMap.put("nowPage",page);
-        linkedHashMap.put("nowPageSize",pageSize);
+        linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        linkedHashMap.put("nowPageSize", pageSize);
 
-        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
-        List<Object[]> items = placeListRepository.getPlaceListItemsById(listId,pageRequest);
+        List<Object[]> items = placeListRepository.getPlaceListItemsById(listId, pageRequest);
 
         ArrayList<PlaceListItemDetail> arr = new ArrayList<>();
         for (Object[] item : items) {
-            Optional<Double> starRateOptional=placeRepository.getStartRateById(String.valueOf((int) item[1]));
-            Double starRate=null;
-            if(starRateOptional.isPresent()){
+            Optional<Double> starRateOptional = placeRepository.getStartRateById(String.valueOf((int) item[1]));
+            Double starRate = null;
+            if (starRateOptional.isPresent()) {
                 starRate = starRateOptional.get();
             }
 
@@ -170,7 +168,7 @@ public class PlaceListService {
                     .build()
             );
         }
-        linkedHashMap.put("place_list_item",arr);
+        linkedHashMap.put("place_list_item", arr);
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message(listId + "의 맛집 정보를 가져오는데 성공했습니다.")
@@ -269,7 +267,7 @@ public class PlaceListService {
     }
 
     //  닉네임으로 가져오기기
-   public ResponseEntity getPlaceListItemByNickname(String nickname, int page, int pageSize) {
+    public ResponseEntity getPlaceListItemByNickname(String nickname, int page, int pageSize) {
         init();
         CustomResponseEntity result;
 
@@ -278,44 +276,41 @@ public class PlaceListService {
         if (!user.isPresent()) {
             result = CustomResponseEntity.builder()
                     .status(404)
-                    .message(nickname+" 유저는 존재하지 않습니다.")
+                    .message(nickname + " 유저는 존재하지 않습니다.")
                     .data(null)
                     .build();
             return new ResponseEntity(result, HttpStatus.NOT_FOUND);
         }
 
+        long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId());
 
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashMap.put("nowPage", page);
+        linkedHashMap.put("nowPageSize", pageSize);
 
-       long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId());
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
-        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
+        List<Object[]> list = placeListItemRepository.getMyPlacelistByContributorIdOrderByPlaceId(user.get().getId(), pageRequest);
 
-        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
-        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
-        linkedHashMap.put("nowPage",page);
-        linkedHashMap.put("nowPageSize",pageSize);
+        List<PlaceListITemsByNicknameResponse> placeListITemsByNicknameResponses = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
-        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+        for (Object[] item : list) {
+            String format = formatter.format(item[5]);
+            placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
+                    .placelist_id((int) item[0])
+                    .title((String) item[1])
+                    .contributor_id((String) item[2])
+                    .contrubute_item_cnt((BigInteger) item[3])
+                    .total_item_cnt((BigInteger) item[4])
+                    .create_date(format)
+                    .build()
+            );
+        }
 
-       List<Object[]> list = placeListItemRepository.getMyPlacelistByContributorIdOrderByPlaceId(user.get().getId(),pageRequest);
-
-       List<PlaceListITemsByNicknameResponse> placeListITemsByNicknameResponses = new ArrayList<>();
-       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-
-       for(Object[] item : list){
-           String format = formatter.format(item[5]);
-           placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
-                   .placelist_id((int)item[0])
-                   .title((String)item[1])
-                   .contributor_id((String)item[2])
-                   .contrubute_item_cnt((BigInteger)item[3])
-                   .total_item_cnt((BigInteger)item[4])
-                   .create_date(format)
-                   .build()
-           );
-       }
-
-        linkedHashMap.put("place_list_item",placeListITemsByNicknameResponses);
+        linkedHashMap.put("place_list_item", placeListITemsByNicknameResponses);
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message(nickname + "의 맛집 정보를 가져오는데 성공했습니다.")

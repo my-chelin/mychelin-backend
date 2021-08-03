@@ -14,9 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @CrossOrigin("*")
@@ -36,13 +34,11 @@ public class PlaceReviewController {
     public ResponseEntity getPlaceReviewsByUser(@PathVariable String nickName
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        try{
-            return placeReviewService.getPlaceReviewsByUser(nickName,page,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+        try {
+            return placeReviewService.getPlaceReviewsByUser(nickName, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
-
     }
 
     @ApiOperation(value = "식당 모든 리뷰 가져오기(최신순)")
@@ -55,13 +51,11 @@ public class PlaceReviewController {
     public ResponseEntity getPlaceReviewsByUser(@PathVariable int placeId
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        try{
-            return placeReviewService.getPlaceAllReviewsByPlaceId(placeId,page,pagesize);
-        }
-        catch (ArithmeticException | IllegalArgumentException e){
+        try {
+            return placeReviewService.getPlaceAllReviewsByPlaceId(placeId, page, pagesize);
+        } catch (ArithmeticException | IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
-
     }
 
     @ApiOperation(value = "식당 리뷰 추가")
@@ -90,9 +84,9 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "리뷰 이미지 추가")
     @PostMapping("/image/{reviewId}")
-    public ResponseEntity saveReviewImage(@RequestBody ImageRequest imageRequest, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int reviewId)throws IOException {
+    public ResponseEntity saveReviewImage(@RequestBody ImageRequest imageRequest, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int reviewId) throws IOException {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
-        return placeReviewService.saveReviewImage(imageRequest, userId,reviewId);
+        return placeReviewService.saveReviewImage(imageRequest, userId, reviewId);
     }
 }

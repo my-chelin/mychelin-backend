@@ -4,7 +4,6 @@ import com.a206.mychelin.web.dto.ReviewEditRequest;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.security.core.parameters.P;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -41,7 +40,7 @@ public class Review {
         this.image = reviewEditRequest.getImage();
     }
 
-    public void reviewImageUpdate(String imagePath){
+    public void reviewImageUpdate(String imagePath) {
         this.image = imagePath;
     }
 }

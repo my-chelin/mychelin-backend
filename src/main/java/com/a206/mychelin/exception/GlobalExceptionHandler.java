@@ -8,9 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(PageIndexLessThanZeroException.class)
-    public ResponseEntity PageIndexLessThanZeroException(PageIndexLessThanZeroException ex){
+    public ResponseEntity PageIndexLessThanZeroException(PageIndexLessThanZeroException ex) {
         CustomResponseEntity result = CustomResponseEntity.builder()
                 .status(400)
                 .message("page가 0이하이거나 pagesize가 0이하입니다.")
@@ -18,5 +17,4 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.BAD_REQUEST);
     }
-
 }
