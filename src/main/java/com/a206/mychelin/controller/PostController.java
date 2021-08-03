@@ -33,15 +33,15 @@ public class PostController {
     @ApiOperation(value = "선택한 포스트를 가져온다.")
     @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
     @GetMapping("/{postId}")
-    public ResponseEntity load(@PathVariable int postId) {
-        return postService.getPostByPostId(postId);
+    public ResponseEntity load(@PathVariable int postId, HttpServletRequest httpRequest) {
+        return postService.getPostByPostId(postId, httpRequest);
     }
 
     @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
     @ApiImplicitParam(name = "userNickname", value = "사용자 닉네임")
     @GetMapping("/list/{userNickname}")
-    public ResponseEntity findPostsByUserId(@PathVariable String userNickname) {
-        return postService.findPostsByUserNickname(userNickname);
+    public ResponseEntity findPostsByUserId(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+        return postService.findPostsByUserNickname(userNickname, httpRequest);
     }
 
     @ApiOperation(value = "선택한 포스트를 삭제한다.")

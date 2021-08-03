@@ -2,6 +2,7 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.BookmarkService;
 import com.a206.mychelin.web.dto.Bookmark;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class BookmarkController {
 
     @ApiOperation(value = "사용자가 저장한 장소에 대한 북마크")
     @GetMapping("/places")
-    public ResponseEntity getPlaceBookmarks(HttpServletRequest httpServletRequest){
+    public ResponseEntity getPlaceBookmarks(HttpServletRequest httpServletRequest) {
         return bookmarkService.getPlaceBookmarks(httpServletRequest);
     }
 
@@ -29,17 +30,17 @@ public class BookmarkController {
     }
 
     @ApiOperation(value = "장소 북마크에 저장하기")
+    @ApiImplicitParam(name = "placeId", value = "장소 고유 id")
     @PutMapping("/places")
     public ResponseEntity addPlaceBookmark(@RequestBody Bookmark.PlaceRequest placeRequest, HttpServletRequest httpServletRequest) {
         return bookmarkService.addBookmarkPlace(placeRequest, httpServletRequest);
     }
 
     @ApiOperation(value = "맛집 리스트 북마크에 저장하기")
+    @ApiImplicitParam(name = "placelistId", value = "맛집 리스트 고유 id")
     @PutMapping("/lists")
     public ResponseEntity addPlacelistBookmark(@RequestBody Bookmark.PlacelistRequest placeListRequest, HttpServletRequest httpServletRequest) {
         return bookmarkService.addBookmarkPlacelist(placeListRequest, httpServletRequest);
     }
-
-
 
 }

@@ -3,8 +3,10 @@ package com.a206.mychelin.service;
 import com.a206.mychelin.domain.entity.BookmarkPlace;
 import com.a206.mychelin.domain.entity.BookmarkPlacelist;
 import com.a206.mychelin.domain.entity.Place;
+import com.a206.mychelin.domain.entity.PlaceList;
 import com.a206.mychelin.domain.repository.BookmarkListRepository;
 import com.a206.mychelin.domain.repository.BookmarkRepository;
+import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
@@ -29,6 +31,7 @@ public class BookmarkService {
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkListRepository bookmarkListRepository;
     private final PlaceRepository placeRepository;
+    private final PlaceListRepository placeListRepository;
 
     @Transactional
     public ResponseEntity addBookmarkPlace(@RequestBody Bookmark.PlaceRequest placeRequest, HttpServletRequest httpRequest) {
@@ -86,6 +89,14 @@ public class BookmarkService {
                     .message("로그인 후 이용해주세요")
                     .build();
 
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        }
+        Optional<PlaceList> checkPlaceList = placeListRepository.findById(placeListRequest.getPlacelistId());
+        if (!checkPlaceList.isPresent()) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재 하지 않는 리스트입니다.")
+                    .build();
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
         Optional<BookmarkPlacelist> item = bookmarkListRepository.findBookmarkPlacelistByUserIdAndPlacelistId(userId, placeListRequest.getPlacelistId());
@@ -171,7 +182,6 @@ public class BookmarkService {
         }
         ArrayList<Bookmark.PlacelistResponse> arr = new ArrayList<Bookmark.PlacelistResponse>();
         for (Object[] item : items) {
-            System.out.println(item[0] + " " + item[1] + " " + item[2] + " " + item[3] + " " + item[4]);
             String diff = TimestampToDateString.getPassedTime((Timestamp) item[4]);
             arr.add(Bookmark.PlacelistResponse.builder()
                     .placelistId((int) item[0])
@@ -183,7 +193,6 @@ public class BookmarkService {
         }
         customResponse = CustomResponseEntity.builder()
                 .status(200)
-
                 .message("북마크에 저장한 맛집 리스트를 가져왔습니다.")
                 .data(arr)
                 .build();

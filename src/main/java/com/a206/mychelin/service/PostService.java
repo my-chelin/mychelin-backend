@@ -76,11 +76,20 @@ public class PostService {
         return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    public ResponseEntity getPostByPostId(@PathVariable int postId) {
+    public ResponseEntity getPostByPostId(@PathVariable int postId, HttpServletRequest httpRequest) {
         List<Object[]> entity = postRepository.findPostInfoByPostId(postId);
+        String userId = TokenToId.check(httpRequest);
+        CustomResponseEntity customResponse;
+        if(userId == null) {
+            customResponse = CustomResponseEntity.builder()
+                    .status(401)
+                    .message("로그인 후 사용가능합니다.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        }
 
         if (entity.size() > 0) {
-            PostInfoResponse postInfo = extractPosts(entity).get(0);
+            PostInfoResponse postInfo = extractPosts(entity,userId).get(0);
 
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
@@ -136,10 +145,18 @@ public class PostService {
         return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
     }
 
-    public ResponseEntity findPostsByUserNickname(@PathVariable String userNickname) {
+    public ResponseEntity findPostsByUserNickname(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+        String userId = TokenToId.check(httpRequest);
+        if(userId == null) {
+            CustomResponseEntity customResponse = CustomResponseEntity.builder()
+                    .status(401)
+                    .message("로그인 후 사용해주세요.")
+                    .build();
+            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+        }
         System.out.println(userNickname);
         List<Object[]> posts = postRepository.findPostsByUserNicknameOrderByCreateDateDesc(userNickname);
-        ArrayList<PostInfoResponse> arr = extractPosts(posts);
+        ArrayList<PostInfoResponse> arr = extractPosts(posts,userId);
 
         CustomResponseEntity customResponse = CustomResponseEntity.builder()
                 .status(200)
@@ -154,7 +171,7 @@ public class PostService {
         String userId = TokenToId.check(httpRequest);
 
         List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId);
-        ArrayList<PostInfoResponse> arr = extractPosts(items);
+        ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
         if (items.size() == 0) {
             customResponseEntity = CustomResponseEntity.builder()
                     .status(200)
@@ -163,7 +180,7 @@ public class PostService {
             return new ResponseEntity(customResponseEntity, HttpStatus.OK);
         }
 
-        extractPosts(items);
+        extractPosts(items, userId);
         customResponseEntity = CustomResponseEntity.builder()
                 .status(200)
                 .message("포스트를 불러옵니다.")
@@ -172,9 +189,10 @@ public class PostService {
         return new ResponseEntity(customResponseEntity, HttpStatus.OK);
     }
 
-    private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts) {
+    private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
         ArrayList<PostInfoResponse> arr = new ArrayList<>();
         for (Object[] post : posts) {
+            Optional<PostLike> isLiked = postLikeRepository.findPostLikeByPostIdAndUserId((int) post[0], userId);
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
             List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
             ArrayList<CommentResponse> commArr = new ArrayList<>();
@@ -191,20 +209,37 @@ public class PostService {
                                 .build()
                 );
             }
-
-            arr.add(PostInfoResponse.builder()
-                    .postId((int) post[0])
-                    .userNickname((String) post[1])
-                    .userFollowerCnt(post[2])
-                    .content((String) post[3])
-                    .createDate(dateDiff)
-                    .likeCnt(post[5])
-                    .commentCnt(post[6])
-                    .placeId(post[7])
-                    .placelistId(post[8])
-                    .image((String) post[9])
-                    .comments(commArr)
-                    .build());
+            if (isLiked.isPresent()) {
+                arr.add(PostInfoResponse.builder()
+                        .postId((int) post[0])
+                        .userNickname((String) post[1])
+                        .userFollowerCnt(post[2])
+                        .content((String) post[3])
+                        .createDate(dateDiff)
+                        .likeCnt(post[5])
+                        .commentCnt(post[6])
+                        .placeId(post[7])
+                        .placelistId(post[8])
+                        .image((String) post[9])
+                        .comments(commArr)
+                        .liked(true)
+                        .build());
+            } else {
+                arr.add(PostInfoResponse.builder()
+                        .postId((int) post[0])
+                        .userNickname((String) post[1])
+                        .userFollowerCnt(post[2])
+                        .content((String) post[3])
+                        .createDate(dateDiff)
+                        .likeCnt(post[5])
+                        .commentCnt(post[6])
+                        .placeId(post[7])
+                        .placelistId(post[8])
+                        .image((String) post[9])
+                        .comments(commArr)
+                        .liked(false)
+                        .build());
+            }
         }
         return arr;
     }

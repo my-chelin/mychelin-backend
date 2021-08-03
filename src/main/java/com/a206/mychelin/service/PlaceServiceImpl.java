@@ -4,6 +4,7 @@ import com.a206.mychelin.domain.entity.Place;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PlaceAndStarRateByCoordinate;
+import com.a206.mychelin.web.dto.PlaceDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,14 @@ public class PlaceServiceImpl implements PlaceService {
 
     @Override
     public ResponseEntity getPlaceInfoById(String id) {
-        Optional<Place> placeObject = placeRepository.findPlacesById(Integer.parseInt(id));
+        Optional<Place> nowPlace = placeRepository.findPlacesById(Integer.parseInt(id));
 
         // 이 부분 Object는 나중에 객체로 변환
         ResponseEntity<CustomResponseEntity> result = null;
         HttpStatus resultHttpStatus;
         CustomResponseEntity req;
 
-        if (!placeObject.isPresent()) {
+        if (!nowPlace.isPresent()) {
             req = CustomResponseEntity.builder()
                     .status(400)
                     .message("식당 id가 존재하지 않습니다.")
@@ -34,18 +35,48 @@ public class PlaceServiceImpl implements PlaceService {
             resultHttpStatus = HttpStatus.BAD_REQUEST;
         } else {
             resultHttpStatus = HttpStatus.ACCEPTED;
-            HashMap<String, Object> hashMap = new HashMap<>();
-            hashMap.put("placeData", placeObject.get());
-
-            if (placeRepository.getStartRateById(id).isPresent()) {
-                hashMap.put("star_rate", placeRepository.getStartRateById(id).get());
+//            HashMap<String, Object> hashMap = new HashMap<>();
+            PlaceDto.PlaceResponse place;
+            Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.get().getId()));
+            if (starRate.isPresent()) {
+                place = PlaceDto.PlaceResponse.builder()
+                        .id(nowPlace.get().getId())
+                        .name(nowPlace.get().getName())
+                        .description(nowPlace.get().getDescription())
+                        .latitude(nowPlace.get().getLatitude())
+                        .longitude(nowPlace.get().getLongitude())
+                        .phone(nowPlace.get().getPhone())
+                        .location(nowPlace.get().getLocation())
+                        .operationHours(nowPlace.get().getOperationHours())
+                        .categoryId(nowPlace.get().getCategoryId())
+                        .image(nowPlace.get().getImage())
+                        .starRate(starRate.get())
+                        .build();
             } else {
-                hashMap.put("star_rate", null);
+                place = PlaceDto.PlaceResponse.builder()
+                        .id(nowPlace.get().getId())
+                        .name(nowPlace.get().getName())
+                        .description(nowPlace.get().getDescription())
+                        .latitude(nowPlace.get().getLatitude())
+                        .longitude(nowPlace.get().getLongitude())
+                        .phone(nowPlace.get().getPhone())
+                        .location(nowPlace.get().getLocation())
+                        .operationHours(nowPlace.get().getOperationHours())
+                        .categoryId(nowPlace.get().getCategoryId())
+                        .image(nowPlace.get().getImage())
+                        .build();
             }
+//            hashMap.put("placeData", placeObject.get());
+//
+//            if (placeRepository.getStartRateById(id).isPresent()) {
+//                hashMap.put("star_rate", placeRepository.getStartRateById(id).get());
+//            } else {
+//                hashMap.put("star_rate", null);
+//            }
             req = CustomResponseEntity.builder()
                     .status(200)
                     .message("식당을 찾았습니다.")
-                    .data(hashMap)
+                    .data(place)
                     .build();
         }
         return new ResponseEntity<Object>(req, resultHttpStatus);
@@ -55,26 +86,52 @@ public class PlaceServiceImpl implements PlaceService {
     public ResponseEntity getPlaceInfoByName(String name, int page, int pageSize) {
         long totalPageItemCnt = placeRepository.countByNameContains(name);
 
-        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
-        linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
-        linkedHashMap.put("nowPage", page);
-        linkedHashMap.put("nowPageSize", pageSize);
+        HashMap<String,Object> linkedHashMap = new LinkedHashMap<>();
 
-        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-        List<Place> placesArrayList = placeRepository.findPlacesByNameContainsOrderById(name, pageRequest);
-        List<HashMap<String, Object>> resultList = new ArrayList<>();
+        linkedHashMap.put("totalPageItemCnt",totalPageItemCnt);
+        linkedHashMap.put("totalPage",((totalPageItemCnt-1)/pageSize)+1);
+        linkedHashMap.put("nowPage",page);
+        linkedHashMap.put("nowPageSize",pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page-1, pageSize);
+        List<Place> placesArrayList = placeRepository.findPlacesByNameContainsOrderById(name,pageRequest);
+
+        ArrayList<PlaceDto.PlaceResponse> resultList = new ArrayList<>();
 
         for (Place nowPlace : placesArrayList) {
             HashMap<String, Object> hashMap = new LinkedHashMap<>();
-
-            if (placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).isPresent()) {
-                hashMap.put("star_rate", placeRepository.getStartRateById(String.valueOf(nowPlace.getId())).get());
+            Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.getId()));
+            if (starRate.isPresent()) {
+                resultList.add(PlaceDto.PlaceResponse.builder()
+                        .id(nowPlace.getId())
+                        .name(nowPlace.getName())
+                        .description(nowPlace.getDescription())
+                        .latitude(nowPlace.getLatitude())
+                        .longitude(nowPlace.getLongitude())
+                        .phone(nowPlace.getPhone())
+                        .location(nowPlace.getLocation())
+                        .operationHours(nowPlace.getOperationHours())
+                        .categoryId(nowPlace.getCategoryId())
+                        .image(nowPlace.getImage())
+                        .starRate(starRate.get())
+                        .build());
             } else {
-                hashMap.put("star_rate", null);
+                resultList.add(PlaceDto.PlaceResponse.builder()
+                        .id(nowPlace.getId())
+                        .name(nowPlace.getName())
+                        .description(nowPlace.getDescription())
+                        .latitude(nowPlace.getLatitude())
+                        .longitude(nowPlace.getLongitude())
+                        .phone(nowPlace.getPhone())
+                        .location(nowPlace.getLocation())
+                        .operationHours(nowPlace.getOperationHours())
+                        .categoryId(nowPlace.getCategoryId())
+                        .image(nowPlace.getImage())
+                        .build());
             }
-            hashMap.put("placeData", nowPlace);
-            resultList.add(hashMap);
+//            hashMap.put("placeData", nowPlace);
+//            resultList.add(hashMap);
+
         }
         linkedHashMap.put("data", resultList);
         CustomResponseEntity req = CustomResponseEntity.builder()

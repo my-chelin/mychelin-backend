@@ -13,6 +13,7 @@ public class PostInfoResponse {
     private Object userFollowerCnt;
     private String content;
     private String createDate;
+    private boolean liked;
     private Object likeCnt;
     private Object commentCnt;
     private Object placeId;
