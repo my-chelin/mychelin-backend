@@ -36,13 +36,11 @@ out/
 ### VS Code ###
 .vscode/
 
-### Configuration ###
-config/application.properties
+### Token Information ###
+/util/
 
 ### macOS ###
 .DS_Store
 
 ### properties ###
-application-email.properties
-application.yml
 application-credentials.properties

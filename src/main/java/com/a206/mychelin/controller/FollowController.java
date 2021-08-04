@@ -22,7 +22,14 @@ public class FollowController {
     @ApiImplicitParam(name = "userNickname", value = "팔로우하고자 하는 사용자 닉네임")
     @PostMapping("/request")
     public ResponseEntity addFollowingUser(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
-        return followService.addFollowingUser(followAskRequest, httpRequest);
+        return followService.follow(followAskRequest, httpRequest);
+    }
+
+    @ApiOperation(value = "언팔로우 요청 보내기")
+    @ApiImplicitParam(name = "userNickname", value = "언팔로우하고자 하는 사용자 닉네임")
+    @DeleteMapping("/request")
+    public ResponseEntity unfollow(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest request) {
+        return followService.unfollow(followAskRequest, request);
     }
 
     @ApiOperation(value = "팔로우 요청을 수락한다.")

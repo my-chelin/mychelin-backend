@@ -24,21 +24,25 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
 
-    //추가하려는 상대방 닉네임은 pathvariable로 넘기고 내 아이디는 httpRequest에서 받아온다.
     @Transactional
-    public ResponseEntity addFollowingUser(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
-        String userId = TokenToId.check(httpRequest);
-        Optional<User> user = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
-        String getFollowingId = user.get().getId();
-
+    public ResponseEntity follow(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest request) {
+        CustomResponseEntity customResponseEntity;
+        String userId = TokenToId.check(request);
+        Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
+        if (!optionalUser.isPresent()) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 유저입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        }
+        String getFollowingId = optionalUser.get().getId();
         Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(userId, getFollowingId);
 
         if (!findFollow.isPresent()) { // 두 유저 간의 팔로우 내역이 없다면 새로 요청받을 수 있도록 생성.
             Follow followRequest = Follow.builder().userId(userId).followingId(getFollowingId).build();
             followRepository.save(followRequest);
-
-            customResponse = CustomResponseEntity.builder()
+            customResponseEntity = CustomResponseEntity.builder()
                     .status(200)
                     .message("팔로우 신청이 전송됐습니다.")
                     .build();
@@ -46,15 +50,15 @@ public class FollowService {
             /*
             상대방에게 알림 보내는 로직이 필요하다면 여기서 처리할 것.
             */
-            return new ResponseEntity(customResponse, HttpStatus.OK);
-        } else { // 기존에 요청이 존재함.
-            customResponse = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("이미 팔로우 요청이 전송되었습니다.")
-                    .build();
-
-            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(customResponseEntity, HttpStatus.OK);
         }
+        // 팔로우 내역이 있다면 팔로우 요청 취소를 한다.
+        followRepository.deleteAllByUserIdAndFollowingIdAndAccept(userId, getFollowingId, false);
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message("팔로우 요청이 취소되었습니다.")
+                .build();
+        return new ResponseEntity(customResponseEntity, HttpStatus.BAD_REQUEST);
     }
 
     @Transactional
@@ -107,7 +111,6 @@ public class FollowService {
                     .message("팔로우 신청 내역이 없습니다.")
                     .build();
             return new ResponseEntity(customResponse, HttpStatus.NOT_ACCEPTABLE);
-
         }
 
         customResponse = CustomResponseEntity.builder()
@@ -188,7 +191,24 @@ public class FollowService {
         return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
     }
 
-    //언팔하기 - 유저가 더 이상 followingId를 팔로우하지 않는다. => userId, followingId, false로 바꾸기
-
-    //
+    public ResponseEntity unfollow(FollowAskRequest followAskRequest, HttpServletRequest request) {
+        System.out.println(followAskRequest);
+        System.out.println(followAskRequest.getUserNickname());
+        CustomResponseEntity customResponseEntity;
+        Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname());
+        if (!optionalUser.isPresent()) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(400)
+                    .message("존재하지 않는 유저입니다.")
+                    .build();
+            return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        }
+        String userId = optionalUser.get().getId();
+        followRepository.deleteAllByUserIdAndFollowingIdAndAccept(TokenToId.check(request), userId, true);
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message("언팔로우 되었습니다.")
+                .build();
+        return new ResponseEntity<CustomResponseEntity>(customResponseEntity, HttpStatus.OK);
+    }
 }

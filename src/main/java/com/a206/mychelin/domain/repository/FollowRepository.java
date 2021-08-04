@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -26,4 +27,7 @@ public interface FollowRepository extends JpaRepository<Follow, FollowPK> {
 
     @Query(value = "select nickname, profile_image from user where id in (select user_id from follow f where following_id = :following_id and accept = false);", nativeQuery = true)
     ArrayList<String[]> findUserIdByUserId(@Param("following_id") String followingId);
+
+    @Transactional
+    void deleteAllByUserIdAndFollowingIdAndAccept(String userId, String followingId, boolean accept);
 }

@@ -66,7 +66,7 @@ public class PlaceReviewController {
         return placeReviewService.addPlaceReviews(userId, review);
     }
 
-    @ApiOperation(value = "식당 리뷰 수정 ")
+    @ApiOperation(value = "식당 리뷰 수정")
     @PutMapping
     public ResponseEntity editPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewEditRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
