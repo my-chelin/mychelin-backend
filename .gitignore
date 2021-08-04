@@ -36,9 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### Token Information ###
-/util/
-
 ### macOS ###
 .DS_Store
 

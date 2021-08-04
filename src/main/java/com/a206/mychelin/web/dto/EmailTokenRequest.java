@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class EmailTokenRequest {
     @ApiModelProperty(example = "이메일")
     private String email;
+
     @ApiModelProperty(example = "인증 번호")
     private String token;
 }

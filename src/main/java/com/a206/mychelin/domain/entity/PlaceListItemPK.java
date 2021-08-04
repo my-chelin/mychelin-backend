@@ -16,7 +16,7 @@ import java.io.Serializable;
 @Embeddable
 public class PlaceListItemPK implements Serializable {
     @Column(name = "placelist_id")
-    private int placelistId;
+    private int placeListId;
 
     @Column(name = "place_id")
     private int placeId;

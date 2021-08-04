@@ -36,5 +36,4 @@ public class UserDto {
     public static class BioUpdateRequest {
         private String bio;
     }
-
 }

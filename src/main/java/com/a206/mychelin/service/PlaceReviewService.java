@@ -68,15 +68,15 @@ public class PlaceReviewService {
             for (Object[] item : items) {
                 String format = formatter.format(item[4]);
                 arr.add(MyPlaceReviewResponse.builder()
-                        .review_id((int) item[0])
-                        .star_rate((float) item[1])
+                        .reviewId((int) item[0])
+                        .starRate((float) item[1])
                         .content((String) item[2])
-                        .user_id((String) item[3])
-                        .craete_date(format)
-                        .review_image((String) item[5])
-                        .place_id((int) item[6])
-                        .place_name((String) item[7])
-                        .place_image((String) item[8])
+                        .userId((String) item[3])
+                        .craeteDate(format)
+                        .reviewImage((String) item[5])
+                        .placeId((int) item[6])
+                        .placeName((String) item[7])
+                        .placeImage((String) item[8])
                         .build());
             }
             hashMap.put("reviews", arr);
@@ -113,9 +113,9 @@ public class PlaceReviewService {
 
             Optional<Float> totalStarRate = placeReviewRepository.getPlaceReviewsAVGByPlaceId(placeId);
             if (totalStarRate.isPresent()) {
-                hashMap.put("total_star_rate", totalStarRate.get());
+                hashMap.put("totalStarRate", totalStarRate.get());
             } else {
-                hashMap.put("total_star_rate", null);
+                hashMap.put("totalStarRate", null);
             }
 
             PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
@@ -126,14 +126,14 @@ public class PlaceReviewService {
             for (Object[] item : items) {
                 String format = formatter.format(item[4]);
                 arr.add(PlaceReviewAndUserResponse.builder()
-                        .review_id((int) item[0])
-                        .star_rate((float) item[1])
+                        .reviewId((int) item[0])
+                        .starRate((float) item[1])
                         .content((String) item[2])
-                        .user_id((String) item[3])
-                        .craete_date(format)
-                        .review_image((String) item[5])
-                        .user_nickname((String) item[6])
-                        .user_profile_image((String) item[7])
+                        .userId((String) item[3])
+                        .craeteDate(format)
+                        .reviewImage((String) item[5])
+                        .userNickname((String) item[6])
+                        .userProfileImage((String) item[7])
                         .build());
             }
             hashMap.put("reviews", arr);
@@ -155,9 +155,9 @@ public class PlaceReviewService {
             message = "해당 유저가 존재하지 않습니다.";
         } else {
             Review newReview = Review.builder()
-                    .star_rate(review.getStar_rate())
+                    .starRate(review.getStarRate())
                     .content(review.getContent())
-                    .placeId(review.getPlace_id())
+                    .placeId(review.getPlaceId())
                     .userId(userId)
                     .image(review.getImage())
                     .build();
@@ -187,7 +187,7 @@ public class PlaceReviewService {
             message = "해당 유저가 존재하지 않습니다.";
         } else if (!findReview.get().getUserId().equals(userId)) {
             message = "리뷰 작성한 사람과 수정하려는 사람이 일치하지 않습니다.";
-        } else if (findReview.get().getPlaceId() != review.getPlace_id()) {
+        } else if (findReview.get().getPlaceId() != review.getPlaceId()) {
             message = "맛집 장소가 일치하지 않습니다.";
         } else {
             findReview.get().editReview(review);

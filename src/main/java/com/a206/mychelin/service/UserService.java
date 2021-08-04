@@ -310,7 +310,7 @@ public class UserService {
     public ResponseEntity updateBio(@RequestBody UserDto.BioUpdateRequest updateRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
-        if(userId == null) {
+        if (userId == null) {
             customResponse = CustomResponseEntity.builder()
                     .status(401)
                     .message("로그인 후 사용가능합니다.")
@@ -328,7 +328,7 @@ public class UserService {
         userRepository.findAll();
         customResponse = CustomResponseEntity.builder()
                 .status(200)
-                .message("바이오가 변경되었습니다.")
+                .message("한줄 소개가 변경되었습니다.")
                 .data(updateRequest.getBio())
                 .build();
         return new ResponseEntity(customResponse, HttpStatus.OK);
@@ -338,7 +338,7 @@ public class UserService {
     public ResponseEntity updateNickname(@RequestBody UserDto.NicknameUpdateRequest updateRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
-        if(userId == null) {
+        if (userId == null) {
             customResponse = CustomResponseEntity.builder()
                     .status(401)
                     .message("로그인 후 사용가능합니다.")
@@ -368,7 +368,6 @@ public class UserService {
                 .status(400)
                 .message("이미 사용 중인 닉네임입니다.")
                 .build();
-
         return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
     }
 }

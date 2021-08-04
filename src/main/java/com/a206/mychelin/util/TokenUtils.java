@@ -5,6 +5,9 @@ import io.jsonwebtoken.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
@@ -16,8 +19,14 @@ import java.util.Map;
 
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class TokenUtils {
-    private static final String secretKey = "ssafy_seoul_a206_jkj_oi";
+    private static String SECRET_KEY_STATIC;
+
+    @Value("${token.secret-key}")
+    public void setSecretKey(String secretKey) {
+        TokenUtils.SECRET_KEY_STATIC = secretKey;
+    }
 
     // 토큰 최종 생성
     public static String generateJwtToken(User user) {
@@ -25,13 +34,14 @@ public class TokenUtils {
                 .setSubject(user.getId())
                 .setHeader(createHeader())
                 .setClaims(createClaims(user))
-                .setExpiration(createExpireDateForOneYear())
+                .setExpiration(createExpireDateForOneMonth())
                 .signWith(SignatureAlgorithm.HS256, createSigningKey());
         return builder.compact();
     }
 
     // 토큰이 유효한지 확인
     public static boolean isValidToken(String token) {
+        System.out.println("secretKey = " + SECRET_KEY_STATIC);
         try {
             Claims claims = getClaimsFormToken(token);
             log.info("expireTime : " + claims.getExpiration());
@@ -55,7 +65,7 @@ public class TokenUtils {
     }
 
     // 만료 날짜 생성
-    private static Date createExpireDateForOneYear() {
+    private static Date createExpireDateForOneMonth() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 30);
         return c.getTime();
@@ -79,13 +89,13 @@ public class TokenUtils {
 
     // jwt signature 생성
     private static Key createSigningKey() {
-        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(secretKey);
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY_STATIC);
         return new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
     }
 
     // jwt에서 claims(payload) 부분 가져오기
     public static Claims getClaimsFormToken(String token) {
-        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(secretKey))
+        return Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY_STATIC))
                 .parseClaimsJws(token).getBody();
     }
 

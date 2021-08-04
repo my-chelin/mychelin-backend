@@ -12,13 +12,13 @@ import lombok.ToString;
 @ToString
 public class ReviewRequest {
     @ApiModelProperty(example = "평점")
-    private float star_rate;
+    private float starRate;
 
     @ApiModelProperty(example = "리뷰 내용")
     private String content;
 
     @ApiModelProperty(example = "맛집 아이디")
-    private int place_id;
+    private int placeId;
 
     @ApiModelProperty(example = "이미지, 없으면 null")
     private String image;

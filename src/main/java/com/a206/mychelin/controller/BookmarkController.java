@@ -26,7 +26,7 @@ public class BookmarkController {
     @ApiOperation(value = "사용자가 저장한 맛집 리스트에 대한 북마크")
     @GetMapping("/lists")
     public ResponseEntity getPlaceListBookmarks(HttpServletRequest httpServletRequest) {
-        return bookmarkService.getPlacelistBookmarks(httpServletRequest);
+        return bookmarkService.getPlaceListBookmarks(httpServletRequest);
     }
 
     @ApiOperation(value = "장소 북마크에 저장하기")
@@ -37,10 +37,9 @@ public class BookmarkController {
     }
 
     @ApiOperation(value = "맛집 리스트 북마크에 저장하기")
-    @ApiImplicitParam(name = "placelistId", value = "맛집 리스트 고유 id")
+    @ApiImplicitParam(name = "placeListId", value = "맛집 리스트 고유 id")
     @PutMapping("/lists")
-    public ResponseEntity addPlacelistBookmark(@RequestBody Bookmark.PlacelistRequest placeListRequest, HttpServletRequest httpServletRequest) {
-        return bookmarkService.addBookmarkPlacelist(placeListRequest, httpServletRequest);
+    public ResponseEntity addPlaceListBookmark(@RequestBody Bookmark.PlaceListRequest placeListRequest, HttpServletRequest httpServletRequest) {
+        return bookmarkService.addBookmarkPlaceList(placeListRequest, httpServletRequest);
     }
-
 }

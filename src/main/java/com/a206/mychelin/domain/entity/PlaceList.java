@@ -23,7 +23,7 @@ public class PlaceList {
 
     private Date createDate;
 
-    private String user_id;
+    private String userId;
 
     public void clear() {
         id = 0;

@@ -100,10 +100,10 @@ public class PlaceListService {
             resultList.add(PlaceListByTitle.builder()
                     .id((int) item[0])
                     .title((String) item[1])
-                    .create_date(format)
-                    .user_id((String) item[3])
+                    .createDate(format)
+                    .userId((String) item[3])
                     .nickname((String) item[4])
-                    .total_item_cnt((BigInteger) item[5])
+                    .totalItemCnt((BigInteger) item[5])
                     .build());
         }
 
@@ -133,7 +133,6 @@ public class PlaceListService {
         long totalPageItemCnt = placeListRepository.getPlaceListItemsNumById(listId);
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-
         linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
         linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
         linkedHashMap.put("nowPage", page);
@@ -152,7 +151,7 @@ public class PlaceListService {
             }
 
             arr.add(PlaceListItemDetail.builder()
-                    .placelistId((int) item[0])
+                    .placeListId((int) item[0])
                     .placeId((int) item[1])
                     .contributorId((String) item[2])
                     .name((String) item[3])
@@ -162,13 +161,13 @@ public class PlaceListService {
                     .phone((String) item[7])
                     .location((String) item[8])
                     .opertaionHours((String) item[9])
-                    .category_id((int) item[10])
+                    .categoryId((int) item[10])
                     .image((String) item[11])
-                    .star_rate(starRate)
+                    .starRate(starRate)
                     .build()
             );
         }
-        linkedHashMap.put("place_list_item", arr);
+        linkedHashMap.put("placeListItem", arr);
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message(listId + "의 맛집 정보를 가져오는데 성공했습니다.")
@@ -190,7 +189,6 @@ public class PlaceListService {
 
     public boolean checkPlaceId(int placeId) {
         Optional<Place> place = placeRepository.findPlacesById(placeId);
-
         if (!place.isPresent()) {
             status = 404;
             message = "식당 " + placeId + "가 존재하지 않습니다.";
@@ -200,7 +198,7 @@ public class PlaceListService {
     }
 
     public boolean checkPlaceIntoPlaceList(int listId, int placeId) {
-        PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
+        PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placeListId(listId).build();
         Optional<PlaceListItem> placeListItem = placeListItemRepository.findByPlaceListItemPK(placeListItemPK);
 
         if (placeListItem.isPresent()) {
@@ -216,9 +214,8 @@ public class PlaceListService {
 
     public ResponseEntity insertPlaceListItem(String userId, int listId, int placeId) {
         init();
-
         if (checkPlaceListId(listId) && checkPlaceId(placeId) && !checkPlaceIntoPlaceList(listId, placeId)) {
-            PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
+            PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placeListId(listId).build();
             // 식당에 추가 가능
             PlaceListItem InsertPlaceListItem = PlaceListItem.builder()
                     .placeListItemPK(placeListItemPK)
@@ -241,7 +238,7 @@ public class PlaceListService {
     public ResponseEntity deletePlaceListItem(String userId, int listId, int placeId) {
         init();
         if (checkPlaceListId(listId) && checkPlaceId(placeId) && checkPlaceIntoPlaceList(listId, placeId)) {
-            PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placelistId(listId).build();
+            PlaceListItemPK placeListItemPK = PlaceListItemPK.builder().placeId(placeId).placeListId(listId).build();
 
             Optional<PlaceListItem> placeListItem = placeListItemRepository.findByPlaceListItemPKAndContributorId(placeListItemPK, userId);
             if (!placeListItem.isPresent()) {
@@ -300,17 +297,17 @@ public class PlaceListService {
         for (Object[] item : list) {
             String format = formatter.format(item[5]);
             placeListITemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
-                    .placelist_id((int) item[0])
+                    .placeListId((int) item[0])
                     .title((String) item[1])
-                    .contributor_id((String) item[2])
-                    .contrubute_item_cnt((BigInteger) item[3])
-                    .total_item_cnt((BigInteger) item[4])
-                    .create_date(format)
+                    .contributorId((String) item[2])
+                    .contrubuteItemCnt((BigInteger) item[3])
+                    .totalItemCnt((BigInteger) item[4])
+                    .createDate(format)
                     .build()
             );
         }
 
-        linkedHashMap.put("place_list_item", placeListITemsByNicknameResponses);
+        linkedHashMap.put("placeListItem", placeListITemsByNicknameResponses);
         result = CustomResponseEntity.builder()
                 .status(200)
                 .message(nickname + "의 맛집 정보를 가져오는데 성공했습니다.")

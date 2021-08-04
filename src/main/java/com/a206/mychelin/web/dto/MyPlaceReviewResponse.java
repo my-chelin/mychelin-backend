@@ -8,13 +8,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MyPlaceReviewResponse {
-    private int review_id;
-    private float star_rate;
+    private int reviewId;
+    private float starRate;
     private String content;
-    private String user_id;
-    private String craete_date;
-    private String review_image;
-    private int place_id;
-    private String place_name;
-    private String place_image;
+    private String userId;
+    private String craeteDate;
+    private String reviewImage;
+    private int placeId;
+    private String placeName;
+    private String placeImage;
 }

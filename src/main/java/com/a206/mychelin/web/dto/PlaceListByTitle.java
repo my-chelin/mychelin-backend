@@ -14,8 +14,8 @@ import java.math.BigInteger;
 public class PlaceListByTitle {
     private int id;
     private String title;
-    private String create_date;
-    private String user_id;
+    private String createDate;
+    private String userId;
     private String nickname;
-    private BigInteger total_item_cnt;
+    private BigInteger totalItemCnt;
 }

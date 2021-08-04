@@ -80,7 +80,7 @@ public class BookmarkService {
     }
 
     @Transactional
-    public ResponseEntity addBookmarkPlacelist(Bookmark.PlacelistRequest placeListRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity addBookmarkPlaceList(Bookmark.PlaceListRequest placeListRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -91,7 +91,7 @@ public class BookmarkService {
 
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
-        Optional<PlaceList> checkPlaceList = placeListRepository.findById(placeListRequest.getPlacelistId());
+        Optional<PlaceList> checkPlaceList = placeListRepository.findById(placeListRequest.getPlaceListId());
         if (!checkPlaceList.isPresent()) {
             customResponse = CustomResponseEntity.builder()
                     .status(400)
@@ -99,11 +99,11 @@ public class BookmarkService {
                     .build();
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
-        Optional<BookmarkPlacelist> item = bookmarkListRepository.findBookmarkPlacelistByUserIdAndPlacelistId(userId, placeListRequest.getPlacelistId());
+        Optional<BookmarkPlacelist> item = bookmarkListRepository.findBookmarkPlacelistByUserIdAndPlacelistId(userId, placeListRequest.getPlaceListId());
         if (!item.isPresent()) {
             BookmarkPlacelist bookmarkPlacelist = BookmarkPlacelist.builder()
                     .userId(userId)
-                    .placelistId(placeListRequest.getPlacelistId())
+                    .placelistId(placeListRequest.getPlaceListId())
                     .build();
 
             bookmarkListRepository.save(bookmarkPlacelist);
@@ -144,7 +144,6 @@ public class BookmarkService {
         }
         ArrayList<Bookmark.PlaceResponse> arr = new ArrayList<>();
         for (Object[] item : items) {
-//            Bookmark.PlaceInfo bookmark = new Bookmark.PlaceInfo( id = item[1], userId = userId,  );
             arr.add(Bookmark.PlaceResponse.builder()
                     .placeId((int) item[0])
                     .placeName((String) item[1])
@@ -162,7 +161,7 @@ public class BookmarkService {
         return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity getPlacelistBookmarks(HttpServletRequest httpRequest) {
+    public ResponseEntity getPlaceListBookmarks(HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -180,13 +179,13 @@ public class BookmarkService {
                     .build();
             return new ResponseEntity(customResponse, HttpStatus.OK);
         }
-        ArrayList<Bookmark.PlacelistResponse> arr = new ArrayList<Bookmark.PlacelistResponse>();
+        ArrayList<Bookmark.PlaceListResponse> arr = new ArrayList<Bookmark.PlaceListResponse>();
         for (Object[] item : items) {
             String diff = TimestampToDateString.getPassedTime((Timestamp) item[4]);
-            arr.add(Bookmark.PlacelistResponse.builder()
-                    .placelistId((int) item[0])
+            arr.add(Bookmark.PlaceListResponse.builder()
+                    .placeListId((int) item[0])
                     .userNickname((String) item[1])
-                    .placelistName((String) item[2])
+                    .placeListName((String) item[2])
                     .placeCnt(item[3])
                     .addDate(diff)
                     .build());
@@ -198,6 +197,4 @@ public class BookmarkService {
                 .build();
         return new ResponseEntity(customResponse, HttpStatus.OK);
     }
-
-
 }

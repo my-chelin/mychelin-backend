@@ -9,9 +9,10 @@ import lombok.RequiredArgsConstructor;
 public class PostLikeRequest {
     private int postId;
     private String userId;
+
     @Builder
-    private PostLikeRequest(int postId, String userId){
+    private PostLikeRequest(int postId, String userId) {
         this.postId = postId;
         this.userId = userId;
-    };
+    }
 }

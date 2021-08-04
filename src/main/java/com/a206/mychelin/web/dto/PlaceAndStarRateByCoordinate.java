@@ -18,8 +18,8 @@ public class PlaceAndStarRateByCoordinate {
     private float longitude;
     private String phone;
     private String location;
-    private String operation_hours;
-    private int category_id;
+    private String operationHours;
+    private int categoryId;
     private String image;
-    private Double star_rate;
+    private Double starRate;
 }

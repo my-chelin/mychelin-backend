@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 public class PostUploadRequest {
     private String content;
     private Integer placeId;
-    private Integer placelistId;
+    private Integer placeListId;
 }

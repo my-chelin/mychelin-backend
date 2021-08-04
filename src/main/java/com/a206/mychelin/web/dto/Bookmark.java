@@ -28,7 +28,7 @@ public class Bookmark {
     @Builder
     public static class PlaceListInfo {
         private Info info;
-        private int placelistId;
+        private int placeListId;
     }
 
     @Getter
@@ -43,8 +43,8 @@ public class Bookmark {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class PlacelistRequest {
-        private int placelistId;
+    public static class PlaceListRequest {
+        private int placeListId;
     }
 
     @Getter
@@ -61,10 +61,10 @@ public class Bookmark {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class PlacelistResponse {
-        private int placelistId;
+    public static class PlaceListResponse {
+        private int placeListId;
         private String userNickname;
-        private String placelistName;
+        private String placeListName;
         private Object placeCnt;
         private String addDate;
     }

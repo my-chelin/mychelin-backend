@@ -14,7 +14,6 @@ public class GlobalExceptionHandler {
                 .status(400)
                 .message("page가 0이하이거나 pagesize가 0이하입니다.")
                 .build();
-
         return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.BAD_REQUEST);
     }
 }

@@ -13,14 +13,14 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/user/profile/{nickname}");
         tokenRequiredPathList.add("/user/changepwd");
         tokenRequiredPathList.add("/user/delete");
-        tokenRequiredPathList.add("/placelist");
-        tokenRequiredPathList.add("/placelist/listitems/items");
-        tokenRequiredPathList.add("/post/upload");
-        tokenRequiredPathList.add("/place/review");
+        tokenRequiredPathList.add("/user/profile/image");
         tokenRequiredPathList.add("/follow/request");
         tokenRequiredPathList.add("/follow/requestList");
-        tokenRequiredPathList.add("/user/profile/image");
-        tokenRequiredPathList.add("place/review/image/{reviewId}");
+        tokenRequiredPathList.add("/post/upload");
+        tokenRequiredPathList.add("/place/review");
+        tokenRequiredPathList.add("/place/review/image/{reviewId}");
+        tokenRequiredPathList.add("/placelist");
+        tokenRequiredPathList.add("/placelist/listitems/items");
     }
 
     public static AuthorizationCheck getObject() {

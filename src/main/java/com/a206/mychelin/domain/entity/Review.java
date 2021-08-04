@@ -21,7 +21,7 @@ public class Review {
     @Id
     private int id;
 
-    private float star_rate;
+    private float starRate;
 
     private String content;
 
@@ -34,7 +34,7 @@ public class Review {
     private String image;
 
     public void editReview(ReviewEditRequest reviewEditRequest) {
-        this.star_rate = reviewEditRequest.getStar_rate();
+        this.starRate = reviewEditRequest.getStarRate();
         this.content = reviewEditRequest.getContent();
         this.createDate = new Date();
         this.image = reviewEditRequest.getImage();

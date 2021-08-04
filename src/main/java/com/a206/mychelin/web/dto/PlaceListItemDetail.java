@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class PlaceListItemDetail {
-    private int placelistId;
+    private int placeListId;
     private int placeId;
     private String contributorId;
     private String name;
@@ -18,7 +18,7 @@ public class PlaceListItemDetail {
     private String phone;
     private String location;
     private String opertaionHours;
-    private int category_id;
+    private int categoryId;
     private String image;
-    private Double star_rate;
+    private Double starRate;
 }

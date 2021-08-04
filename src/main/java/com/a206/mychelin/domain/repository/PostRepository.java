@@ -28,13 +28,13 @@ public interface PostRepository extends JpaRepository<Post, String> {
     int deletePostById(int id);
 
     @Query(value = "SELECT * FROM place p WHERE p.id = ?1", nativeQuery = true)
-    Place getPlaceInfoByPlaceId(int place_id);
+    Place getPlaceInfoByPlaceId(int placeId);
 
     @Query(value = "SELECT * FROM placelist pl WHERE e.place_id = ?1", nativeQuery = true)
-    PlaceList getPlaceListInfoByPlaceListId(int placelist_id);
+    PlaceList getPlaceListInfoByPlaceListId(int placeListId);
 
     @Query(value = "INSERT INTO post (user_id, content) VALUES (:user_id, :content)", nativeQuery = true)
-    Optional<Post> saveText(@Param("user_id") String user_id, @Param("content") String content);
+    Optional<Post> saveText(@Param("user_id") String userId, @Param("content") String content);
 
     @Query(value = "select p.id, u.nickname, ifnull ( (select count(user_id) from follow f where f.following_id = u.id and f.accept = true),0) , p.content, p.create_date, ifnull ((select count(user_id) from post_like where p.id = post_id and user_id is not null group by post_id), 0) ,(select count(message) from comment where p.id = comment.post_id ), p.place_id, p.placelist_id , (select pi.image from post_image pi where pi.post_id = p.id)" +
             "from user u join post p where p.user_id = u.id and u.id in (select following_id from follow where user_id = :userId) group by p.id order by p.create_date desc", nativeQuery = true)

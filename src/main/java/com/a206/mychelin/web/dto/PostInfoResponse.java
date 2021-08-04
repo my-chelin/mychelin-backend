@@ -17,7 +17,7 @@ public class PostInfoResponse {
     private Object likeCnt;
     private Object commentCnt;
     private Object placeId;
-    private Object placelistId;
+    private Object placeListId;
     private String image;
     private ArrayList<CommentResponse> comments;
 }

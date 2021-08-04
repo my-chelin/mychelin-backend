@@ -16,6 +16,4 @@ public interface BookmarkListRepository extends JpaRepository<BookmarkPlacelist,
 
     @Query(value = "select p.id, p.name, p.description, p.location, p.image from bookmark_place bp join place p where bp.place_id = p.id and bp.user_id = :userId", nativeQuery = true)
     List<Object[]> findBookmarkPlacelistsByUserId(String userId);
-
-
 }

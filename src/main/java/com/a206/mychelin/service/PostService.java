@@ -34,7 +34,7 @@ public class PostService {
                 .userId(userId)
                 .content(postRequest.getContent())
                 .placeId(postRequest.getPlaceId())
-                .placelistId(postRequest.getPlacelistId())
+                .placeListId(postRequest.getPlaceListId())
                 .build();
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
@@ -59,9 +59,7 @@ public class PostService {
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
         Post post = tempPost.get();
-        System.out.println(post.toString());
         if (userId.equals(post.getUserId())) {
-            System.out.println("작성자 확인");
             post.update(postUpdateRequest.getContent());
             customResponse = CustomResponseEntity.builder()
                     .status(200)
@@ -80,7 +78,7 @@ public class PostService {
         List<Object[]> entity = postRepository.findPostInfoByPostId(postId);
         String userId = TokenToId.check(httpRequest);
         CustomResponseEntity customResponse;
-        if(userId == null) {
+        if (userId == null) {
             customResponse = CustomResponseEntity.builder()
                     .status(401)
                     .message("로그인 후 사용가능합니다.")
@@ -89,8 +87,7 @@ public class PostService {
         }
 
         if (entity.size() > 0) {
-            PostInfoResponse postInfo = extractPosts(entity,userId).get(0);
-
+            PostInfoResponse postInfo = extractPosts(entity, userId).get(0);
             CustomResponseEntity customResponseEntity
                     = CustomResponseEntity.builder()
                     .status(200)
@@ -104,7 +101,7 @@ public class PostService {
                 .status(400)
                 .message("게시글을 불러오지 못했습니다.")
                 .build();
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(customResponseEntity, HttpStatus.BAD_REQUEST);
     }
 
     @Transactional
@@ -147,16 +144,15 @@ public class PostService {
 
     public ResponseEntity findPostsByUserNickname(@PathVariable String userNickname, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
-        if(userId == null) {
+        if (userId == null) {
             CustomResponseEntity customResponse = CustomResponseEntity.builder()
                     .status(401)
                     .message("로그인 후 사용해주세요.")
                     .build();
             return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
         }
-        System.out.println(userNickname);
         List<Object[]> posts = postRepository.findPostsByUserNicknameOrderByCreateDateDesc(userNickname);
-        ArrayList<PostInfoResponse> arr = extractPosts(posts,userId);
+        ArrayList<PostInfoResponse> arr = extractPosts(posts, userId);
 
         CustomResponseEntity customResponse = CustomResponseEntity.builder()
                 .status(200)
@@ -219,7 +215,7 @@ public class PostService {
                         .likeCnt(post[5])
                         .commentCnt(post[6])
                         .placeId(post[7])
-                        .placelistId(post[8])
+                        .placeListId(post[8])
                         .image((String) post[9])
                         .comments(commArr)
                         .liked(true)
@@ -234,7 +230,7 @@ public class PostService {
                         .likeCnt(post[5])
                         .commentCnt(post[6])
                         .placeId(post[7])
-                        .placelistId(post[8])
+                        .placeListId(post[8])
                         .image((String) post[9])
                         .comments(commArr)
                         .liked(false)
@@ -264,9 +260,7 @@ public class PostService {
 
             return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
         }
-        System.out.println(">>>>>> " + post.get().getContent());
         Optional<PostLike> postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postLikeRequest.getPostId(), userId);
-        System.out.println(userId + "  " + postLikeRequest.getPostId());
         if (!postLike.isPresent()) { // 없으면 좋아요 추가
             PostLike newLike = PostLike.builder()
                     .postId(postLikeRequest.getPostId())
@@ -291,7 +285,6 @@ public class PostService {
                 .status(200)
                 .message("좋아요가 취소되었습니다.")
                 .build();
-
         return new ResponseEntity(customResponse, HttpStatus.OK);
     }
 }

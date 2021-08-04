@@ -12,10 +12,10 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @Builder
 public class PlaceListITemsByNicknameResponse {
-    private int placelist_id;
+    private int placeListId;
     private String title;
-    private String contributor_id;
-    private BigInteger contrubute_item_cnt;
-    private BigInteger total_item_cnt;
-    private String create_date;
+    private String contributorId;
+    private BigInteger contrubuteItemCnt;
+    private BigInteger totalItemCnt;
+    private String createDate;
 }

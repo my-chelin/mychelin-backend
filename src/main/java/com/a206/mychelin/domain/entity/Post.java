@@ -18,11 +18,11 @@ import java.util.Date;
 public class Post {
 
     @Builder
-    public Post(String userId, String content, Integer placeId, Integer placelistId) {
+    public Post(String userId, String content, Integer placeId, Integer placeListId) {
         this.userId = userId;
         this.content = content;
         this.placeId = placeId;
-        this.placelistId = placelistId;
+        this.placeListId = placeListId;
     }
 
     @Id
@@ -42,7 +42,7 @@ public class Post {
     private Integer placeId;
 
     @Column(name = "placelist_id", nullable = true)
-    private Integer placelistId;
+    private Integer placeListId;
 
     public void update(String content) {
         this.content = content;
