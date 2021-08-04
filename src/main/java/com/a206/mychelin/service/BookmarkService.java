@@ -34,7 +34,7 @@ public class BookmarkService {
     private final PlaceListRepository placeListRepository;
 
     @Transactional
-    public ResponseEntity addBookmarkPlace(@RequestBody Bookmark.PlaceRequest placeRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> addBookmarkPlace(@RequestBody Bookmark.PlaceRequest placeRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -42,8 +42,7 @@ public class BookmarkService {
                     .status(400)
                     .message("로그인 후 이용해주세요")
                     .build();
-
-            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
         }
 
         int placeId = placeRequest.getPlaceId();
@@ -53,7 +52,7 @@ public class BookmarkService {
                     .status(400)
                     .message("존재하지 않는 장소입니다.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
         }
 
         Optional<BookmarkPlace> item = bookmarkRepository.findBookmarkPlaceByUserIdAndPlaceId(userId, placeId);
@@ -67,7 +66,7 @@ public class BookmarkService {
                     .status(200)
                     .message("장소를 북마크로 저장하였습니다.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.OK);
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
         }
         BookmarkPlace bookmark = new BookmarkPlace(item.get().getId(), userId, item.get().getPlaceId(), item.get().getAddDate());
         bookmarkRepository.delete(bookmark);
@@ -75,12 +74,11 @@ public class BookmarkService {
                 .status(200)
                 .message("북마크를 해제 하였습니다.")
                 .build();
-
-        return new ResponseEntity(customResponse, HttpStatus.OK);
+        return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity addBookmarkPlaceList(Bookmark.PlaceListRequest placeListRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> addBookmarkPlaceList(Bookmark.PlaceListRequest placeListRequest, HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -88,8 +86,7 @@ public class BookmarkService {
                     .status(400)
                     .message("로그인 후 이용해주세요")
                     .build();
-
-            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
         }
         Optional<PlaceList> checkPlaceList = placeListRepository.findById(placeListRequest.getPlaceListId());
         if (!checkPlaceList.isPresent()) {
@@ -97,7 +94,7 @@ public class BookmarkService {
                     .status(400)
                     .message("존재 하지 않는 리스트입니다.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
         }
         Optional<BookmarkPlacelist> item = bookmarkListRepository.findBookmarkPlacelistByUserIdAndPlacelistId(userId, placeListRequest.getPlaceListId());
         if (!item.isPresent()) {
@@ -111,8 +108,7 @@ public class BookmarkService {
                     .status(200)
                     .message("리스트가 저장되었습니다.")
                     .build();
-
-            return new ResponseEntity(customResponse, HttpStatus.OK);
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
         }
         BookmarkPlacelist bookmarkPlacelist = bookmarkListRepository.getById(item.get().getId());
         bookmarkListRepository.delete(bookmarkPlacelist);
@@ -121,10 +117,10 @@ public class BookmarkService {
                 .status(200)
                 .message("북마크가 해제되었습니다.")
                 .build();
-        return new ResponseEntity(customResponse, HttpStatus.OK);
+        return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
 
-    public ResponseEntity getPlaceBookmarks(HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> getPlaceBookmarks(HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -132,7 +128,7 @@ public class BookmarkService {
                     .status(401)
                     .message("로그인 후 이용해주세요.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
         }
         List<Object[]> items = bookmarkRepository.findBookmarkPlacesByUserId(userId);
         if (items.size() == 0) {
@@ -140,7 +136,7 @@ public class BookmarkService {
                     .status(200)
                     .message("아직 북마크로 찜한 장소가 없네요.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.OK);
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
         }
         ArrayList<Bookmark.PlaceResponse> arr = new ArrayList<>();
         for (Object[] item : items) {
@@ -158,10 +154,10 @@ public class BookmarkService {
                 .message("북마크에 저장한 장소들을 불러왔어요.")
                 .data(arr)
                 .build();
-        return new ResponseEntity(customResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
     }
 
-    public ResponseEntity getPlaceListBookmarks(HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> getPlaceListBookmarks(HttpServletRequest httpRequest) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
@@ -169,7 +165,7 @@ public class BookmarkService {
                     .status(401)
                     .message("로그인 후 이용해주세요.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
         }
         List<Object[]> items = bookmarkListRepository.findBookmarkPlacelistsByUserIdOrderByAddDate(userId);
         if (items.size() == 0) {
@@ -177,9 +173,9 @@ public class BookmarkService {
                     .status(200)
                     .message("북마크에 맛집 리스트를 저장해보세요.")
                     .build();
-            return new ResponseEntity(customResponse, HttpStatus.OK);
+            return new ResponseEntity<>(customResponse, HttpStatus.OK);
         }
-        ArrayList<Bookmark.PlaceListResponse> arr = new ArrayList<Bookmark.PlaceListResponse>();
+        ArrayList<Bookmark.PlaceListResponse> arr = new ArrayList<>();
         for (Object[] item : items) {
             String diff = TimestampToDateString.getPassedTime((Timestamp) item[4]);
             arr.add(Bookmark.PlaceListResponse.builder()
@@ -195,6 +191,6 @@ public class BookmarkService {
                 .message("북마크에 저장한 맛집 리스트를 가져왔습니다.")
                 .data(arr)
                 .build();
-        return new ResponseEntity(customResponse, HttpStatus.OK);
+        return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
 }

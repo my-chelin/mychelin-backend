@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -40,7 +39,7 @@ public class PlaceReviewService {
         data = null;
     }
 
-    public ResponseEntity getPlaceReviewsByUser(String nickName, int page, int pageSize) {
+    public ResponseEntity<CustomResponseEntity> getPlaceReviewsByUser(String nickName, int page, int pageSize) {
         init();
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserByNickname(nickName);
@@ -88,10 +87,10 @@ public class PlaceReviewService {
                 .data(data)
                 .build();
 
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
-    public ResponseEntity getPlaceAllReviewsByPlaceId(int placeId, int page, int pageSize) {
+    public ResponseEntity<CustomResponseEntity> getPlaceAllReviewsByPlaceId(int placeId, int page, int pageSize) {
         init();
         CustomResponseEntity result;
         Optional<Place> place = placeRepository.findPlacesById(placeId);
@@ -144,10 +143,10 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
-    public ResponseEntity addPlaceReviews(String userId, ReviewRequest review) {
+    public ResponseEntity<CustomResponseEntity> addPlaceReviews(String userId, ReviewRequest review) {
         init();
         CustomResponseEntity result;
         Optional<User> user = userRepository.findUserById(userId);
@@ -172,10 +171,10 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
-    public ResponseEntity editPlaceReviews(String userId, ReviewEditRequest review) {
+    public ResponseEntity<CustomResponseEntity> editPlaceReviews(String userId, ReviewEditRequest review) {
         init();
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
@@ -202,10 +201,10 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
-    public ResponseEntity deletePlaceReviews(String userId, ReviewDeleteRequest review) {
+    public ResponseEntity<CustomResponseEntity> deletePlaceReviews(String userId, ReviewDeleteRequest review) {
         init();
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
@@ -229,10 +228,10 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 
-    public ResponseEntity saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) throws IOException {
+    public ResponseEntity<CustomResponseEntity> saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) {
         init();
         CustomResponseEntity result;
         Optional<Review> findReview = placeReviewRepository.findById(reviewId);
@@ -258,6 +257,6 @@ public class PlaceReviewService {
                 .message(message)
                 .data(data)
                 .build();
-        return new ResponseEntity(result, httpStatus);
+        return new ResponseEntity<>(result, httpStatus);
     }
 }

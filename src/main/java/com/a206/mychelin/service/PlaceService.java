@@ -18,7 +18,7 @@ import java.util.*;
 public class PlaceService {
     private final PlaceRepository placeRepository;
 
-    public ResponseEntity getPlaceInfoById(String id) {
+    public ResponseEntity<CustomResponseEntity> getPlaceInfoById(String id) {
         Optional<Place> nowPlace = placeRepository.findPlacesById(Integer.parseInt(id));
 
         // 이 부분 Object는 나중에 객체로 변환
@@ -69,10 +69,10 @@ public class PlaceService {
                     .data(place)
                     .build();
         }
-        return new ResponseEntity<Object>(req, resultHttpStatus);
+        return new ResponseEntity<>(req, resultHttpStatus);
     }
 
-    public ResponseEntity getPlaceInfoByName(String name, int page, int pageSize) {
+    public ResponseEntity<CustomResponseEntity> getPlaceInfoByName(String name, int page, int pageSize) {
         long totalPageItemCnt = placeRepository.countByNameContains(name);
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
@@ -123,10 +123,10 @@ public class PlaceService {
                 .message("이름으로 검색에 성공했습니다.")
                 .data(linkedHashMap)
                 .build();
-        return new ResponseEntity<Object>(req, HttpStatus.OK);
+        return new ResponseEntity<>(req, HttpStatus.OK);
     }
 
-    public ResponseEntity getPlaceInfoByLocation(String location, int page, int pageSize) {
+    public ResponseEntity<CustomResponseEntity> getPlaceInfoByLocation(String location, int page, int pageSize) {
         long totalPageItemCnt = placeRepository.countByLocationContains(location);
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
@@ -157,10 +157,10 @@ public class PlaceService {
                 .message("장소로 검색에 성공했습니다.")
                 .data(linkedHashMap)
                 .build();
-        return new ResponseEntity<Object>(req, HttpStatus.OK);
+        return new ResponseEntity<>(req, HttpStatus.OK);
     }
 
-    public ResponseEntity getPlaceByCoordinate(float lat, float lng, float distance) {
+    public ResponseEntity<CustomResponseEntity> getPlaceByCoordinate(float lat, float lng, float distance) {
         List<Object[]> placeList = placeRepository.getPlaceByCoordinate(lat, lng, distance);
         List<PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
         for (Object[] objects : placeList) {
@@ -185,6 +185,6 @@ public class PlaceService {
                 .message("위치 기반 맛집 검색에 성공했습니다.")
                 .data(resultList)
                 .build();
-        return new ResponseEntity<CustomResponseEntity>(req, HttpStatus.OK);
+        return new ResponseEntity<>(req, HttpStatus.OK);
     }
 }

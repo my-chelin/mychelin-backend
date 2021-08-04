@@ -36,4 +36,12 @@ public class UserDto {
     public static class BioUpdateRequest {
         private String bio;
     }
+
+    @Getter
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class NumberUpdateRequest {
+        private String number;
+    }
 }

@@ -10,10 +10,12 @@ public class AuthorizationCheck {
     // 토큰이 필요한 url 경로를 싱글톤 패턴으로 관리
     private AuthorizationCheck() {
         tokenRequiredPathList = new ArrayList<>();
-        tokenRequiredPathList.add("/user/profile/{nickname}");
         tokenRequiredPathList.add("/user/changepwd");
         tokenRequiredPathList.add("/user/delete");
+        tokenRequiredPathList.add("/user/profile/{nickname}");
         tokenRequiredPathList.add("/user/profile/image");
+        tokenRequiredPathList.add("/user/profile/phoneNumber");
+        tokenRequiredPathList.add("/user/profile/bio");
         tokenRequiredPathList.add("/follow/request");
         tokenRequiredPathList.add("/follow/requestList");
         tokenRequiredPathList.add("/post/upload");

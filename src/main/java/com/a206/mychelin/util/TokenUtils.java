@@ -41,7 +41,6 @@ public class TokenUtils {
 
     // 토큰이 유효한지 확인
     public static boolean isValidToken(String token) {
-        System.out.println("secretKey = " + SECRET_KEY_STATIC);
         try {
             Claims claims = getClaimsFormToken(token);
             log.info("expireTime : " + claims.getExpiration());

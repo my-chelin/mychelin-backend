@@ -27,9 +27,9 @@ public class UserController {
         return userService.changePassword(passwordChangeRequest, request);
     }
 
-    @PutMapping("/changeinfo")
-    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserDto.UserUpdateRequest requestDto, HttpServletRequest httpRequest) {
-        return userService.update(requestDto, httpRequest);
+    @PutMapping("/profile/phoneNumber")
+    public ResponseEntity<CustomResponseEntity> updatePhoneNumber(@RequestBody UserDto.NumberUpdateRequest requestDto, HttpServletRequest httpRequest) {
+        return userService.updatePhoneNumber(requestDto, httpRequest);
     }
 
     @GetMapping("/profile/{nickname}")
