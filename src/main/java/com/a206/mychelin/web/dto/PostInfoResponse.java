@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Builder
@@ -18,6 +19,6 @@ public class PostInfoResponse {
     private Object commentCnt;
     private Object placeId;
     private Object placeListId;
-    private String image;
+    private List<String> images;
     private ArrayList<CommentResponse> comments;
 }

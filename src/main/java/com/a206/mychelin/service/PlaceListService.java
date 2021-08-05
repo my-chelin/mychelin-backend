@@ -30,8 +30,8 @@ public class PlaceListService {
     private Object data = null;
 
     private void init() {
-        httpStatus = HttpStatus.NOT_FOUND;
-        status = 404;
+        httpStatus = HttpStatus.BAD_REQUEST;
+        status = 400;
         message = null;
         data = null;
     }
