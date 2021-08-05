@@ -13,9 +13,7 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/user/changepwd");
         tokenRequiredPathList.add("/user/delete");
         tokenRequiredPathList.add("/user/profile/{nickname}");
-        tokenRequiredPathList.add("/user/profile/image");
-        tokenRequiredPathList.add("/user/profile/phoneNumber");
-        tokenRequiredPathList.add("/user/profile/bio");
+        tokenRequiredPathList.add("/user/profile");
         tokenRequiredPathList.add("/follow/request");
         tokenRequiredPathList.add("/follow/requestList");
         tokenRequiredPathList.add("/post/upload");

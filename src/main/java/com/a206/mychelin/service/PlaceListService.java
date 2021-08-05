@@ -5,6 +5,7 @@ import com.a206.mychelin.domain.repository.PlaceListItemRepository;
 import com.a206.mychelin.domain.repository.PlaceListRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -24,7 +26,7 @@ public class PlaceListService {
     final private PlaceRepository placeRepository;
     final private UserRepository userRepository;
 
-    private HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     private int status = 0;
     private String message = null;
     private Object data = null;
@@ -36,10 +38,14 @@ public class PlaceListService {
         data = null;
     }
 
-    public ResponseEntity<CustomResponseEntity> createPlaceList(PlaceListCreateRequest placeList) {
+    public ResponseEntity<CustomResponseEntity> createPlaceList(PlaceListCreateRequest placeList, HttpServletRequest request) {
         CustomResponseEntity result;
+        String userId = TokenToId.check(request);
+        User user = userRepository.findUserById(userId).get();
         PlaceList newPlaceList = PlaceList.builder()
-                .title(placeList.getTitle()).build();
+                .title(placeList.getTitle())
+                .userId(user.getId())
+                .build();
         PlaceList insertPlaceList = placeListRepository.save(newPlaceList);
 
         HashMap<String, Object> hashMap = new HashMap<>();

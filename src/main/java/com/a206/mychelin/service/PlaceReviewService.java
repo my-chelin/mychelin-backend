@@ -24,8 +24,8 @@ public class PlaceReviewService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
 
-    private HttpStatus httpStatus = HttpStatus.NOT_FOUND;
-    private int status = 404;
+    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+    private int status = 400;
     private String message = null;
     private Object data = null;
 
