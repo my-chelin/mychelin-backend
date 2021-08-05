@@ -313,4 +313,27 @@ public class PostService {
                 .build();
         return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
+
+    public ResponseEntity<CustomResponseEntity> findAll(HttpServletRequest httpRequest) {
+        CustomResponseEntity customResponseEntity;
+        String userId = TokenToId.check(httpRequest);
+
+        List<Object[]> items = postRepository.findAllPost();
+        ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+        if (items.size() == 0) {
+            customResponseEntity = CustomResponseEntity.builder()
+                    .status(200)
+                    .message("작성된 글이 없습니다.")
+                    .build();
+            return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+        }
+
+        extractPosts(items, userId);
+        customResponseEntity = CustomResponseEntity.builder()
+                .status(200)
+                .message("전체 포스트를 불러옵니다.")
+                .data(arr).build();
+
+        return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+    }
 }

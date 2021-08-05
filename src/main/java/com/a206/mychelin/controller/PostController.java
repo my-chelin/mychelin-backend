@@ -51,9 +51,14 @@ public class PostController {
         return postService.delete(id, httpRequest);
     }
 
-    @GetMapping("/main")
+    @GetMapping("/following")
     public ResponseEntity<CustomResponseEntity> findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
         return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
+    }
+
+    @GetMapping("/main")
+    public ResponseEntity<CustomResponseEntity> getPosts(HttpServletRequest request) {
+        return postService.findAll(request);
     }
 
     @ApiOperation(value = "선택한 포스트에 좋아요 표시를 한다.")
