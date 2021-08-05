@@ -22,9 +22,5 @@ public class PlaceDto {
         private int categoryId;
         private String image;
         private Double starRate;
-
-        public void setStarRate(double starRate) {
-            this.starRate = starRate;
-        }
     }
 }

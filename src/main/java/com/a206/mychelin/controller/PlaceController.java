@@ -2,7 +2,6 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceService;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

@@ -32,9 +32,7 @@ public class PostService {
     @Transactional
     public ResponseEntity<Response> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
-
         postRequest.checkPlaceIdOrPlaceListId();
-
         Post newPost = Post.builder()
                 .userId(userId)
                 .content(postRequest.getContent())
