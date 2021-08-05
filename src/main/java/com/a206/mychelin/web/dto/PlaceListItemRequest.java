@@ -9,9 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceListItemRequest {
-    @ApiModelProperty(example = "맛집 리스트 id")
-    int listId;
-
     @ApiModelProperty(example = "맛집 id")
     int placeId;
 }

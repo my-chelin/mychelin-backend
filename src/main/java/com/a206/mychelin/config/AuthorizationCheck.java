@@ -20,7 +20,7 @@ public class AuthorizationCheck {
         tokenRequiredPathList.add("/place/review");
         tokenRequiredPathList.add("/place/review/image/{reviewId}");
         tokenRequiredPathList.add("/placelist");
-        tokenRequiredPathList.add("/placelist/listitems/items");
+        tokenRequiredPathList.add("/placelist/{listId}");
     }
 
     public static AuthorizationCheck getObject() {
