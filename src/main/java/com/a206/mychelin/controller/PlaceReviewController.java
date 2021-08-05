@@ -4,10 +4,7 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceReviewService;
 import com.a206.mychelin.util.TokenUtils;
-import com.a206.mychelin.web.dto.ImageRequest;
-import com.a206.mychelin.web.dto.ReviewDeleteRequest;
-import com.a206.mychelin.web.dto.ReviewEditRequest;
-import com.a206.mychelin.web.dto.ReviewRequest;
+import com.a206.mychelin.web.dto.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -15,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 
 @CrossOrigin("*")
 @RestController
@@ -31,7 +27,7 @@ public class PlaceReviewController {
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/user/{nickName}")
-    public ResponseEntity getPlaceReviewsByUser(@PathVariable String nickName
+    public ResponseEntity<CustomResponseEntity> getPlaceReviewsByUser(@PathVariable String nickName
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
         try {
@@ -48,7 +44,7 @@ public class PlaceReviewController {
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/{placeId}")
-    public ResponseEntity getPlaceReviewsByUser(@PathVariable int placeId
+    public ResponseEntity<CustomResponseEntity> getPlaceReviewsByUser(@PathVariable int placeId
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
         try {
@@ -60,7 +56,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 추가")
     @PostMapping
-    public ResponseEntity addPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewRequest review) {
+    public ResponseEntity<CustomResponseEntity> addPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.addPlaceReviews(userId, review);
@@ -68,7 +64,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 수정")
     @PutMapping
-    public ResponseEntity editPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewEditRequest review) {
+    public ResponseEntity<CustomResponseEntity> editPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewEditRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.editPlaceReviews(userId, review);
@@ -76,7 +72,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 삭제")
     @DeleteMapping
-    public ResponseEntity deletePlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDeleteRequest review) {
+    public ResponseEntity<CustomResponseEntity> deletePlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDeleteRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.deletePlaceReviews(userId, review);
@@ -84,7 +80,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "리뷰 이미지 추가")
     @PostMapping("/image/{reviewId}")
-    public ResponseEntity saveReviewImage(@RequestBody ImageRequest imageRequest, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int reviewId) throws IOException {
+    public ResponseEntity<CustomResponseEntity> saveReviewImage(@RequestBody ImageRequest imageRequest, @RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int reviewId) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.saveReviewImage(imageRequest, userId, reviewId);

@@ -28,14 +28,14 @@ public class CommentController {
     @ApiOperation(value = "특정 포스트에 댓글을 단다.")
     @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
     @PostMapping("/{postId}")
-    public ResponseEntity addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
         return commentService.addComment(postId, commentRequest, request);
     }
 
     @ApiOperation(value = "특정 포스트에 남긴 특정 댓글을 삭제한다.")
     @ApiImplicitParam(name = "commentId", value = "댓글 고유 id")
     @DeleteMapping("/{commentId}")
-    public ResponseEntity deleteComment(@PathVariable int commentId, HttpServletRequest httpRequest) {
+    public ResponseEntity<CustomResponseEntity> deleteComment(@PathVariable int commentId, HttpServletRequest httpRequest) {
         return commentService.deleteComment(commentId, httpRequest);
     }
 }
