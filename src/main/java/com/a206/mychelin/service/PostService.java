@@ -30,7 +30,7 @@ public class PostService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         Post newPost = Post.builder()
                 .userId(userId)
@@ -38,184 +38,99 @@ public class PostService {
                 .placeId(postRequest.getPlaceId())
                 .placeListId(postRequest.getPlaceListId())
                 .build();
-
-        CustomResponseEntity customResponse
-                = CustomResponseEntity.builder()
-                .message("게시글이 업로드되었습니다")
-                .status(200)
-                .build();
         postRepository.save(newPost);
 
-        for(String image : postRequest.getImages()){
-            System.out.println(image);
+        for (String image : postRequest.getImages()) {
             // 이미지 추가
             PostImage insertPostImage = PostImage.builder()
                     .postId(newPost.getId())
                     .image(image)
                     .build();
-
             postImageRepository.save(insertPostImage);
-
         }
-
-        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, "게시글이 업로드되었습니다.", null);
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
+    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         Optional<Post> tempPost = postRepository.findPostById(id);
 
         if (!tempPost.isPresent()) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("게시글이 없습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+            return Response.newResult(HttpStatus.BAD_REQUEST, "게시글이 없습니다.", null);
         }
         Post post = tempPost.get();
         if (userId.equals(post.getUserId())) {
             post.update(postUpdateRequest.getContent());
-            customResponse = CustomResponseEntity.builder()
-                    .status(200)
-                    .message(post.getId() + "번 게시글이 수정되었습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, post.getId() + "번 게시글이 수정되었습니다.", null);
         }
-        customResponse = CustomResponseEntity.builder()
-                .status(401)
-                .message("수정 권한이 없습니다.")
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
+        return Response.newResult(HttpStatus.UNAUTHORIZED, "수정 권한이 없습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> getPostByPostId(@PathVariable int postId, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> getPostByPostId(@PathVariable int postId, HttpServletRequest httpRequest) {
         List<Object[]> entity = postRepository.findPostInfoByPostId(postId);
         String userId = TokenToId.check(httpRequest);
-        CustomResponseEntity customResponse;
         if (userId == null) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(401)
-                    .message("로그인 후 사용가능합니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
-
         if (entity.size() > 0) {
             PostInfoResponse postInfo = extractPosts(entity, userId).get(0);
-            CustomResponseEntity customResponseEntity
-                    = CustomResponseEntity.builder()
-                    .status(200)
-                    .message(postId + "번 게시글을 불러왔습니다.")
-                    .data(postInfo)
-                    .build();
-            return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, postId + "번 게시글을 불러왔습니다.", postInfo);
         }
-        CustomResponseEntity customResponseEntity
-                = CustomResponseEntity.builder()
-                .status(400)
-                .message("게시글을 불러오지 못했습니다.")
-                .build();
-        return new ResponseEntity<>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "게시글을 불러오지 못했습니다.", null);
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> delete(@PathVariable int id, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> delete(@PathVariable int id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
-                    .status(401)
-                    .message("로그인 후 이용해주세요.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         Optional<Post> entity = postRepository.findPostById(id);
         if (!entity.isPresent()) {
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("게시글이 없습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+            return Response.newResult(HttpStatus.BAD_REQUEST, "게시글을 불러오지 못했습니다.", null);
         }
         Post post = entity.get();
         if (userId.equals(post.getUserId())) {
             postRepository.deletePostById(id);
-            CustomResponseEntity customResponse
-                    = CustomResponseEntity.builder()
-                    .status(200)
-                    .message(id + "번 게시물을 삭제했습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, id + "번 게시글을 삭제했습니다.", null);
         }
-        CustomResponseEntity customResponse
-                = CustomResponseEntity.builder()
-                .status(401)
-                .message("삭제 권한이 없습니다.")
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
+        return Response.newResult(HttpStatus.UNAUTHORIZED, "삭제 권한이 없습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> findPostsByUserNickname(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> findPostsByUserNickname(@PathVariable String userNickname, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
-            CustomResponseEntity customResponse = CustomResponseEntity.builder()
-                    .status(401)
-                    .message("로그인 후 사용해주세요.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         List<Object[]> posts = postRepository.findPostsByUserNicknameOrderByCreateDateDesc(userNickname);
         ArrayList<PostInfoResponse> arr = extractPosts(posts, userId);
-
-        CustomResponseEntity customResponse = CustomResponseEntity.builder()
-                .status(200)
-                .message(userNickname + "의 게시글을 불러왔습니다.")
-                .data(arr)
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, userNickname + "의 게시글을 불러왔습니다.", arr);
     }
 
-    public ResponseEntity<CustomResponseEntity> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponseEntity;
+    public ResponseEntity<Response> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
-
         List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId);
         ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
         if (items.size() == 0) {
-            customResponseEntity = CustomResponseEntity.builder()
-                    .status(200)
-                    .message("팔로우하는 친구의 소식을 기다려주세요!")
-                    .build();
-            return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, "팔로우 하는 친구의 소식을 기다려주세요!", null);
         }
-
         extractPosts(items, userId);
-        customResponseEntity = CustomResponseEntity.builder()
-                .status(200)
-                .message("포스트를 불러옵니다.")
-                .data(arr).build();
-
-        return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, "팔로우하는 유저의 소식을 불러옵니다.", arr);
     }
 
     private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
         ArrayList<PostInfoResponse> arr = new ArrayList<>();
 
         for (Object[] post : posts) {
-            Optional<User> curWriter = userRepository.findUserByNickname((String)post[1]);
-
+            Optional<User> curWriter = userRepository.findUserByNickname((String) post[1]);
             Optional<PostLike> isLiked = postLikeRepository.findPostLikeByPostIdAndUserId((int) post[0], userId);
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
             List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
             ArrayList<CommentResponse> commArr = new ArrayList<>();
             int len = comments.size();
 
-
-            List<String> images = postImageRepository.findPostsByPostIdOrderByOrder((int)post[0]);
-
+            List<String> images = postImageRepository.findPostsByPostIdOrderByOrder((int) post[0]);
 
             for (int i = len - 1; i >= 0; i--) {
                 Object[] item = comments.get(i);
@@ -267,24 +182,14 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> likePost(PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
+    public ResponseEntity<Response> likePost(PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(401)
-                    .message("로그인 후 이용해주세요.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.UNAUTHORIZED);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         Optional<Post> post = postRepository.findPostById(postLikeRequest.getPostId());
         if (!post.isPresent()) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("존재하지 않는 게시글입니다.")
-                    .build();
-
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
+            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 게시글입니다.", null);
         }
         Optional<PostLike> postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postLikeRequest.getPostId(), userId);
         if (!postLike.isPresent()) { // 없으면 좋아요 추가
@@ -292,13 +197,8 @@ public class PostService {
                     .postId(postLikeRequest.getPostId())
                     .userId(userId)
                     .build();
-
             postLikeRepository.save(newLike);
-            customResponse = CustomResponseEntity.builder()
-                    .status(200)
-                    .message("좋아요가 반영되었습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, "좋아요가 반영되었습니다.", null);
         }
         // 있으면 좋아요 취소하기.
         PostLike cancelLike = PostLike.builder()
@@ -306,34 +206,18 @@ public class PostService {
                 .userId(userId)
                 .build();
         postLikeRepository.delete(cancelLike);
-
-        customResponse = CustomResponseEntity.builder()
-                .status(200)
-                .message("좋아요가 취소되었습니다.")
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, "좋아요가 취소되었습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> findAll(HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponseEntity;
+    public ResponseEntity<Response> findAllPosts(HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
 
         List<Object[]> items = postRepository.findAllPost();
         ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
         if (items.size() == 0) {
-            customResponseEntity = CustomResponseEntity.builder()
-                    .status(200)
-                    .message("작성된 글이 없습니다.")
-                    .build();
-            return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+            return Response.newResult(HttpStatus.OK, "작성된 글이 없습니다.", null);
         }
-
         extractPosts(items, userId);
-        customResponseEntity = CustomResponseEntity.builder()
-                .status(200)
-                .message("전체 포스트를 불러옵니다.")
-                .data(arr).build();
-
-        return new ResponseEntity<>(customResponseEntity, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", arr);
     }
 }
