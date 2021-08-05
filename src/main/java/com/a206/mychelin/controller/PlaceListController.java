@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/placelist")
@@ -22,8 +24,8 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트 생성")
     @PostMapping
-    public ResponseEntity createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest) {
-        return placeListService.createPlaceList(placeListCreateRequest);
+    public ResponseEntity createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest, HttpServletRequest request) {
+        return placeListService.createPlaceList(placeListCreateRequest, request);
     }
 
     @ApiOperation(value = "맛집 리스트 id로 검색 => 리스트의 상세 정보는 안나옵니다!")
