@@ -1,10 +1,10 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Post;
+import com.a206.mychelin.domain.entity.PostImage;
 import com.a206.mychelin.domain.entity.PostLike;
-import com.a206.mychelin.domain.repository.CommentRepository;
-import com.a206.mychelin.domain.repository.PostLikeRepository;
-import com.a206.mychelin.domain.repository.PostRepository;
+import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.domain.repository.*;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.web.dto.*;
@@ -26,6 +26,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final PostImageRepository postImageRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
@@ -36,12 +38,26 @@ public class PostService {
                 .placeId(postRequest.getPlaceId())
                 .placeListId(postRequest.getPlaceListId())
                 .build();
+
         CustomResponseEntity customResponse
                 = CustomResponseEntity.builder()
                 .message("게시글이 업로드되었습니다")
                 .status(200)
                 .build();
         postRepository.save(newPost);
+
+        for(String image : postRequest.getImages()){
+            System.out.println(image);
+            // 이미지 추가
+            PostImage insertPostImage = PostImage.builder()
+                    .postId(newPost.getId())
+                    .image(image)
+                    .build();
+
+            postImageRepository.save(insertPostImage);
+
+        }
+
         return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
 
@@ -187,12 +203,20 @@ public class PostService {
 
     private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
         ArrayList<PostInfoResponse> arr = new ArrayList<>();
+
         for (Object[] post : posts) {
+            Optional<User> curWriter = userRepository.findUserByNickname((String)post[1]);
+
             Optional<PostLike> isLiked = postLikeRepository.findPostLikeByPostIdAndUserId((int) post[0], userId);
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
             List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
             ArrayList<CommentResponse> commArr = new ArrayList<>();
             int len = comments.size();
+
+
+            List<String> images = postImageRepository.findPostsByPostIdOrderByOrder((int)post[0]);
+
+
             for (int i = len - 1; i >= 0; i--) {
                 Object[] item = comments.get(i);
                 String diff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
@@ -216,9 +240,10 @@ public class PostService {
                         .commentCnt(post[6])
                         .placeId(post[7])
                         .placeListId(post[8])
-                        .image((String) post[9])
+                        .images(images)
                         .comments(commArr)
                         .liked(true)
+                        .profileImage(curWriter.get().getProfileImage())
                         .build());
             } else {
                 arr.add(PostInfoResponse.builder()
@@ -231,8 +256,9 @@ public class PostService {
                         .commentCnt(post[6])
                         .placeId(post[7])
                         .placeListId(post[8])
-                        .image((String) post[9])
+                        .images(images)
                         .comments(commArr)
+                        .profileImage(curWriter.get().getProfileImage())
                         .liked(false)
                         .build());
             }
