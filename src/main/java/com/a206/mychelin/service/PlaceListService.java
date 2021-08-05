@@ -24,14 +24,14 @@ public class PlaceListService {
     final private PlaceRepository placeRepository;
     final private UserRepository userRepository;
 
-    private HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
     private int status = 0;
     private String message = null;
     private Object data = null;
 
     private void init() {
-        httpStatus = HttpStatus.NOT_FOUND;
-        status = 404;
+        httpStatus = HttpStatus.BAD_REQUEST;
+        status = 400;
         message = null;
         data = null;
     }

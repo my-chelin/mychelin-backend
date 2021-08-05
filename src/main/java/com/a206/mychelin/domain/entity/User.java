@@ -57,28 +57,14 @@ public class User {
     @Column(name = "role", nullable = true)
     private String role;
 
-    public void update(String id, String nickname, String bio, String phoneNumber, String profileImage) {
-        this.id = id;
+    public void updateInfo(String nickname, String bio, String phoneNumber) {
         this.nickname = nickname;
         this.bio = bio;
         this.phoneNumber = phoneNumber;
-        this.profileImage = profileImage;
     }
 
     public void userImageUpdate(String imagePath) {
         this.profileImage = imagePath;
-    }
-
-    public void updateBio(String bio) {
-        this.bio = bio;
-    }
-
-    public void updatePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public void updateNickname(String nickname) {
-        this.nickname = nickname;
     }
 
     public void changePassword(String password) {

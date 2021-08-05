@@ -53,14 +53,14 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<CustomResponseEntity> updatePhoneNumber(@RequestBody UserDto.NumberUpdateRequest requestDto, HttpServletRequest request) {
+    public ResponseEntity<CustomResponseEntity> updateInfo(@RequestBody UserDto.UpdateRequest requestDTO, HttpServletRequest request) {
         CustomResponseEntity customResponse;
         String userId = TokenToId.check(request);
         Optional<User> user = userRepository.findUserById(userId);
-        user.get().updatePhoneNumber(requestDto.getNumber());
+        user.get().updateInfo(requestDTO.getNickname(), requestDTO.getBio(), requestDTO.getPhoneNumber());
         customResponse = CustomResponseEntity.builder()
                 .status(200)
-                .message("휴대폰 번호가 변경되었습니다.")
+                .message("정보가 변경되었습니다.")
                 .build();
         return new ResponseEntity<>(customResponse, HttpStatus.OK);
     }
@@ -184,10 +184,10 @@ public class UserService {
 
     public ResponseEntity<CustomResponseEntity> checkEmail(EmailRequest emailRequest) {
         Optional<User> user = userRepository.findUserById(emailRequest.getEmail());
-        int status = 404;
+        int status = 400;
         String message = "";
         Object data = null;
-        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
         if (user.isPresent()) {
             message = "이미 가입된 이메일입니다.";
@@ -250,10 +250,10 @@ public class UserService {
 
     public ResponseEntity<CustomResponseEntity> checkEmailToken(EmailTokenRequest emailTokenRequest) {
         Optional<User> user = userRepository.findUserById(emailTokenRequest.getEmail());
-        int status = 404;
+        int status = 400;
         String message = "";
         Object data = null;
-        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         if (user.isPresent()) {
             message = "이미 가입된 이메일입니다.";
         } else {
@@ -297,56 +297,5 @@ public class UserService {
                 .message("프로필 이미지 저장에 성공했습니다.")
                 .build();
         return new ResponseEntity<>(result, HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<CustomResponseEntity> updateBio(@RequestBody UserDto.BioUpdateRequest updateRequest, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
-        String userId = TokenToId.check(httpRequest);
-        Optional<User> user = userRepository.findUserById(userId);
-        if (!user.isPresent()) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("존재하지 않는 사용자입니다.").build();
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
-        }
-        user.get().updateBio(updateRequest.getBio());
-        userRepository.findAll();
-        customResponse = CustomResponseEntity.builder()
-                .status(200)
-                .message("한줄 소개가 변경되었습니다.")
-                .data(updateRequest.getBio())
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.OK);
-    }
-
-    @Transactional
-    public ResponseEntity<CustomResponseEntity> updateNickname(@RequestBody UserDto.NicknameUpdateRequest updateRequest, HttpServletRequest httpRequest) {
-        CustomResponseEntity customResponse;
-        String userId = TokenToId.check(httpRequest);
-        Optional<User> user = userRepository.findUserById(userId);
-        if (!user.isPresent()) {
-            customResponse = CustomResponseEntity.builder()
-                    .status(400)
-                    .message("유효하지 않은 계정입니다.").build();
-            return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
-        }
-
-        Optional<User> findNickname = userRepository.findUserByNickname(updateRequest.getNickname());
-        if (!findNickname.isPresent()) {
-            user.get().updateNickname(updateRequest.getNickname());
-            userRepository.findAll();
-            customResponse = CustomResponseEntity.builder()
-                    .status(200)
-                    .message("닉네임이 변경되었습니다.")
-                    .data(updateRequest.getNickname())
-                    .build();
-            return new ResponseEntity<>(customResponse, HttpStatus.OK);
-        }
-        customResponse = CustomResponseEntity.builder()
-                .status(400)
-                .message("이미 사용 중인 닉네임입니다.")
-                .build();
-        return new ResponseEntity<>(customResponse, HttpStatus.BAD_REQUEST);
     }
 }
