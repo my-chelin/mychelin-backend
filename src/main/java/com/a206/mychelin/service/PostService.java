@@ -3,10 +3,8 @@ package com.a206.mychelin.service;
 import com.a206.mychelin.domain.entity.Post;
 import com.a206.mychelin.domain.entity.PostImage;
 import com.a206.mychelin.domain.entity.PostLike;
-import com.a206.mychelin.domain.repository.CommentRepository;
-import com.a206.mychelin.domain.repository.PostImageRepository;
-import com.a206.mychelin.domain.repository.PostLikeRepository;
-import com.a206.mychelin.domain.repository.PostRepository;
+import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.domain.repository.*;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.web.dto.*;
@@ -29,6 +27,7 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final PostImageRepository postImageRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public ResponseEntity<CustomResponseEntity> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
@@ -204,7 +203,10 @@ public class PostService {
 
     private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
         ArrayList<PostInfoResponse> arr = new ArrayList<>();
+
         for (Object[] post : posts) {
+            Optional<User> curWriter = userRepository.findUserByNickname((String)post[1]);
+
             Optional<PostLike> isLiked = postLikeRepository.findPostLikeByPostIdAndUserId((int) post[0], userId);
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
             List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
@@ -241,6 +243,7 @@ public class PostService {
                         .images(images)
                         .comments(commArr)
                         .liked(true)
+                        .profileImage(curWriter.get().getProfileImage())
                         .build());
             } else {
                 arr.add(PostInfoResponse.builder()
@@ -255,6 +258,7 @@ public class PostService {
                         .placeListId(post[8])
                         .images(images)
                         .comments(commArr)
+                        .profileImage(curWriter.get().getProfileImage())
                         .liked(false)
                         .build());
             }

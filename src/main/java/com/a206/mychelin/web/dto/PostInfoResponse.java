@@ -21,4 +21,5 @@ public class PostInfoResponse {
     private Object placeListId;
     private List<String> images;
     private ArrayList<CommentResponse> comments;
+    private String profileImage;
 }
