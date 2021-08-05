@@ -115,14 +115,14 @@ public class UserService {
                 .build();
         User loginUser = getUser(request);
         if (loginUser.getId().equals(user.getId())) {
-            return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", null);
+            return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
         }
         if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
             userProfileResponse.setIsFollower(true);
         } else {
             userProfileResponse.setIsFollower(false);
         }
-        return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", null);
+        return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
     }
 
     public ResponseEntity<Response> checkEmail(EmailRequest emailRequest) {
