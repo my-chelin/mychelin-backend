@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @RequiredArgsConstructor
@@ -20,7 +21,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         final UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
         final String id = token.getName();
         final String userPw = (String) token.getCredentials();
-        final MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(id);
+        final MyUserDetails userDetails;
+        try{
+            userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(id);
+        }
+        catch (Exception ee){
+            throw new BadCredentialsException(id + "Invalid ID");
+        }
 
         // 비밀번호 검사: matches
         if (!passwordEncoder.matches(userPw, userDetails.getPassword())) {
