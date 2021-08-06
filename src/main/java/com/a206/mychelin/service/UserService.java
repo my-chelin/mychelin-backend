@@ -94,7 +94,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<Response> getProfile(String nickname, HttpServletRequest request) {
-        UserProfileResponse userProfileResponse;
+        UserProfileResponse.UserProfileResponseBuilder userProfileResponseBuilder;
         Optional<User> tempUser = userRepository.findUserByNickname(nickname);
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
@@ -103,25 +103,25 @@ public class UserService {
         int follow = followRepository.countByUserIdAndAccept(user.getId(), true);
         int follower = followRepository.countByFollowingIdAndAccept(user.getId(), true);
         long like = postLikeRepository.getLikes(user.getId());
-        Boolean isFollower = null;
-        userProfileResponse = UserProfileResponse.builder()
+        userProfileResponseBuilder = UserProfileResponse.builder()
                 .nickname(user.getNickname())
                 .bio(user.getBio())
                 .profileImage(user.getProfileImage())
                 .follow(follow)
                 .follower(follower)
-                .like(like)
-                .isFollowing(isFollower)
-                .build();
+                .like(like);
         User loginUser = getUser(request);
         if (loginUser.getId().equals(user.getId())) {
+            userProfileResponseBuilder = userProfileResponseBuilder.phoneNumber(user.getPhoneNumber());
+            UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
             return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
         }
         if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
-            userProfileResponse.setIsFollower(true);
+            userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(true);
         } else {
-            userProfileResponse.setIsFollower(false);
+            userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(false);
         }
+        UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
         return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
     }
 

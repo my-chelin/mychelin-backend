@@ -9,12 +9,9 @@ public class UserProfileResponse {
     private String nickname;
     private String bio;
     private String profileImage;
+    private String phoneNumber;
     private int follow;
     private int follower;
     private long like;
     private Boolean isFollowing;
-
-    public void setIsFollower(boolean check) {
-        this.isFollowing = check;
-    }
 }
