@@ -13,13 +13,13 @@ public class PostUploadRequest {
     private Integer placeListId;
     private List<String> images;
 
-    public void checkPlaceIdOrPlaceListId(){
-        if(this.placeId!=null && this.placeId <=0){
-            this.placeId=null;
+    public void checkPlaceIdOrPlaceListId() {
+        if (this.placeId != null && this.placeId <= 0) {
+            this.placeId = null;
         }
 
-        if(this.placeListId!=null && this.placeListId <=0){
-            this.placeListId=null;
+        if (this.placeListId != null && this.placeListId <= 0) {
+            this.placeListId = null;
         }
     }
 }

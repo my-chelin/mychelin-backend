@@ -2,7 +2,7 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceService;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -21,7 +21,7 @@ public class PlaceController {
     @ApiOperation(value = "id를 이용하여 식당 정보 조회")
     @ApiImplicitParam(name = "id", value = "식당 고유 id")
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponseEntity> getPlaceInfoById(@PathVariable String id) {
+    public ResponseEntity<Response> getPlaceInfoById(@PathVariable String id) {
         return placeService.getPlaceInfoById(id);
     }
 
@@ -32,7 +32,7 @@ public class PlaceController {
             @ApiImplicitParam(name = "pageSize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping
-    public ResponseEntity<CustomResponseEntity> getPlaceInfoByName(@RequestParam(defaultValue = "") String name
+    public ResponseEntity<Response> getPlaceInfoByName(@RequestParam(defaultValue = "") String name
             , @RequestParam(defaultValue = "") String location
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
@@ -49,11 +49,7 @@ public class PlaceController {
                 throw new PageIndexLessThanZeroException();
             }
         }
-        CustomResponseEntity customResponseEntity = CustomResponseEntity.builder()
-                .message("파라미터가 잘못 되었습니다.")
-                .status(400)
-                .build();
-        return new ResponseEntity<>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터가 잘못 되었습니다.", null);
     }
 
     @ApiOperation(value = "위치 정보를 이용하여, 해당 위치 주변 맛집 조회")
@@ -63,7 +59,7 @@ public class PlaceController {
             @ApiImplicitParam(name = "distance", value = "거리(km), 기본 값 : 0.5km", dataType = "float", paramType = "query", defaultValue = "0.5"),
     })
     @GetMapping("/coordinate")
-    public ResponseEntity<CustomResponseEntity> getPlaceByCoordinate(
+    public ResponseEntity<Response> getPlaceByCoordinate(
             @RequestParam float lat
             , @RequestParam float lng
             , @RequestParam(defaultValue = "0.5", required = false) float distance) {

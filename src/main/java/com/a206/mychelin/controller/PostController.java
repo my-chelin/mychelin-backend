@@ -19,52 +19,52 @@ public class PostController {
 
     @ApiOperation(value = "포스트를 업로드한다.")
     @PostMapping("/upload")
-    public ResponseEntity<CustomResponseEntity> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
         return postService.addPost(postUploadRequest, request);
     }
 
     @ApiOperation(value = "선택한 포스트를 수정한다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @PutMapping("/{id}")
-    public ResponseEntity<CustomResponseEntity> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         return postService.update(id, postUpdateRequest, httpRequest);
     }
 
     @ApiOperation(value = "선택한 포스트를 가져온다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponseEntity> load(@PathVariable int id, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> load(@PathVariable int id, HttpServletRequest httpRequest) {
         return postService.getPostByPostId(id, httpRequest);
     }
 
     @ApiOperation(value = "특정 사용자가 작성한 모든 포스트를 최신순으로 가져온다.")
     @ApiImplicitParam(name = "userNickname", value = "사용자 닉네임")
     @GetMapping("/list/{userNickname}")
-    public ResponseEntity<CustomResponseEntity> findPostsByUserId(@PathVariable String userNickname, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> findPostsByUserId(@PathVariable String userNickname, HttpServletRequest httpRequest) {
         return postService.findPostsByUserNickname(userNickname, httpRequest);
     }
 
     @ApiOperation(value = "선택한 포스트를 삭제한다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @DeleteMapping("/{id}")
-    public ResponseEntity<CustomResponseEntity> delete(@PathVariable int id, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> delete(@PathVariable int id, HttpServletRequest httpRequest) {
         return postService.delete(id, httpRequest);
     }
 
     @GetMapping("/following")
-    public ResponseEntity<CustomResponseEntity> findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> findPostsByFollowingUsers(HttpServletRequest httpServletRequest) {
         return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest);
     }
 
     @GetMapping("/main")
-    public ResponseEntity<CustomResponseEntity> getPosts(HttpServletRequest request) {
-        return postService.findAll(request);
+    public ResponseEntity<Response> getPosts(HttpServletRequest request) {
+        return postService.findAllPosts(request);
     }
 
     @ApiOperation(value = "선택한 포스트에 좋아요 표시를 한다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @PutMapping("/like")
-    public ResponseEntity<CustomResponseEntity> likePost(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> likePost(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
         return postService.likePost(postLikeRequest, httpRequest);
     }
 }

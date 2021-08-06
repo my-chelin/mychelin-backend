@@ -6,7 +6,6 @@ import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.PlaceReviewRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
-import com.a206.mychelin.util.ImageServer;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -24,239 +23,154 @@ public class PlaceReviewService {
     private final UserRepository userRepository;
     private final PlaceRepository placeRepository;
 
-    private HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
-    private int status = 400;
-    private String message = null;
-    private Object data = null;
-
-    // 이미지 저장을 위해 선언
-    private final ImageServer s3Service;
-
-    private void init() {
-        httpStatus = HttpStatus.BAD_REQUEST;
-        status = 400;
-        message = null;
-        data = null;
-    }
-
-    public ResponseEntity<CustomResponseEntity> getPlaceReviewsByUser(String nickName, int page, int pageSize) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> getPlaceReviewsByUser(String nickName, int page, int pageSize) {
         Optional<User> user = userRepository.findUserByNickname(nickName);
-
         if (!user.isPresent()) {
-            message = nickName + "는 존재하지 않는 유저입니다.";
-        } else {
-            httpStatus = HttpStatus.OK;
-            status = 200;
-            message = nickName + "의 리뷰 목록 조회에 성공했습니다.";
-            PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-
-            int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumById(user.get().getId());
-
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("totalPageItemCnt", totalPageItemCnt);
-            hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
-            hashMap.put("nowPage", page);
-            hashMap.put("nowPageSize", pageSize);
-
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId(), pageRequest);
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-
-            ArrayList<MyPlaceReviewResponse> arr = new ArrayList<>();
-            for (Object[] item : items) {
-                String format = formatter.format(item[4]);
-                arr.add(MyPlaceReviewResponse.builder()
-                        .reviewId((int) item[0])
-                        .starRate((float) item[1])
-                        .content((String) item[2])
-                        .userId((String) item[3])
-                        .craeteDate(format)
-                        .reviewImage((String) item[5])
-                        .placeId((int) item[6])
-                        .placeName((String) item[7])
-                        .placeImage((String) item[8])
-                        .build());
-            }
-            hashMap.put("reviews", arr);
-            data = hashMap;
+            return Response.newResult(HttpStatus.BAD_REQUEST, nickName + "는 존재하지 않는 유저입니다.", null);
         }
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
-                .build();
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumById(user.get().getId());
 
-        return new ResponseEntity<>(result, httpStatus);
+        HashMap<String, Object> hashMap = new LinkedHashMap<>();
+        hashMap.put("totalPageItemCnt", totalPageItemCnt);
+        hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        hashMap.put("nowPage", page);
+        hashMap.put("nowPageSize", pageSize);
+
+        List<Object[]> items = placeReviewRepository.getPlaceReviewsById(user.get().getId(), pageRequest);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+
+        ArrayList<MyPlaceReviewResponse> arr = new ArrayList<>();
+        for (Object[] item : items) {
+            String format = formatter.format(item[4]);
+            arr.add(MyPlaceReviewResponse.builder()
+                    .reviewId((int) item[0])
+                    .starRate((float) item[1])
+                    .content((String) item[2])
+                    .userId((String) item[3])
+                    .craeteDate(format)
+                    .reviewImage((String) item[5])
+                    .placeId((int) item[6])
+                    .placeName((String) item[7])
+                    .placeImage((String) item[8])
+                    .build());
+        }
+        hashMap.put("reviews", arr);
+        return Response.newResult(HttpStatus.OK, nickName + "의 리뷰 목록 조회에 성공했습니다.", hashMap);
     }
 
-    public ResponseEntity<CustomResponseEntity> getPlaceAllReviewsByPlaceId(int placeId, int page, int pageSize) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> getPlaceAllReviewsByPlaceId(int placeId, int page, int pageSize) {
         Optional<Place> place = placeRepository.findPlacesById(placeId);
-
         if (!place.isPresent()) {
-            message = placeId + "는 존재하지 않는 맛집입니다.";
-        } else {
-            httpStatus = HttpStatus.OK;
-            status = 200;
-            message = placeId + "의 모든 리뷰 목록 조회에 성공했습니다.";
-
-            int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumByPlaceId(placeId);
-
-            HashMap<String, Object> hashMap = new LinkedHashMap<>();
-            hashMap.put("totalPageItemCnt", totalPageItemCnt);
-            hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
-            hashMap.put("nowPage", page);
-            hashMap.put("nowPageSize", pageSize);
-
-            Optional<Float> totalStarRate = placeReviewRepository.getPlaceReviewsAVGByPlaceId(placeId);
-            if (totalStarRate.isPresent()) {
-                hashMap.put("totalStarRate", totalStarRate.get());
-            } else {
-                hashMap.put("totalStarRate", null);
-            }
-
-            PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-            List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId, pageRequest);
-            ArrayList<PlaceReviewAndUserResponse> arr = new ArrayList<>();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-
-            for (Object[] item : items) {
-                String format = formatter.format(item[4]);
-                arr.add(PlaceReviewAndUserResponse.builder()
-                        .reviewId((int) item[0])
-                        .starRate((float) item[1])
-                        .content((String) item[2])
-                        .userId((String) item[3])
-                        .craeteDate(format)
-                        .reviewImage((String) item[5])
-                        .userNickname((String) item[6])
-                        .userProfileImage((String) item[7])
-                        .build());
-            }
-            hashMap.put("reviews", arr);
-            data = hashMap;
+            return Response.newResult(HttpStatus.BAD_REQUEST, placeId + "는 존재하지 않는 맛집입니다.", null);
         }
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
-                .build();
-        return new ResponseEntity<>(result, httpStatus);
+        int totalPageItemCnt = placeReviewRepository.getPlaceReviewsNumByPlaceId(placeId);
+
+        HashMap<String, Object> hashMap = new LinkedHashMap<>();
+        hashMap.put("totalPageItemCnt", totalPageItemCnt);
+        hashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        hashMap.put("nowPage", page);
+        hashMap.put("nowPageSize", pageSize);
+
+        Optional<Float> totalStarRate = placeReviewRepository.getPlaceReviewsAVGByPlaceId(placeId);
+        if (totalStarRate.isPresent()) {
+            hashMap.put("totalStarRate", totalStarRate.get());
+        } else {
+            hashMap.put("totalStarRate", null);
+        }
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Object[]> items = placeReviewRepository.getPlaceReviewsByPlaceId(placeId, pageRequest);
+        ArrayList<PlaceReviewAndUserResponse> arr = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+
+        for (Object[] item : items) {
+            String format = formatter.format(item[4]);
+            arr.add(PlaceReviewAndUserResponse.builder()
+                    .reviewId((int) item[0])
+                    .starRate((float) item[1])
+                    .content((String) item[2])
+                    .userId((String) item[3])
+                    .craeteDate(format)
+                    .reviewImage((String) item[5])
+                    .userNickname((String) item[6])
+                    .userProfileImage((String) item[7])
+                    .build());
+        }
+        hashMap.put("reviews", arr);
+        return Response.newResult(HttpStatus.OK, placeId + "의 모든 리뷰 목록 조회에 성공했습니다.", hashMap);
     }
 
-    public ResponseEntity<CustomResponseEntity> addPlaceReviews(String userId, ReviewRequest review) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> addPlaceReviews(String userId, ReviewRequest review) {
         Optional<User> user = userRepository.findUserById(userId);
         if (!user.isPresent()) {
-            message = "해당 유저가 존재하지 않습니다.";
-        } else {
-            Review newReview = Review.builder()
-                    .starRate(review.getStarRate())
-                    .content(review.getContent())
-                    .placeId(review.getPlaceId())
-                    .userId(userId)
-                    .image(review.getImage())
-                    .build();
-            placeReviewRepository.save(newReview);
-            status = 200;
-            message = "리뷰 추가에 성공하였습니다.";
-            httpStatus = HttpStatus.OK;
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
+        Review newReview = Review.builder()
+                .starRate(review.getStarRate())
+                .content(review.getContent())
+                .placeId(review.getPlaceId())
+                .userId(userId)
+                .image(review.getImage())
                 .build();
-        return new ResponseEntity<>(result, httpStatus);
+        placeReviewRepository.save(newReview);
+        return Response.newResult(HttpStatus.OK, "리뷰 추가에 성공하였습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> editPlaceReviews(String userId, ReviewEditRequest review) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> editPlaceReviews(String userId, ReviewEditRequest review) {
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 
         if (!findReview.isPresent()) {
-            message = "해당 리뷰가 존재하지 않습니다.";
-        } else if (!user.isPresent()) {
-            message = "해당 유저가 존재하지 않습니다.";
-        } else if (!findReview.get().getUserId().equals(userId)) {
-            message = "리뷰 작성한 사람과 수정하려는 사람이 일치하지 않습니다.";
-        } else if (findReview.get().getPlaceId() != review.getPlaceId()) {
-            message = "맛집 장소가 일치하지 않습니다.";
-        } else {
-            findReview.get().editReview(review);
-            placeReviewRepository.save(findReview.get());
-            status = 200;
-            message = "리뷰 수정에 성공하였습니다.";
-            httpStatus = HttpStatus.OK;
+            return Response.newResult(HttpStatus.BAD_REQUEST, "리뷰가 존재하지 않습니다.", null);
         }
-
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
-                .build();
-        return new ResponseEntity<>(result, httpStatus);
+        if (!user.isPresent()) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요", null);
+        }
+        if (!findReview.get().getUserId().equals(userId)) {
+            return Response.newResult(HttpStatus.FORBIDDEN, "자신의 리뷰만 수정 가능합니다.", null);
+        }
+        if (findReview.get().getPlaceId() != review.getPlaceId()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "맛집 장소가 일치하지 않습니다.", null);
+        }
+        findReview.get().editReview(review);
+        placeReviewRepository.save(findReview.get());
+        return Response.newResult(HttpStatus.OK, "리뷰 수정에 성공했습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> deletePlaceReviews(String userId, ReviewDeleteRequest review) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> deletePlaceReviews(String userId, ReviewDeleteRequest review) {
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 
         if (!findReview.isPresent()) {
-            message = "해당 리뷰가 존재하지 않습니다.";
-        } else if (!user.isPresent()) {
-            message = "해당 유저가 존재하지 않습니다.";
-        } else if (!findReview.get().getUserId().equals(userId)) {
-            message = "리뷰 작성한 사람과 삭제하려는 사람이 일치하지 않습니다.";
-        } else {
-            placeReviewRepository.delete(findReview.get());
-            status = 200;
-            message = "리뷰 삭제에 성공하였습니다.";
-            httpStatus = HttpStatus.OK;
+            return Response.newResult(HttpStatus.BAD_REQUEST, "리뷰가 존재하지 않습니다.", null);
         }
-
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
-                .build();
-        return new ResponseEntity<>(result, httpStatus);
+        if (!user.isPresent()) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요", null);
+        }
+        if (!findReview.get().getUserId().equals(userId)) {
+            return Response.newResult(HttpStatus.FORBIDDEN, "자신의 리뷰만 삭제 가능합니다.", null);
+        }
+        placeReviewRepository.delete(findReview.get());
+        return Response.newResult(HttpStatus.OK, "리뷰 삭제에 성공했습니다.", null);
     }
 
-    public ResponseEntity<CustomResponseEntity> saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) {
-        init();
-        CustomResponseEntity result;
+    public ResponseEntity<Response> saveReviewImage(ImageRequest imageRequest, String userId, int reviewId) {
         Optional<Review> findReview = placeReviewRepository.findById(reviewId);
         Optional<User> user = userRepository.findUserById(userId);
 
         if (!findReview.isPresent()) {
-            message = "해당 리뷰가 존재하지 않습니다.";
-        } else if (!user.isPresent()) {
-            message = "해당 유저가 존재하지 않습니다.";
-        } else if (!findReview.get().getUserId().equals(userId)) {
-            message = "리뷰 작성한 사람과 이미지 추가하려는 사람이 일치하지 않습니다.";
-        } else {
-            Review newReview = findReview.get();
-            newReview.reviewImageUpdate(imageRequest.getImage());
-            placeReviewRepository.save(newReview);
-            status = 200;
-            message = "리뷰 이미지 추가에 성공하였습니다.";
-            httpStatus = HttpStatus.OK;
+            return Response.newResult(HttpStatus.BAD_REQUEST, "리뷰가 존재하지 않습니다.", null);
         }
-
-        result = CustomResponseEntity.builder()
-                .status(status)
-                .message(message)
-                .data(data)
-                .build();
-        return new ResponseEntity<>(result, httpStatus);
+        if (!user.isPresent()) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요", null);
+        }
+        if (!findReview.get().getUserId().equals(userId)) {
+            return Response.newResult(HttpStatus.FORBIDDEN, "자신의 리뷰에만 이미지 추가가 가능합니다.", null);
+        }
+        Review newReview = findReview.get();
+        newReview.reviewImageUpdate(imageRequest.getImage());
+        placeReviewRepository.save(newReview);
+        return Response.newResult(HttpStatus.OK, "리뷰 이미지 추가에 성공하였습니다.", null);
     }
 }

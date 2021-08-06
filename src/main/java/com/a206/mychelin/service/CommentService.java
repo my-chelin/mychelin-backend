@@ -1,16 +1,14 @@
 package com.a206.mychelin.service;
 
-import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.domain.entity.Comment;
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.CommentRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TimestampToDateString;
-import com.a206.mychelin.util.TokenUtils;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
 import com.a206.mychelin.web.dto.CommentResponse;
 import com.a206.mychelin.web.dto.CustomResponseEntity;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,13 +28,7 @@ public class CommentService {
     private final UserRepository userRepository;
 
     private User getUser(HttpServletRequest request) {
-        String header = request.getHeader(AuthConstants.AUTH_HEADER);
-        if (header == null) {
-            return null;
-        }
-        String token = TokenUtils.getTokenFromHeader(header);
-        Claims claims = TokenUtils.getClaimsFormToken(token);
-        String id = (String) claims.get("id");
+        String id = TokenToId.check(request);
         Optional<User> user = userRepository.findUserById(id);
         if (!user.isPresent()) {
             return null;

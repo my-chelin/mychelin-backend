@@ -21,6 +21,6 @@ public class PlaceDto {
         private String operationHours;
         private int categoryId;
         private String image;
-        private Object starRate;
+        private Double starRate;
     }
 }
