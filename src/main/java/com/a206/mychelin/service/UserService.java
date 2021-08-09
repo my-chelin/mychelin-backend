@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
@@ -48,7 +49,7 @@ public class UserService {
         String userId = TokenToId.check(request);
         Optional<User> user = userRepository.findUserById(userId);
         user.get().updateInfo(requestDTO.getNickname(), requestDTO.getBio(), requestDTO.getPhoneNumber());
-        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", user);
+        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", null);
     }
 
     @Transactional
@@ -93,9 +94,9 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Response> getProfile(String nickname, HttpServletRequest request) {
+    public ResponseEntity<Response> getProfile(String userId, HttpServletRequest request) {
         UserProfileResponse.UserProfileResponseBuilder userProfileResponseBuilder;
-        Optional<User> tempUser = userRepository.findUserByNickname(nickname);
+        Optional<User> tempUser = userRepository.findUserById(userId);
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }

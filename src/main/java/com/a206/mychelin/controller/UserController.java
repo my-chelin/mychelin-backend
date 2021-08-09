@@ -1,5 +1,7 @@
 package com.a206.mychelin.controller;
 
+import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import com.a206.mychelin.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +30,9 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<Response> updateInfo(@RequestBody UserDto.UpdateRequest requestDTO, HttpServletRequest httpRequest) {
-        return userService.updateInfo(requestDTO, httpRequest);
+        userService.updateInfo(requestDTO, httpRequest);
+        ResponseEntity<Response> response = userService.getProfile(TokenToId.check(httpRequest), httpRequest);
+        return Response.newResult(response.getStatusCode(), "정보를 수정했습니다.", response.getBody());
     }
 
     @GetMapping("/profile/{nickname}")
