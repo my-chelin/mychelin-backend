@@ -48,7 +48,7 @@ public class UserService {
         String userId = TokenToId.check(request);
         Optional<User> user = userRepository.findUserById(userId);
         user.get().updateInfo(requestDTO.getNickname(), requestDTO.getBio(), requestDTO.getPhoneNumber());
-        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", null);
+        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", user);
     }
 
     @Transactional
@@ -100,8 +100,8 @@ public class UserService {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
         User user = tempUser.get();
-        int follow = followRepository.countByUserIdAndAccept(user.getId(), true);
-        int follower = followRepository.countByFollowingIdAndAccept(user.getId(), true);
+        int follow = followRepository.countByUserIdAndAccept(user.getId(), true); // 사용자가 신청한 팔로우 리스트이므로 팔로잉
+        int follower = followRepository.countByFollowingIdAndAccept(user.getId(), true); // 사용자를 팔로우 하겠다고 담은 사람 리스트이므로 팔로워.
         long like = postLikeRepository.getLikes(user.getId());
         userProfileResponseBuilder = UserProfileResponse.builder()
                 .nickname(user.getNickname())

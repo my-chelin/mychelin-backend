@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/place")
@@ -21,8 +23,8 @@ public class PlaceController {
     @ApiOperation(value = "id를 이용하여 식당 정보 조회")
     @ApiImplicitParam(name = "id", value = "식당 고유 id")
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getPlaceInfoById(@PathVariable String id) {
-        return placeService.getPlaceInfoById(id);
+    public ResponseEntity<Response> getPlaceInfoById(@PathVariable String id, HttpServletRequest httpServletRequest) {
+        return placeService.getPlaceInfoById(id, httpServletRequest);
     }
 
     @ApiOperation(value = "식당 이름을 이용하여 식당 정보 검색")
@@ -33,18 +35,19 @@ public class PlaceController {
     })
     @GetMapping
     public ResponseEntity<Response> getPlaceInfoByName(@RequestParam(defaultValue = "") String name
+            , HttpServletRequest httpServletRequest
             , @RequestParam(defaultValue = "") String location
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pageSize) throws PageIndexLessThanZeroException {
         if (location.equals("") && !name.equals("")) {
             try {
-                return placeService.getPlaceInfoByName(name, page, pageSize);
+                return placeService.getPlaceInfoByName(name, page, pageSize, httpServletRequest);
             } catch (ArithmeticException | IllegalArgumentException e) {
                 throw new PageIndexLessThanZeroException();
             }
         } else if (!location.equals("") && name.equals("")) {
             try {
-                return placeService.getPlaceInfoByLocation(location, page, pageSize);
+                return placeService.getPlaceInfoByLocation(location, page, pageSize, httpServletRequest);
             } catch (ArithmeticException | IllegalArgumentException e) {
                 throw new PageIndexLessThanZeroException();
             }

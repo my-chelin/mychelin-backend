@@ -17,6 +17,9 @@ public class TimestampToDateString {
         int minutes = (seconds % 3600) / 60;
         seconds = (seconds % 3600) % 60;
 
+        if (hours >= 840) {
+            return sdf.format(writtenTime);
+        }
         if (hours < 840 && hours >= 672) {
             return "4주 전";
         }
@@ -36,9 +39,10 @@ public class TimestampToDateString {
         if (hours < 24 && hours >= 1) {
             return hours + "시간 전";
         }
-        if (hours < 1) {
+        if (minutes >= 1) {
             return minutes + "분 전";
+        } else {
+            return seconds + "초 전";
         }
-        return sdf.format(writtenTime);
     }
 }

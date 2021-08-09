@@ -41,6 +41,11 @@ dependencies {
     // AWS S3
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.37'
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.3'
+    // 임베디드 레디스
+    testImplementation 'it.ozimov:embedded-redis:0.7.3'
 }
 
 test {

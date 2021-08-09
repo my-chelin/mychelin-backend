@@ -22,5 +22,6 @@ public class PlaceDto {
         private int categoryId;
         private String image;
         private Double starRate;
+        private boolean isSaved;
     }
 }
