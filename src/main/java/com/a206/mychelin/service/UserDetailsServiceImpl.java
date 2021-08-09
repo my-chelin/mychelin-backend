@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public MyUserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findById(id);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             if (!user.get().isWithdraw()) {
                 return new MyUserDetails(user.get(), Collections.singleton(new SimpleGrantedAuthority(user.get().getRole())));
             }

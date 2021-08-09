@@ -104,7 +104,7 @@ public class UserService {
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
-        if(tempUser.get().isWithdraw()) {
+        if (tempUser.get().isWithdraw()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 사용자입니다.", null);
         }
         User user = tempUser.get();
@@ -141,8 +141,7 @@ public class UserService {
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         StringBuffer token = new StringBuffer();
         Random rnd = new Random();
-        for (int i = 0; i < 10; i++)
-        {
+        for (int i = 0; i < 10; i++) {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
                 case 0:

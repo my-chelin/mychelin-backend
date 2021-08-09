@@ -26,21 +26,13 @@ public class FollowService {
 
     @Transactional
     public ResponseEntity<Response> follow(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest request) {
-<<<<<<< HEAD
-        CustomResponseEntity customResponseEntity;
-        String userId = TokenToId.check(request);
-        Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
-        if (!optionalUser.isPresent()) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다." , null);
-        }
-        if (optionalUser.get().isWithdraw()) {
-            return Response.newResult(HttpStatus.NOT_FOUND, "탈퇴한 유저입니다.", null);
-=======
         String userId = TokenToId.check(request);
         Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
+        }
+        if (optionalUser.get().isWithdraw()) {
+            return Response.newResult(HttpStatus.NOT_FOUND, "탈퇴한 유저입니다.", null);
         }
         String getFollowingId = optionalUser.get().getId();
         Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(userId, getFollowingId);
@@ -48,23 +40,11 @@ public class FollowService {
         if (!findFollow.isPresent()) { // 두 유저 간의 팔로우 내역이 없다면 새로 요청받을 수 있도록 생성.
             Follow followRequest = Follow.builder().userId(userId).followingId(getFollowingId).build();
             followRepository.save(followRequest);
-<<<<<<< HEAD
-
-            /*
-            상대방에게 알림 보내는 로직이 필요하다면 여기서 처리할 것.
-            */
-            return Response.newResult(HttpStatus.OK, "팔로우 신청이 전송되었습니다.", null);
-        }
-        // 팔로우 내역이 있다면 팔로우 요청 취소를 한다.
-        followRepository.deleteAllByUserIdAndFollowingIdAndAccept(userId, getFollowingId, false);
-        return Response.newResult(HttpStatus.BAD_REQUEST, "팔로우 요청이 취소 되었습니다.", null);
-=======
             return Response.newResult(HttpStatus.OK, "팔로우 신청이 전송됐습니다.", null);
         }
         // 팔로우 내역이 있다면 팔로우 요청 취소를 한다.
         followRepository.deleteAllByUserIdAndFollowingIdAndAccept(userId, getFollowingId, false);
         return Response.newResult(HttpStatus.OK, "팔로우 신청이 취소됐습니다.", null);
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
     }
 
     @Transactional
@@ -85,33 +65,19 @@ public class FollowService {
             if (!checkFollow.get().isAccept()) {
                 Follow follow = checkFollow.get();
                 follow.update(getFollowerId, userId);
-<<<<<<< HEAD
-
-                return Response.newResult(HttpStatus.OK, "팔로우가 수락되었습니다.", follow);
-            }
-            return Response.newResult(HttpStatus.BAD_REQUEST, "이미 완료된 작업입니다.", null);
-        }
-
-        // 팔로우 신청이 없는 경우
-        return Response.newResult(HttpStatus.NOT_ACCEPTABLE, "팔로우 신청 내역이 없습니다.", null);
-=======
                 return Response.newResult(HttpStatus.OK, "팔로우가 수락되었습니다.", follow);
             }
             return Response.newResult(HttpStatus.BAD_REQUEST, "이미 수락한 팔로우 요청입니다.", null);
         }
         return Response.newResult(HttpStatus.OK, "팔로우 신청 내역이 없습니다.", null);
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
     }
 
     @Transactional
     public ResponseEntity<Response> findFollowingList(String nickname) {
-<<<<<<< HEAD
-=======
         Optional<User> optionalUser = userRepository.findUserByNickname(nickname);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
         List<Object[]> following = followRepository.findFollowingByUserNickname(nickname);
         if (following.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로잉 목록이 없습니다.", null);
@@ -150,14 +116,11 @@ public class FollowService {
     }
 
     public ResponseEntity<Response> getFollowRequest(HttpServletRequest request) {
-<<<<<<< HEAD
-=======
         String userId = TokenToId.check(request);
         Optional<User> optionalUser = userRepository.findUserById(userId);
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
         User user = userRepository.findUserById(TokenToId.check(request)).get();
         List<String[]> requests = followRepository.findUserIdByUserId(user.getId());
         if (requests.size() == 0) {
@@ -172,24 +135,6 @@ public class FollowService {
                     .build()
             );
         }
-<<<<<<< HEAD
-        if (requests.size() == 0) {
-            return Response.newResult(HttpStatus.OK, "아직은 요청이 없어요.", null);
-        }
-        return Response.newResult(HttpStatus.OK, user.getNickname() + "의 팔로워 요청 목록" , list);
-    }
-    public ResponseEntity<Response> unfollow(FollowAskRequest followAskRequest, HttpServletRequest request) {
-        System.out.println(followAskRequest);
-        System.out.println(followAskRequest.getUserNickname());
-        Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname());
-        if (!optionalUser.isPresent()) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다." , null);
-        }
-        String userId = optionalUser.get().getId();
-        followRepository.deleteAllByUserIdAndFollowingIdAndAccept(TokenToId.check(request), userId, true);
-
-        return Response.newResult(HttpStatus.OK, "팔로우를 취소하였습니다.", null);
-=======
         return Response.newResult(HttpStatus.OK, user.getNickname() + "의 팔로워 신청 목록", list);
     }
 
@@ -201,6 +146,5 @@ public class FollowService {
         String userId = optionalUser.get().getId();
         followRepository.deleteAllByUserIdAndFollowingIdAndAccept(TokenToId.check(request), userId, true);
         return Response.newResult(HttpStatus.BAD_REQUEST, "언팔로우 되었습니다.", null);
->>>>>>> c49b4b94bf68644be2cbad7e0c0366f959beba2f
     }
 }
