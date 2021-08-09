@@ -1,6 +1,6 @@
 package com.a206.mychelin.util;
 
-import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.Response;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -87,16 +87,10 @@ public class ImageServer {
         return token.toString();
     }
 
-    public ResponseEntity registerImageIntoServer(MultipartFile file) throws IOException {
+    public ResponseEntity<Response> registerImageIntoServer(MultipartFile file) throws IOException {
         String imagePath = upload(file);
         HashMap<String, String> hashMap = new LinkedHashMap<>();
         hashMap.put("image", imagePath);
-        CustomResponseEntity result = CustomResponseEntity.builder()
-                .status(200)
-                .message("이미지를 서버에 성공적으로 저장했습니다.")
-                .data(hashMap)
-                .build();
-
-        return new ResponseEntity<CustomResponseEntity>(result, HttpStatus.OK);
+        return Response.newResult(HttpStatus.OK, "이미지를 서버에 성공적으로 저장했습니다.", hashMap);
     }
 }

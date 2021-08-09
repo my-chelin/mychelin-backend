@@ -4,9 +4,9 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceListService;
 import com.a206.mychelin.util.TokenUtils;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.PlaceListCreateRequest;
 import com.a206.mychelin.web.dto.PlaceListItemRequest;
+import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -26,18 +26,18 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트 생성")
     @PostMapping
-    public ResponseEntity<CustomResponseEntity> createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest, HttpServletRequest request) {
         return placeListService.createPlaceList(placeListCreateRequest, request);
     }
 
     @ApiOperation(value = "맛집 리스트의 상세 맛집 정보")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "listId", value = "맛집 리스트의 id"),
-            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
-            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping("/{listId}")
-    public ResponseEntity<CustomResponseEntity> getPlaceListItemByTitle(@PathVariable int listId
+    public ResponseEntity<Response> getPlaceListItemByTitle(@PathVariable int listId
             , @RequestParam(defaultValue = "1") int page
             , @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
         try {
@@ -49,7 +49,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트의 맛집 추가")
     @PostMapping("/{listId}")
-    public ResponseEntity<CustomResponseEntity> insertPlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
+    public ResponseEntity<Response> insertPlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeListService.insertPlaceListItem(userId, listId, placeListItemRequest.getPlaceId());
@@ -57,7 +57,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트의 맛집 삭제")
     @DeleteMapping("/{listId}")
-    public ResponseEntity<CustomResponseEntity> deletePlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
+    public ResponseEntity<Response> deletePlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeListService.deletePlaceListItem(userId, listId, placeListItemRequest.getPlaceId());
@@ -72,7 +72,7 @@ public class PlaceListController {
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping
-    public ResponseEntity<CustomResponseEntity> searchPlaceListByTitle(@RequestParam(defaultValue = "") String title
+    public ResponseEntity<Response> searchPlaceListByTitle(@RequestParam(defaultValue = "") String title
             , @RequestParam(defaultValue = "-1") int id
             , @RequestParam(defaultValue = "") String nickname
             , @RequestParam(defaultValue = "1") int page
@@ -92,10 +92,6 @@ public class PlaceListController {
                 throw new PageIndexLessThanZeroException();
             }
         }
-        CustomResponseEntity customResponseEntity = CustomResponseEntity.builder()
-                .message("파라미터가 잘못 되었습니다.")
-                .status(400)
-                .build();
-        return new ResponseEntity<>(customResponseEntity, HttpStatus.BAD_REQUEST);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터가 잘못 되었습니다.", null);
     }
 }
