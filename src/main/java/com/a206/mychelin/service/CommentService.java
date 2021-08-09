@@ -8,7 +8,6 @@ import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
 import com.a206.mychelin.web.dto.CommentResponse;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -55,7 +54,6 @@ public class CommentService {
                             .build()
             );
         }
-
         return Response.newResult(HttpStatus.OK, "댓글을 불러왔습니다.", arr);
     }
 
@@ -64,7 +62,7 @@ public class CommentService {
     public ResponseEntity<Response> addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
         User user = getUser(request);
         if (user == null) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "로그인 후 이용해주세요.", null);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
         String userId = user.getId();
         commentRequest.setWriterId(userId);
@@ -78,10 +76,9 @@ public class CommentService {
     public ResponseEntity<Response> deleteComment(@PathVariable int commentId, HttpServletRequest request) {
         User user = getUser(request);
         if (user == null) {
-            return Response.newResult(HttpStatus.BAD_REQUEST, "로그인 후 이용해주세요", null);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
         String userId = user.getId();
-
         Optional<Comment> comment = commentRepository.findCommentByCommentId(commentId);
         if (!comment.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "작업을 수행할 수 없습니다.", null);

@@ -1,7 +1,6 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.FollowService;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.FollowAcceptRequest;
 import com.a206.mychelin.web.dto.FollowAskRequest;
 import com.a206.mychelin.web.dto.Response;

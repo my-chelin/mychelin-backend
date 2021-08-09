@@ -2,7 +2,6 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.CommentService;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

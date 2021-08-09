@@ -23,10 +23,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         final String id = token.getName();
         final String userPw = (String) token.getCredentials();
         final MyUserDetails userDetails;
-        try{
+        try {
             userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(id);
-        }
-        catch (Exception ee){
+        } catch (Exception ee) {
             throw new BadCredentialsException(id + "Invalid ID");
         }
 
