@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -81,8 +83,14 @@ public class CommentService {
         if (!comment.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "작업을 수행할 수 없습니다.", null);
         }
+
         if (comment.get().getWriterId().equals(userId)) {
-            commentRepository.deleteCommentByCommentId(commentId);
+            // 삭제 대신 삭제된 댓글입니다로 내용물 바꾸기.
+            if (comment.get().getMessage().substring(0, 10).equals("삭제된 댓글입니다.")) {
+                return Response.newResult(HttpStatus.NOT_ACCEPTABLE, "이미 삭제된 댓글입니다.", null);
+            }
+            comment.get().changeComment();
+//            commentRepository.deleteCommentByCommentId(comment);
             return Response.newResult(HttpStatus.OK, "댓글을 삭제했습니다.", null);
         }
         return Response.newResult(HttpStatus.UNAUTHORIZED, "댓글 삭제 권한이 없습니다.", null);

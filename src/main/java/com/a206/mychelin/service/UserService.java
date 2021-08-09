@@ -89,8 +89,12 @@ public class UserService {
     @Transactional
     public ResponseEntity<Response> deleteUser(HttpServletRequest request) {
         User user = getUser(request);
-        userRepository.deleteUsersById(user.getId());
-        return Response.newResult(HttpStatus.OK, "탈퇴가 완료되었습니다.", null);
+        if (!user.isWithdraw()) {
+            user.userWithdraw();
+            return Response.newResult(HttpStatus.OK, "탈퇴가 완료되었습니다.", null);
+        }
+        return Response.newResult(HttpStatus.BAD_REQUEST, "유효하지 않은 접근입니다.", null);
+//        userRepository.deleteUsersById(user.getId());
     }
 
     @Transactional
@@ -99,6 +103,9 @@ public class UserService {
         Optional<User> tempUser = userRepository.findUserById(userId);
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        if(tempUser.get().isWithdraw()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 사용자입니다.", null);
         }
         User user = tempUser.get();
         int follow = followRepository.countByUserIdAndAccept(user.getId(), true); // 사용자가 신청한 팔로우 리스트이므로 팔로잉
@@ -134,7 +141,8 @@ public class UserService {
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         StringBuffer token = new StringBuffer();
         Random rnd = new Random();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
                 case 0:
@@ -154,8 +162,8 @@ public class UserService {
 
         emailMessage.setTo(emailRequest.getEmail());
         emailMessage.setSubject("가입 인증 메일입니다.");
-        emailMessage.setText("안녕하세요 Mychelin 입니다.\n\n" +
-                "가입 인증 토큰 : " + token + " 입니다.\n\n" +
+        emailMessage.setText("안녕하세요😄 Mychelin 입니다.\n\n" +
+                "가입 인증 토큰은 : " + token + " 입니다.\n\n" +
                 "감사합니다.");
         javaMailSender.send(emailMessage);
 

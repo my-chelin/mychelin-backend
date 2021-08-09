@@ -1,5 +1,6 @@
 package com.a206.mychelin.config;
 
+import com.a206.mychelin.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
