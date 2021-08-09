@@ -145,6 +145,6 @@ public class FollowService {
         }
         String userId = optionalUser.get().getId();
         followRepository.deleteAllByUserIdAndFollowingIdAndAccept(TokenToId.check(request), userId, true);
-        return Response.newResult(HttpStatus.BAD_REQUEST, "언팔로우 되었습니다.", null);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "팔로우 요청이 취소 되었습니다.", null);
     }
 }
