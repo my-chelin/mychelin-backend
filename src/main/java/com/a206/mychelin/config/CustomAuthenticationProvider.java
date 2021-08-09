@@ -1,5 +1,6 @@
 package com.a206.mychelin.config;
 
+import com.a206.mychelin.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
