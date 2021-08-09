@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Getter
@@ -36,5 +37,11 @@ public class Comment {
         this.writerId = writerId;
         this.message = message;
         this.postId = postId;
+    }
+
+    public void changeComment(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yy년 MM월 dd일 k시 m분");
+        String date = sdf.format(new Date());
+        this.message = "삭제된 댓글입니다. (삭제일시 : " + date + ")";
     }
 }

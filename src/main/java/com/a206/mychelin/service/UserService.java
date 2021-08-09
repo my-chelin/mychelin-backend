@@ -140,7 +140,8 @@ public class UserService {
         SimpleMailMessage emailMessage = new SimpleMailMessage();
         StringBuffer token = new StringBuffer();
         Random rnd = new Random();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
+        {
             int rIndex = rnd.nextInt(3);
             switch (rIndex) {
                 case 0:
@@ -160,8 +161,8 @@ public class UserService {
 
         emailMessage.setTo(emailRequest.getEmail());
         emailMessage.setSubject("가입 인증 메일입니다.");
-        emailMessage.setText("안녕하세요 Mychelin 입니다.\n\n" +
-                "가입 인증 토큰 : " + token + " 입니다.\n\n" +
+        emailMessage.setText("안녕하세요😄 Mychelin 입니다.\n\n" +
+                "가입 인증 토큰은 : " + token + " 입니다.\n\n" +
                 "감사합니다.");
         javaMailSender.send(emailMessage);
 
