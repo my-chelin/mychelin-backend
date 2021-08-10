@@ -13,8 +13,8 @@ public class PlaceListItemDetail {
     private String contributorId;
     private String name;
     private String description;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private String phone;
     private String location;
     private String opertaionHours;

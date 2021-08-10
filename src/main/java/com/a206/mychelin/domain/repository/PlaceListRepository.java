@@ -32,4 +32,6 @@ public interface PlaceListRepository extends JpaRepository<PlaceList, Integer> {
     @Query(value = "SELECT COUNT(*) from placelist_item pi, place p where pi.placelist_id=:id and pi.place_id=p.id order by p.id"
             , nativeQuery = true)
     int getPlaceListItemsNumById(int id);
+
+    long countPlaceListsByUserId(@Param("user_id") String userId);
 }

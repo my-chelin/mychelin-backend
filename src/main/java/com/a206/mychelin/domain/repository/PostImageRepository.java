@@ -11,4 +11,6 @@ import java.util.List;
 public interface PostImageRepository extends JpaRepository<PostImage, Integer> {
     @Query(value = "select image from post_image where post_id = :post_id order by post_image.order", nativeQuery = true)
     List<String> findPostsByPostIdOrderByOrder(@Param("post_id") int postId);
+
+    List<PostImage> findPostImagesByPostId(@Param("post_id") int postId);
 }

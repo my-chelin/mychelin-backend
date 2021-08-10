@@ -23,5 +23,6 @@ public class PlaceDto {
         private String image;
         private Double starRate;
         private boolean isSaved;
+        private int reviewCnt;
     }
 }

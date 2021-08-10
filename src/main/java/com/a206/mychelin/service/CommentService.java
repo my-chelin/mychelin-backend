@@ -86,11 +86,11 @@ public class CommentService {
 
         if (comment.get().getWriterId().equals(userId)) {
             // 삭제 대신 삭제된 댓글입니다로 내용물 바꾸기.
-            if (comment.get().getMessage().substring(0, 10).equals("삭제된 댓글입니다.")) {
-                return Response.newResult(HttpStatus.NOT_ACCEPTABLE, "이미 삭제된 댓글입니다.", null);
-            }
-            comment.get().changeComment();
-//            commentRepository.deleteCommentByCommentId(comment);
+//            if (comment.get().getMessage().substring(0, 10).equals("삭제된 댓글입니다.")) {
+//                return Response.newResult(HttpStatus.NOT_ACCEPTABLE, "이미 삭제된 댓글입니다.", null);
+//            }
+//            comment.get().changeComment();
+            commentRepository.deleteCommentByCommentId(comment.get().getCommentId());
             return Response.newResult(HttpStatus.OK, "댓글을 삭제했습니다.", null);
         }
         return Response.newResult(HttpStatus.UNAUTHORIZED, "댓글 삭제 권한이 없습니다.", null);

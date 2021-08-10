@@ -56,26 +56,27 @@ public class PostController {
         return postService.delete(id, httpRequest);
     }
 
-    @GetMapping("/following")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
-            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
-    })
-    public ResponseEntity<Response> findPostsByFollowingUsers(HttpServletRequest httpServletRequest, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
-        return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest, page, pagesize);
-    }
 
-    @GetMapping("/main")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
             @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
     })
+    @GetMapping("/main")
     public ResponseEntity<Response> getPosts(HttpServletRequest request, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
         try {
             return postService.findAllPosts(request, page, pagesize);
         } catch (IllegalArgumentException e) {
             throw new PageIndexLessThanZeroException();
         }
+    }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    @GetMapping("/following")
+    public ResponseEntity<Response> findPostsByFollowingUsers(HttpServletRequest httpServletRequest, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pagesize) throws PageIndexLessThanZeroException {
+        return postService.findPostsByFollowingUsersOrderByCreateDateDesc(httpServletRequest, page, pagesize);
     }
 
     @ApiOperation(value = "선택한 포스트에 좋아요 표시를 한다.")
