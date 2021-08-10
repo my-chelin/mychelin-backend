@@ -7,7 +7,7 @@ public class FoodPreferenceIndicationService {
     int[] choices;
 
 
-    public Map<String, Double> getResult(Object[] choices){
+    public Map<String, Double> getResult(Object[] choices) {
         Map<String, Double> map = new HashMap<>();
         int[] res = new int[5];
         // sour
