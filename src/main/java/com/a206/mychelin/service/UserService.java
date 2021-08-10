@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
@@ -42,6 +41,10 @@ public class UserService {
             return null;
         }
         return user.get();
+    }
+
+    public String getIdByNickname(String nickname) {
+        return userRepository.findUserByNickname(nickname).get().getId();
     }
 
     @Transactional
@@ -94,7 +97,6 @@ public class UserService {
             return Response.newResult(HttpStatus.OK, "탈퇴가 완료되었습니다.", null);
         }
         return Response.newResult(HttpStatus.BAD_REQUEST, "유효하지 않은 접근입니다.", null);
-//        userRepository.deleteUsersById(user.getId());
     }
 
     @Transactional

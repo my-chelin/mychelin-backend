@@ -10,14 +10,12 @@ import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.print.attribute.standard.PageRanges;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -114,7 +112,7 @@ public class PostService {
 
     public ResponseEntity<Response> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest, int page, int pageSize) {
         String userId = TokenToId.check(httpRequest);
-        if(userId == null) {
+        if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
 
