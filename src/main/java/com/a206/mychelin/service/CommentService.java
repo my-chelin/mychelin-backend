@@ -1,9 +1,12 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Comment;
+import com.a206.mychelin.domain.entity.NoticeComment;
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.repository.CommentRepository;
+import com.a206.mychelin.domain.repository.NoticeCommentRepository;
 import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.util.RealTimeDataBase;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.CommentInsertRequest;
@@ -26,9 +29,12 @@ import java.util.*;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final RealTimeDataBase realTimeDataBase;
+    private final NoticeCommentRepository noticeCommentRepository;
 
     private User getUser(HttpServletRequest request) {
         String id = TokenToId.check(request);
+        System.out.println(id);
         Optional<User> user = userRepository.findUserById(id);
         if (!user.isPresent()) {
             return null;
@@ -79,6 +85,18 @@ public class CommentService {
         commentRequest.setPostId(postId);
         Comment newComment = commentRequest.toEntity();
         commentRepository.save(newComment);
+
+        commentRepository.findAll();
+
+        NoticeComment noticeComment = NoticeComment.builder()
+                .commentId(newComment.getCommentId())
+                .build();
+
+        noticeCommentRepository.save(noticeComment);
+
+        realTimeDataBase.setNotice(user.getNickname());
+
+
         customResponseEntity = CustomResponseEntity.builder()
                 .status(200)
                 .message("댓글을 달았습니다.")

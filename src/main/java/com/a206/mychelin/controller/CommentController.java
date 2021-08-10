@@ -29,6 +29,7 @@ public class CommentController {
     @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
     @PostMapping("/{postId}")
     public ResponseEntity<CustomResponseEntity> addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
+        System.out.println("???");
         return commentService.addComment(postId, commentRequest, request);
     }
 

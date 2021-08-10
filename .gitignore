@@ -41,3 +41,5 @@ out/
 
 ### properties ###
 application-credentials.properties
+
+serviceAccountKey.json
