@@ -106,6 +106,9 @@ public class PostService {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         List<Object[]> posts = postRepository.findPostsByUserNicknameOrderByCreateDateDesc(userNickname);
+        if (posts.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "아직 작성한 글이 없습니다", null);
+        }
         ArrayList<PostInfoResponse> arr = extractPosts(posts, userId);
         return Response.newResult(HttpStatus.OK, userNickname + "의 게시글을 불러왔습니다.", arr);
     }

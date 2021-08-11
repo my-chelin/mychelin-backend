@@ -143,7 +143,6 @@ public class PlaceService {
             PlaceDto.PlaceResponse place = placeResponseBuilder.build();
             resultList.add(place);
         }
-        //
         if (resultList.size() == 0) {
             return Response.newResult(HttpStatus.OK, "검색결과가 없습니다.", null);
         }
