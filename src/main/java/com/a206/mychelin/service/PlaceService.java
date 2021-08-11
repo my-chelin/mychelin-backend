@@ -4,6 +4,7 @@ import com.a206.mychelin.domain.entity.BookmarkPlace;
 import com.a206.mychelin.domain.entity.Place;
 import com.a206.mychelin.domain.repository.BookmarkRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
+import com.a206.mychelin.domain.repository.ReviewRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.PlaceAndStarRateByCoordinate;
 import com.a206.mychelin.web.dto.PlaceDto;
@@ -22,6 +23,7 @@ import java.util.*;
 public class PlaceService {
     private final PlaceRepository placeRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ReviewRepository reviewRepository;
 
     public ResponseEntity<Response> getPlaceInfoById(String id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
@@ -29,6 +31,7 @@ public class PlaceService {
         if (!nowPlace.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "식당이 존재하지 않습니다.", null);
         }
+        int reviewCnt = reviewRepository.countAllByPlaceId(nowPlace.get().getId());
         // 로그인 안 한 상태
         PlaceDto.PlaceResponse.PlaceResponseBuilder placeBuilder = PlaceDto.PlaceResponse.builder()
                 .id(nowPlace.get().getId())
@@ -40,7 +43,8 @@ public class PlaceService {
                 .location(nowPlace.get().getLocation())
                 .operationHours(nowPlace.get().getOperationHours())
                 .categoryId(nowPlace.get().getCategoryId())
-                .image(nowPlace.get().getImage());
+                .image(nowPlace.get().getImage())
+                .reviewCnt(reviewCnt);
 
         if (userId != null) {
             Optional<BookmarkPlace> bookmark = bookmarkRepository.findBookmarkPlaceByUserIdAndPlaceId(userId, nowPlace.get().getId());
@@ -73,6 +77,7 @@ public class PlaceService {
 
         ArrayList<PlaceDto.PlaceResponse> resultList = new ArrayList<>();
         for (Place nowPlace : placesArrayList) {
+            int reviewCnt = reviewRepository.countAllByPlaceId(nowPlace.getId());
             PlaceDto.PlaceResponse.PlaceResponseBuilder placeResponseBuilder = PlaceDto.PlaceResponse.builder()
                     .id(nowPlace.getId())
                     .name(nowPlace.getName())
@@ -83,7 +88,8 @@ public class PlaceService {
                     .location(nowPlace.getLocation())
                     .operationHours(nowPlace.getOperationHours())
                     .categoryId(nowPlace.getCategoryId())
-                    .image(nowPlace.getImage());
+                    .image(nowPlace.getImage())
+                    .reviewCnt(reviewCnt);
             Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.getId()));
             if (starRate.isPresent()) {
                 placeResponseBuilder = placeResponseBuilder.starRate(starRate.get());

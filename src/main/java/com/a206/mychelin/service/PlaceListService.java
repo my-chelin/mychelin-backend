@@ -113,8 +113,8 @@ public class PlaceListService {
                     .contributorId((String) item[2])
                     .name((String) item[3])
                     .description((String) item[4])
-                    .latitude((float) item[5])
-                    .longitude((float) item[6])
+                    .latitude((double) item[5])
+                    .longitude((double) item[6])
                     .phone((String) item[7])
                     .location((String) item[8])
                     .opertaionHours((String) item[9])
@@ -194,7 +194,7 @@ public class PlaceListService {
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
-        long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId());
+        long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId()) + placeListRepository.countPlaceListsByUserId(user.get().getId());
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
@@ -214,7 +214,7 @@ public class PlaceListService {
             placeListItemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
                     .placeListId((int) item[0])
                     .title((String) item[1])
-                    .contributorId((String) item[2])
+                    .nickname((String) item[2])
                     .contrubuteItemCnt((BigInteger) item[3])
                     .totalItemCnt((BigInteger) item[4])
                     .createDate(format)

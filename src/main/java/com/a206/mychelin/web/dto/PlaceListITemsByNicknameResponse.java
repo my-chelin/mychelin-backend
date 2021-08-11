@@ -14,7 +14,7 @@ import java.math.BigInteger;
 public class PlaceListITemsByNicknameResponse {
     private int placeListId;
     private String title;
-    private String contributorId;
+    private String nickname;
     private BigInteger contrubuteItemCnt;
     private BigInteger totalItemCnt;
     private String createDate;

@@ -85,6 +85,7 @@ public class CommentService {
         }
 
         if (comment.get().getWriterId().equals(userId)) {
+            commentRepository.deleteCommentByCommentId(comment.get().getCommentId());
             return Response.newResult(HttpStatus.OK, "댓글을 삭제했습니다.", null);
         }
         return Response.newResult(HttpStatus.UNAUTHORIZED, "댓글 삭제 권한이 없습니다.", null);
