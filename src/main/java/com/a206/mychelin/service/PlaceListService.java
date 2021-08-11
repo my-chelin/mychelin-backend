@@ -1,10 +1,7 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.*;
-import com.a206.mychelin.domain.repository.PlaceListItemRepository;
-import com.a206.mychelin.domain.repository.PlaceListRepository;
-import com.a206.mychelin.domain.repository.PlaceRepository;
-import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.domain.repository.*;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,7 @@ public class PlaceListService {
     final private PlaceListItemRepository placeListItemRepository;
     final private PlaceRepository placeRepository;
     final private UserRepository userRepository;
+    final private ReviewRepository reviewRepository;
 
     static String message;
 
@@ -106,6 +104,7 @@ public class PlaceListService {
             if (starRateOptional.isPresent()) {
                 starRate = starRateOptional.get();
             }
+            int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
 
             arr.add(PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
@@ -121,6 +120,7 @@ public class PlaceListService {
                     .categoryId((int) item[10])
                     .image((String) item[11])
                     .starRate(starRate)
+                    .reviewCnt(reviewCnt)
                     .build()
             );
         }

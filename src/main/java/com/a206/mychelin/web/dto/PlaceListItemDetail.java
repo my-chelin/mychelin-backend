@@ -21,4 +21,5 @@ public class PlaceListItemDetail {
     private int categoryId;
     private String image;
     private Double starRate;
+    private int reviewCnt;
 }
