@@ -33,14 +33,8 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "gender", nullable = true)
-    private char gender;
-
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
-
-    @Column(name = "report_count", nullable = true)
-    private int reportCount;
 
     @Column(name = "create_date", nullable = true)
     private Date createDate;

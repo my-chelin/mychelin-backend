@@ -35,7 +35,7 @@ dependencies {
     // jwt 토큰 인증 추가
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
-    //	이메일 기능 추가
+    // 이메일 기능 추가
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 
     // AWS S3
@@ -46,6 +46,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis:2.5.3'
     // 임베디드 레디스
     testImplementation 'it.ozimov:embedded-redis:0.7.3'
+
+    // firebase
+    implementation 'com.google.firebase:firebase-admin:6.8.1'
 }
 
 test {
