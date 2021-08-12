@@ -1,7 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.util.ImageServer;
-import com.a206.mychelin.web.dto.CustomResponseEntity;
+import com.a206.mychelin.web.dto.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ public class ImageController {
     final private ImageServer imageServer;
 
     @PostMapping
-    public ResponseEntity<CustomResponseEntity> registerImageIntoServer(@RequestParam MultipartFile file) throws IOException {
+    public ResponseEntity<Response> registerImageIntoServer(@RequestParam MultipartFile file) throws IOException {
         return imageServer.registerImageIntoServer(file);
     }
 }

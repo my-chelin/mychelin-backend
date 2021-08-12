@@ -17,12 +17,12 @@ public class UserRepositoryTest {
     UserRepository userRepository;
 
     @After
-    public void cleanup(){
+    public void cleanup() {
         userRepository.deleteAll();
     }
 
     @Test
-    public void 회원정보_불러오기(){
+    public void 회원정보_불러오기() {
         String nickname = "테스트 닉네임";
         String id = "테스트이메일@naver.com";
         String phone_number = "010-1111-1111";
@@ -30,20 +30,20 @@ public class UserRepositoryTest {
         String bio = "테스트 한 줄 자기 소개";
 
         userRepository.save(User.builder()
-                                .id(id)
-                                .password(password)
-                                .nickname(nickname)
-                                .phoneNumber(phone_number)
-                                .build());
+                .id(id)
+                .password(password)
+                .nickname(nickname)
+                .phoneNumber(phone_number)
+                .build());
 
         //when
         Optional<User> optionalUser = userRepository.findUserById(id);
 
         //then
-        if(!optionalUser.isPresent()){
+        if (!optionalUser.isPresent()) {
 
 
-        }else {
+        } else {
             User user = optionalUser.get();
             assertThat(user.getId()).isEqualTo(id);
             assertThat(user.getPhoneNumber()).isEqualTo(phone_number);

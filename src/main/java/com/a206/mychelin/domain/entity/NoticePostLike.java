@@ -5,26 +5,29 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Date;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@DynamicUpdate
 @DynamicInsert
 @Entity
-public class NoticeComment {
+public class NoticePostLike {
 
     @Id
     private int id;
 
-    private int commentId;
+    private int postId;
 
-    private boolean isRead;
+    private String userId;
 
     private Date addTime;
 
+    private boolean isRead;
 }

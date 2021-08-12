@@ -1,20 +1,21 @@
 package com.a206.mychelin.service;
 
-import com.a206.mychelin.domain.entity.Post;
-import com.a206.mychelin.domain.entity.PostImage;
-import com.a206.mychelin.domain.entity.PostLike;
-import com.a206.mychelin.domain.entity.User;
+import com.a206.mychelin.domain.entity.*;
 import com.a206.mychelin.domain.repository.*;
+import com.a206.mychelin.util.RealTimeDataBase;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.print.attribute.standard.PageRanges;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -28,7 +29,8 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final PostImageRepository postImageRepository;
     private final UserRepository userRepository;
-
+    private final NoticePostLikeRepository noticePostLikeRepository;
+    private final RealTimeDataBase realTimeDataBase;
     @Transactional
     public ResponseEntity<Response> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
@@ -109,15 +111,29 @@ public class PostService {
         return Response.newResult(HttpStatus.OK, userNickname + "의 게시글을 불러왔습니다.", arr);
     }
 
-    public ResponseEntity<Response> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest, int page, int pageSize) {
         String userId = TokenToId.check(httpRequest);
-        List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId);
+        if(userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
+        }
+
+        long totalPageItemCnt = postRepository.countPostsByFollowingUsers(userId);
+        System.out.println(totalPageItemCnt);
+        HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
+        linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashmap.put("nowPage", page);
+        linkedHashmap.put("nowPageSize", pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId, pageRequest);
         ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+        linkedHashmap.put("posts", arr);
         if (items.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로우 하는 친구의 소식을 기다려주세요!", null);
         }
         extractPosts(items, userId);
-        return Response.newResult(HttpStatus.OK, "팔로우하는 유저의 소식을 불러옵니다.", arr);
+        return Response.newResult(HttpStatus.OK, "팔로우하는 유저의 소식을 불러옵니다.", linkedHashmap);
     }
 
     private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
@@ -199,6 +215,22 @@ public class PostService {
                     .userId(userId)
                     .build();
             postLikeRepository.save(newLike);
+
+            // 좋아요 누르면 해당 알림 추가
+            postLikeRepository.findAll();
+
+            NoticePostLike noticePostLike = NoticePostLike.builder()
+                    .postId(newLike.getPostId())
+                    .userId(newLike.getUserId())
+                    .build();
+
+            noticePostLikeRepository.save(noticePostLike);
+
+            User postUser = userRepository.getById(post.get().getUserId());
+            System.out.println(postUser);
+            realTimeDataBase.setNotice(postUser.getNickname());
+
+
             return Response.newResult(HttpStatus.OK, "좋아요가 반영되었습니다.", null);
         }
         // 있으면 좋아요 취소하기.
@@ -207,18 +239,36 @@ public class PostService {
                 .userId(userId)
                 .build();
         postLikeRepository.delete(cancelLike);
+
+        // 있으면 좋아요 알림 삭제
+        Optional<NoticePostLike> noticePostLike = noticePostLikeRepository.findByPostIdAndUserId(cancelLike.getPostId(),cancelLike.getUserId());
+
+        if(noticePostLike.isPresent()){
+            noticePostLikeRepository.delete(noticePostLike.get());
+        }
+
         return Response.newResult(HttpStatus.OK, "좋아요가 취소되었습니다.", null);
     }
 
-    public ResponseEntity<Response> findAllPosts(HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> findAllPosts(HttpServletRequest httpRequest, int page, int pageSize) {
         String userId = TokenToId.check(httpRequest);
+        long totalPageItemCnt = postRepository.count();
 
-        List<Object[]> items = postRepository.findAllPost();
+        HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
+        linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashmap.put("nowPage", page);
+        linkedHashmap.put("nowPageSize", pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+
+        List<Object[]> items = postRepository.findAllPost(pageRequest);
         ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+        linkedHashmap.put("posts", arr);
         if (items.size() == 0) {
             return Response.newResult(HttpStatus.OK, "작성된 글이 없습니다.", null);
         }
         extractPosts(items, userId);
-        return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", arr);
+        return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", linkedHashmap);
     }
 }

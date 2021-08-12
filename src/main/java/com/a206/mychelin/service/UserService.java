@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Random;
 
@@ -48,7 +49,7 @@ public class UserService {
         String userId = TokenToId.check(request);
         Optional<User> user = userRepository.findUserById(userId);
         user.get().updateInfo(requestDTO.getNickname(), requestDTO.getBio(), requestDTO.getPhoneNumber());
-        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", user);
+        return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", null);
     }
 
     @Transactional
@@ -88,16 +89,23 @@ public class UserService {
     @Transactional
     public ResponseEntity<Response> deleteUser(HttpServletRequest request) {
         User user = getUser(request);
-        userRepository.deleteUsersById(user.getId());
-        return Response.newResult(HttpStatus.OK, "탈퇴가 완료되었습니다.", null);
+        if (!user.isWithdraw()) {
+            user.userWithdraw();
+            return Response.newResult(HttpStatus.OK, "탈퇴가 완료되었습니다.", null);
+        }
+        return Response.newResult(HttpStatus.BAD_REQUEST, "유효하지 않은 접근입니다.", null);
+//        userRepository.deleteUsersById(user.getId());
     }
 
     @Transactional
-    public ResponseEntity<Response> getProfile(String nickname, HttpServletRequest request) {
+    public ResponseEntity<Response> getProfile(String userId, HttpServletRequest request) {
         UserProfileResponse.UserProfileResponseBuilder userProfileResponseBuilder;
-        Optional<User> tempUser = userRepository.findUserByNickname(nickname);
+        Optional<User> tempUser = userRepository.findUserById(userId);
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
+        }
+        if (tempUser.get().isWithdraw()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "탈퇴한 사용자입니다.", null);
         }
         User user = tempUser.get();
         int follow = followRepository.countByUserIdAndAccept(user.getId(), true); // 사용자가 신청한 팔로우 리스트이므로 팔로잉
@@ -153,8 +161,8 @@ public class UserService {
 
         emailMessage.setTo(emailRequest.getEmail());
         emailMessage.setSubject("가입 인증 메일입니다.");
-        emailMessage.setText("안녕하세요 Mychelin 입니다.\n\n" +
-                "가입 인증 토큰 : " + token + " 입니다.\n\n" +
+        emailMessage.setText("안녕하세요😄 Mychelin 입니다.\n\n" +
+                "가입 인증 토큰은 : " + token + " 입니다.\n\n" +
                 "감사합니다.");
         javaMailSender.send(emailMessage);
 

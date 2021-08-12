@@ -11,17 +11,19 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @DynamicInsert
 @Entity
-public class NoticeComment {
+public class NoticeFollow {
 
     @Id
     private int id;
 
-    private int commentId;
+    private String userId;
+
+    private String followingId;
 
     private boolean isRead;
 
