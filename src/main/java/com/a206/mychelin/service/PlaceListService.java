@@ -108,7 +108,6 @@ public class PlaceListService {
             }
             int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
 
-
             arr.add(PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
                     .placeId((int) item[1])
