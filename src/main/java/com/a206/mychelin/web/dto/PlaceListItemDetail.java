@@ -10,7 +10,6 @@ import lombok.*;
 public class PlaceListItemDetail {
     private int placeListId;
     private int placeId;
-    private String placeListTitle;
     private String contributorId;
     private String name;
     private String description;

@@ -86,12 +86,14 @@ public class PlaceListService {
             return Response.newResult(HttpStatus.OK, listId + "번 맛집 리스트가 없습니다.", null);
         }
         long totalPageItemCnt = placeListRepository.getPlaceListItemsNumById(listId);
+        String placeTitle = placeList.get().getTitle();
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
         linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
         linkedHashMap.put("nowPage", page);
         linkedHashMap.put("nowPageSize", pageSize);
+        linkedHashMap.put("placeListTitle", placeTitle);
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
@@ -105,12 +107,11 @@ public class PlaceListService {
                 starRate = starRateOptional.get();
             }
             int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
-            String placeTitle = placeList.get().getTitle();
+
 
             arr.add(PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
                     .placeId((int) item[1])
-                    .placeListTitle(placeTitle)
                     .contributorId((String) item[2])
                     .name((String) item[3])
                     .description((String) item[4])
