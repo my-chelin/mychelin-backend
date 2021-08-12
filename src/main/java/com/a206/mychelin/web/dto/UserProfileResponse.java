@@ -13,5 +13,5 @@ public class UserProfileResponse {
     private int follow;
     private int follower;
     private long like;
-    private Boolean isFollowing;
+    private int isFollowing;
 }

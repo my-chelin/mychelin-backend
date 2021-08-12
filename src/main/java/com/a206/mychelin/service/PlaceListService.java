@@ -105,10 +105,12 @@ public class PlaceListService {
                 starRate = starRateOptional.get();
             }
             int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
+            String placeTitle = placeList.get().getTitle();
 
             arr.add(PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
                     .placeId((int) item[1])
+                    .placeListTitle(placeTitle)
                     .contributorId((String) item[2])
                     .name((String) item[3])
                     .description((String) item[4])
