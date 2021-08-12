@@ -27,4 +27,8 @@ public class NoticeComment {
 
     private Date addTime;
 
+    public void readNotice(){
+        isRead=true;
+    }
+
 }

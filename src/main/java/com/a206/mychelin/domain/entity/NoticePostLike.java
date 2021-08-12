@@ -30,4 +30,8 @@ public class NoticePostLike {
     private Date addTime;
 
     private boolean isRead;
+
+    public void readNotice(){
+        isRead=true;
+    }
 }

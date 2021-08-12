@@ -22,7 +22,7 @@ public class PostImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int order;
+    private int id;
 
     private String image;
 }

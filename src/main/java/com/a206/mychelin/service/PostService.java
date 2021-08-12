@@ -8,14 +8,12 @@ import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.print.attribute.standard.PageRanges;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -64,7 +62,23 @@ public class PostService {
         }
         Post post = tempPost.get();
         if (userId.equals(post.getUserId())) {
+            // image Repository 해당 아이디 이미지 데이터 다 지우고
+            List<PostImage> oldImages = postImageRepository.findPostImagesByPostId(id);
+            for (PostImage item : oldImages) {
+                System.out.println(item.getId()+ " " + item.getImage());
+                postImageRepository.delete(item);
+            }
+            // 받아온걸로 다시 upload 로직
             post.update(postUpdateRequest.getContent());
+            for (String image : postUpdateRequest.getImages()) {
+                // 이미지 추가
+                PostImage insertPostImage = PostImage.builder()
+                        .postId(id)
+                        .image(image)
+                        .build();
+                postImageRepository.save(insertPostImage);
+            }
+
             return Response.newResult(HttpStatus.OK, post.getId() + "번 게시글이 수정되었습니다.", null);
         }
         return Response.newResult(HttpStatus.UNAUTHORIZED, "수정 권한이 없습니다.", null);
@@ -107,13 +121,16 @@ public class PostService {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         List<Object[]> posts = postRepository.findPostsByUserNicknameOrderByCreateDateDesc(userNickname);
+        if (posts.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "아직 작성한 글이 없습니다", null);
+        }
         ArrayList<PostInfoResponse> arr = extractPosts(posts, userId);
         return Response.newResult(HttpStatus.OK, userNickname + "의 게시글을 불러왔습니다.", arr);
     }
 
     public ResponseEntity<Response> findPostsByFollowingUsersOrderByCreateDateDesc(HttpServletRequest httpRequest, int page, int pageSize) {
         String userId = TokenToId.check(httpRequest);
-        if(userId == null) {
+        if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
 
@@ -147,7 +164,7 @@ public class PostService {
             ArrayList<CommentResponse> commArr = new ArrayList<>();
             int len = comments.size();
 
-            List<String> images = postImageRepository.findPostsByPostIdOrderByOrder((int) post[0]);
+            List<String> images = postImageRepository.findPostsByPostIdOrderById((int) post[0]);
 
             for (int i = len - 1; i >= 0; i--) {
                 Object[] item = comments.get(i);

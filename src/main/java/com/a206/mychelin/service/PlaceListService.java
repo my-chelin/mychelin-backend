@@ -1,10 +1,7 @@
 package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.*;
-import com.a206.mychelin.domain.repository.PlaceListItemRepository;
-import com.a206.mychelin.domain.repository.PlaceListRepository;
-import com.a206.mychelin.domain.repository.PlaceRepository;
-import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.domain.repository.*;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,7 @@ public class PlaceListService {
     final private PlaceListItemRepository placeListItemRepository;
     final private PlaceRepository placeRepository;
     final private UserRepository userRepository;
+    final private ReviewRepository reviewRepository;
 
     static String message;
 
@@ -88,12 +86,14 @@ public class PlaceListService {
             return Response.newResult(HttpStatus.OK, listId + "번 맛집 리스트가 없습니다.", null);
         }
         long totalPageItemCnt = placeListRepository.getPlaceListItemsNumById(listId);
+        String placeTitle = placeList.get().getTitle();
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
         linkedHashMap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
         linkedHashMap.put("nowPage", page);
         linkedHashMap.put("nowPageSize", pageSize);
+        linkedHashMap.put("placeListTitle", placeTitle);
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
@@ -106,6 +106,7 @@ public class PlaceListService {
             if (starRateOptional.isPresent()) {
                 starRate = starRateOptional.get();
             }
+            int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
 
             arr.add(PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
@@ -113,14 +114,15 @@ public class PlaceListService {
                     .contributorId((String) item[2])
                     .name((String) item[3])
                     .description((String) item[4])
-                    .latitude((float) item[5])
-                    .longitude((float) item[6])
+                    .latitude((double) item[5])
+                    .longitude((double) item[6])
                     .phone((String) item[7])
                     .location((String) item[8])
                     .opertaionHours((String) item[9])
                     .categoryId((int) item[10])
                     .image((String) item[11])
                     .starRate(starRate)
+                    .reviewCnt(reviewCnt)
                     .build()
             );
         }
@@ -194,7 +196,7 @@ public class PlaceListService {
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
-        long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId());
+        long totalPageItemCnt = placeListItemRepository.getCountByContributorId(user.get().getId()) + placeListRepository.countPlaceListsByUserId(user.get().getId());
 
         HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("totalPageItemCnt", totalPageItemCnt);
@@ -214,7 +216,7 @@ public class PlaceListService {
             placeListItemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
                     .placeListId((int) item[0])
                     .title((String) item[1])
-                    .contributorId((String) item[2])
+                    .nickname((String) item[2])
                     .contrubuteItemCnt((BigInteger) item[3])
                     .totalItemCnt((BigInteger) item[4])
                     .createDate(format)
