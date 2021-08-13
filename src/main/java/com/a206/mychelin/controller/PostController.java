@@ -85,4 +85,15 @@ public class PostController {
     public ResponseEntity<Response> likePost(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
         return postService.likePost(postLikeRequest, httpRequest);
     }
+
+    @ApiOperation(value = "키워드를 포함한 포스트를 검색한다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "keyword", value = "검색할 키워드"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    @GetMapping("/search")
+    public ResponseEntity searchPostByKeyword(@RequestParam String keyword, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize, HttpServletRequest httpServletRequest) {
+        return postService.findPostsByKeyword(keyword, page, pageSize, httpServletRequest);
+    }
 }

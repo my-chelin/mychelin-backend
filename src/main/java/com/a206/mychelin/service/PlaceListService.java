@@ -62,18 +62,23 @@ public class PlaceListService {
         if (placeListList.size() == 0) {
             return Response.newResult(HttpStatus.OK, title + "로 검색한 결과가 없습니다", null);
         }
-        List<PlaceListByTitle> resultList = new ArrayList<>();
+        List<PlaceListDto.PlaceListByTitle> resultList = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
         for (Object[] item : placeListList) {
+            List<String> contributorsProfile = userRepository.findContributedUserProfilesByPlaceListId((int) item[0]);
+            int contributorCnt = placeListItemRepository.countContributorByPlaceId((int) item[0]);
+
             String format = formatter.format(item[2]);
-            resultList.add(PlaceListByTitle.builder()
+            resultList.add(PlaceListDto.PlaceListByTitle.builder()
                     .id((int) item[0])
                     .title((String) item[1])
                     .createDate(format)
                     .userId((String) item[3])
                     .nickname((String) item[4])
                     .totalItemCnt((BigInteger) item[5])
+                    .contributorProfiles(contributorsProfile)
+                    .contributorCnt(contributorCnt)
                     .build());
         }
         linkedHashMap.put("placeList", resultList);

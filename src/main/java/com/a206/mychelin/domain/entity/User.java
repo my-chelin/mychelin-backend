@@ -51,6 +51,9 @@ public class User {
     @Column(name = "role", nullable = true)
     private String role;
 
+    @Column(name = "is_private", nullable = true)
+    private boolean isPrivate;
+
     public void updateInfo(String nickname, String bio, String phoneNumber) {
         this.nickname = nickname;
         this.bio = bio;
@@ -67,5 +70,9 @@ public class User {
 
     public void userWithdraw() {
         this.withdraw = true;
+    }
+
+    public void updateIsPrivate() {
+        this.isPrivate = !this.isPrivate;
     }
 }
