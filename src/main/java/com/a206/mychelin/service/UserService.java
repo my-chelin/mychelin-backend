@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -213,5 +214,13 @@ public class UserService {
         user.userImageUpdate(image.getImage());
         userRepository.save(user);
         return Response.newResult(HttpStatus.OK, "프로필 이미지 저장에 성공했습니다.", null);
+    }
+
+    public ResponseEntity<Response> searchUserByNickname(String nickname) {
+        List<User> userList = userRepository.findUsersByNicknameContains(nickname);
+        if (userList.size() > 0) {
+            return Response.newResult(HttpStatus.OK, "사용자 검색을 완료하였습니다.", userList);
+        }
+        return Response.newResult(HttpStatus.OK, "일치하는 사용자가 없습니다.", null);
     }
 }

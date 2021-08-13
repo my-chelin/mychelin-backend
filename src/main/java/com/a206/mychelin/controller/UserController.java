@@ -63,4 +63,10 @@ public class UserController {
     public ResponseEntity<Response> saveUserProfileImage(@RequestBody ImageRequest imageRequest, HttpServletRequest request) {
         return userService.saveUserProfileImage(imageRequest, request);
     }
+
+    @ApiOperation(value = "유저 닉네임으로 검색하기")
+    @GetMapping("/search")
+    public ResponseEntity searchUserByNickname(@RequestParam String nickname) {
+        return userService.searchUserByNickname(nickname);
+    }
 }

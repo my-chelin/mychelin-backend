@@ -288,4 +288,12 @@ public class PostService {
         extractPosts(items, userId);
         return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", linkedHashmap);
     }
+
+    public ResponseEntity findPostsByKeyword(String keyword, int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        List<Object[]> items = postRepository.findPostsByContentContains(keyword, pageRequest);
+
+
+
+    }
 }

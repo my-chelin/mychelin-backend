@@ -27,7 +27,7 @@ public interface PostRepository extends JpaRepository<Post, String> {
     @Query(value = "select p.id, u.nickname, ifnull ( (select count(user_id) from follow f where f.following_id = u.id and f.accept = true),0) , p.content, p.create_date, ifnull ((select count(user_id) from post_like where p.id = post_id and user_id is not null group by post_id), 0) ,(select count(message) from comment where p.id = comment.post_id ), p.place_id, p.placelist_id from user u join post p where p.user_id = u.id  group by p.id order by p.create_date desc", nativeQuery = true)
     List<Object[]> findAllPost(Pageable pageable);
 
-    List<Post> findPostsByContentContains(String content);
+    List<Post> findPostsByContentContains(String content, Pageable pageable);
 
     int deletePostById(int id);
 

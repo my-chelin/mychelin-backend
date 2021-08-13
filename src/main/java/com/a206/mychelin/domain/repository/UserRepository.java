@@ -24,4 +24,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             "limit 2) p\n" +
             "where u.id = p.contributor_id;", nativeQuery = true)
     List<String> findContributedUserProfilesByPlaceListId(@Param("placeListId") int placeListId);
+
+    List<User> findUsersByNicknameContains(String nickname);
 }
