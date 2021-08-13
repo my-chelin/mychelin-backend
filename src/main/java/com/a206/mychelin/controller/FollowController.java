@@ -1,8 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.FollowService;
-import com.a206.mychelin.web.dto.FollowAcceptRequest;
-import com.a206.mychelin.web.dto.FollowAskRequest;
+import com.a206.mychelin.web.dto.FollowDto;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -22,21 +21,21 @@ public class FollowController {
     @ApiOperation(value = "특정 사용자 팔로우 요청 보내기")
     @ApiImplicitParam(name = "userNickname", value = "팔로우하고자 하는 사용자 닉네임")
     @PostMapping("/request")
-    public ResponseEntity<Response> addFollowingUser(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> addFollowingUser(@RequestBody FollowDto.FollowAskRequest followAskRequest, HttpServletRequest httpRequest) {
         return followService.follow(followAskRequest, httpRequest);
     }
 
     @ApiOperation(value = "언팔로우 요청 보내기")
     @ApiImplicitParam(name = "userNickname", value = "언팔로우하고자 하는 사용자 닉네임")
     @DeleteMapping("/request")
-    public ResponseEntity<Response> unfollow(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> unfollow(@RequestBody FollowDto.FollowAskRequest followAskRequest, HttpServletRequest request) {
         return followService.unfollow(followAskRequest, request);
     }
 
     @ApiOperation(value = "팔로우 요청을 수락한다.")
     @ApiImplicitParam(name = "userNickname", value = "사용자 닉네임")
     @PutMapping("/accept")
-    public ResponseEntity<Response> acceptFollowingUser(@RequestBody FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> acceptFollowingUser(@RequestBody FollowDto.FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
         return followService.acceptFollowing(followAcceptRequest, httpRequest);
     }
 

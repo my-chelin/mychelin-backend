@@ -1,6 +1,5 @@
 package com.a206.mychelin.controller;
 
-import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import com.a206.mychelin.service.UserService;
@@ -19,12 +18,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(value = "/signup")
-    public ResponseEntity<Response> signUp(@RequestBody UserSaveRequest userSaveRequest) {
+    public ResponseEntity<Response> signUp(@RequestBody UserDto.UserSaveRequest userSaveRequest) {
         return userService.signUp(userSaveRequest);
     }
 
     @PutMapping("/changepwd")
-    public ResponseEntity<Response> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> changePassword(@RequestBody UserDto.PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
         return userService.changePassword(passwordChangeRequest, request);
     }
 

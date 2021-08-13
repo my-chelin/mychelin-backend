@@ -2,10 +2,7 @@ package com.a206.mychelin.controller;
 
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PostService;
-import com.a206.mychelin.web.dto.PostLikeRequest;
-import com.a206.mychelin.web.dto.PostUpdateRequest;
-import com.a206.mychelin.web.dto.PostUploadRequest;
-import com.a206.mychelin.web.dto.Response;
+import com.a206.mychelin.web.dto.*;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -24,14 +21,14 @@ public class PostController {
 
     @ApiOperation(value = "포스트를 업로드한다.")
     @PostMapping("/upload")
-    public ResponseEntity<Response> uploadTextPost(@RequestBody PostUploadRequest postUploadRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> uploadTextPost(@RequestBody PostDto.PostUploadRequest postUploadRequest, HttpServletRequest request) {
         return postService.addPost(postUploadRequest, request);
     }
 
     @ApiOperation(value = "선택한 포스트를 수정한다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @PutMapping("/{id}")
-    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostDto.PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         return postService.update(id, postUpdateRequest, httpRequest);
     }
 
@@ -82,7 +79,7 @@ public class PostController {
     @ApiOperation(value = "선택한 포스트에 좋아요 표시를 한다.")
     @ApiImplicitParam(name = "id", value = "포스트 고유 id")
     @PutMapping("/like")
-    public ResponseEntity<Response> likePost(@RequestBody PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> likePost(@RequestBody PostDto.PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
         return postService.likePost(postLikeRequest, httpRequest);
     }
 

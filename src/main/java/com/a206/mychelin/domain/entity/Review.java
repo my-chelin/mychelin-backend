@@ -1,6 +1,6 @@
 package com.a206.mychelin.domain.entity;
 
-import com.a206.mychelin.web.dto.ReviewEditRequest;
+import com.a206.mychelin.web.dto.ReviewDto;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -33,7 +33,7 @@ public class Review {
 
     private String image;
 
-    public void editReview(ReviewEditRequest reviewEditRequest) {
+    public void editReview(ReviewDto.ReviewEditRequest reviewEditRequest) {
         this.starRate = reviewEditRequest.getStarRate();
         this.content = reviewEditRequest.getContent();
         this.createDate = new Date();

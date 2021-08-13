@@ -40,4 +40,33 @@ public class UserDto {
         private String profileImage;
         private String bio;
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class UserSaveRequest {
+        private String id;
+        private String nickname;
+        private String password;
+        private String phoneNumber;
+
+        @Builder
+        public UserSaveRequest(String id, String nickname, String password, String phoneNumber) {
+            this.id = id;
+            this.nickname = nickname;
+            this.password = password;
+            this.phoneNumber = phoneNumber;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    public static class PasswordChangeRequest {
+        String password;
+        String newPassword;
+    }
 }

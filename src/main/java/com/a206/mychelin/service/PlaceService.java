@@ -6,7 +6,6 @@ import com.a206.mychelin.domain.repository.BookmarkRepository;
 import com.a206.mychelin.domain.repository.PlaceRepository;
 import com.a206.mychelin.domain.repository.ReviewRepository;
 import com.a206.mychelin.util.TokenToId;
-import com.a206.mychelin.web.dto.PlaceAndStarRateByCoordinate;
 import com.a206.mychelin.web.dto.PlaceDto;
 import com.a206.mychelin.web.dto.Response;
 import lombok.RequiredArgsConstructor;
@@ -158,9 +157,9 @@ public class PlaceService {
 
     public ResponseEntity<Response> getPlaceByCoordinate(float lat, float lng, float distance) {
         List<Object[]> placeList = placeRepository.getPlaceByCoordinate(lat, lng, distance);
-        List<PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
+        List<PlaceDto.PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
         for (Object[] objects : placeList) {
-            resultList.add(PlaceAndStarRateByCoordinate.builder()
+            resultList.add(PlaceDto.PlaceAndStarRateByCoordinate.builder()
                     .distance((double) objects[0])
                     .id((int) objects[1])
                     .name((String) objects[2])

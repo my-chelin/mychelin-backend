@@ -101,7 +101,7 @@ public class PlaceReviewService {
         return Response.newResult(HttpStatus.OK, placeId + "의 모든 리뷰 목록 조회에 성공했습니다.", hashMap);
     }
 
-    public ResponseEntity<Response> addPlaceReviews(String userId, ReviewRequest review) {
+    public ResponseEntity<Response> addPlaceReviews(String userId, ReviewDto.ReviewRequest review) {
         Optional<User> user = userRepository.findUserById(userId);
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
@@ -117,7 +117,7 @@ public class PlaceReviewService {
         return Response.newResult(HttpStatus.OK, "리뷰 추가에 성공하였습니다.", null);
     }
 
-    public ResponseEntity<Response> editPlaceReviews(String userId, ReviewEditRequest review) {
+    public ResponseEntity<Response> editPlaceReviews(String userId, ReviewDto.ReviewEditRequest review) {
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 
@@ -138,7 +138,7 @@ public class PlaceReviewService {
         return Response.newResult(HttpStatus.OK, "리뷰 수정에 성공했습니다.", null);
     }
 
-    public ResponseEntity<Response> deletePlaceReviews(String userId, ReviewDeleteRequest review) {
+    public ResponseEntity<Response> deletePlaceReviews(String userId, ReviewDto.ReviewDeleteRequest review) {
         Optional<Review> findReview = placeReviewRepository.findById(review.getId());
         Optional<User> user = userRepository.findUserById(userId);
 

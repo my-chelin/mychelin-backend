@@ -1,14 +1,12 @@
 package com.a206.mychelin.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 
 import java.math.BigInteger;
-import java.util.List;
 
 public class PlaceListDto {
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -20,8 +18,14 @@ public class PlaceListDto {
         private String userId;
         private String nickname;
         private BigInteger totalItemCnt;
-        private List<String> contributorProfiles;
-        private int contributorCnt;
     }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    public static class PlaceListCreateRequest {
+        @ApiModelProperty(example = "맛집 리스트 제목")
+        private String title;
+    }
 }

@@ -4,8 +4,8 @@ import com.a206.mychelin.config.AuthConstants;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceListService;
 import com.a206.mychelin.util.TokenUtils;
-import com.a206.mychelin.web.dto.PlaceListCreateRequest;
-import com.a206.mychelin.web.dto.PlaceListItemRequest;
+import com.a206.mychelin.web.dto.PlaceListDto;
+import com.a206.mychelin.web.dto.PlaceListItemDto;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -26,7 +26,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트 생성")
     @PostMapping
-    public ResponseEntity<Response> createPlaceList(@RequestBody PlaceListCreateRequest placeListCreateRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> createPlaceList(@RequestBody PlaceListDto.PlaceListCreateRequest placeListCreateRequest, HttpServletRequest request) {
         return placeListService.createPlaceList(placeListCreateRequest, request);
     }
 
@@ -49,7 +49,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트의 맛집 추가")
     @PostMapping("/{listId}")
-    public ResponseEntity<Response> insertPlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
+    public ResponseEntity<Response> insertPlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemDto.PlaceListItemRequest placeListItemRequest) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeListService.insertPlaceListItem(userId, listId, placeListItemRequest.getPlaceId());
@@ -57,7 +57,7 @@ public class PlaceListController {
 
     @ApiOperation(value = "맛집 리스트의 맛집 삭제")
     @DeleteMapping("/{listId}")
-    public ResponseEntity<Response> deletePlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemRequest placeListItemRequest) {
+    public ResponseEntity<Response> deletePlaceListItem(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @PathVariable int listId, @RequestBody PlaceListItemDto.PlaceListItemRequest placeListItemRequest) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeListService.deletePlaceListItem(userId, listId, placeListItemRequest.getPlaceId());

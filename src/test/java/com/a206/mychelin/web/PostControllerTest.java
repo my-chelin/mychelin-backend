@@ -2,9 +2,7 @@ package com.a206.mychelin.web;
 
 import com.a206.mychelin.domain.entity.Post;
 import com.a206.mychelin.domain.repository.PostRepository;
-import com.a206.mychelin.web.dto.PostInfoResponse;
-import com.a206.mychelin.web.dto.PostUpdateRequest;
-import com.a206.mychelin.web.dto.PostUploadRequest;
+import com.a206.mychelin.web.dto.PostDto;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,13 +72,13 @@ public class PostControllerTest {
         String newTitle = "더운 여름에 꼭 먹어야 할 음식은";
         String newContent = "역시 여름엔 이열치열이지! 닭백숙 먹으러왔어요";
 
-        PostUpdateRequest updateRequest = PostUpdateRequest.builder()
+        PostDto.PostUpdateRequest updateRequest = PostDto.PostUpdateRequest.builder()
                 .content(newContent)
                 .build();
 
         String url = "http://localhost:" + port + "/post/" + updateId;
 
-        HttpEntity<PostUpdateRequest> requestEntity = new HttpEntity<>(updateRequest);
+        HttpEntity<PostDto.PostUpdateRequest> requestEntity = new HttpEntity<>(updateRequest);
 
         // when
         ResponseEntity<Integer> responseEntity = restTemplate
@@ -106,8 +103,8 @@ public class PostControllerTest {
         HttpEntity<Integer> requestEntity = new HttpEntity<>(postId);
 
         //when
-        ResponseEntity<PostInfoResponse> responseEntity = restTemplate
-                .exchange(url, HttpMethod.GET, requestEntity, PostInfoResponse.class);
+        ResponseEntity<PostDto.PostInfoResponse> responseEntity = restTemplate
+                .exchange(url, HttpMethod.GET, requestEntity, PostDto.PostInfoResponse.class);
 
         //then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);

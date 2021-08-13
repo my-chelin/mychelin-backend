@@ -58,7 +58,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Response> changePassword(PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> changePassword(UserDto.PasswordChangeRequest passwordChangeRequest, HttpServletRequest request) {
         User user = getUser(request);
         if (user == null) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "유저가 존재하지 않습니다.", null);
@@ -71,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public ResponseEntity<Response> signUp(UserSaveRequest userSaveRequest) {
+    public ResponseEntity<Response> signUp(UserDto.UserSaveRequest userSaveRequest) {
         String id = userSaveRequest.getId();
         String nickname = userSaveRequest.getNickname();
         if (userRepository.findUserById(id).isPresent()) {

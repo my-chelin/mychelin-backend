@@ -1,7 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.CommentService;
-import com.a206.mychelin.web.dto.CommentInsertRequest;
+import com.a206.mychelin.web.dto.CommentDto;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +28,7 @@ public class CommentController {
     @ApiOperation(value = "특정 포스트에 댓글을 단다.")
     @ApiImplicitParam(name = "postId", value = "포스트 고유 id")
     @PostMapping("/{postId}")
-    public ResponseEntity<Response> addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> addComment(@PathVariable int postId, @RequestBody CommentDto.CommentInsertRequest commentRequest, HttpServletRequest request) {
         return commentService.addComment(postId, commentRequest, request);
     }
 

@@ -30,7 +30,7 @@ public class FollowService {
     private final RealTimeDataBase realTimeDataBase;
 
     @Transactional
-    public ResponseEntity<Response> follow(@RequestBody FollowAskRequest followAskRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> follow(@RequestBody FollowDto.FollowAskRequest followAskRequest, HttpServletRequest request) {
         String userId = TokenToId.check(request);
         Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname()); //허락할 상대 아이디
         if (!optionalUser.isPresent()) {
@@ -71,7 +71,7 @@ public class FollowService {
     }
 
     @Transactional
-    public ResponseEntity<Response> acceptFollowing(@RequestBody FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> acceptFollowing(@RequestBody FollowDto.FollowAcceptRequest followAcceptRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest); //사용자 ID(허락해주는 사람.)
         Optional<User> user = userRepository.findUserByNickname(followAcceptRequest.getUserNickname()); //허락할 상대 아이디
         if (!user.isPresent()) {
@@ -105,9 +105,9 @@ public class FollowService {
         if (following.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로잉 목록이 없습니다.", null);
         }
-        ArrayList<FollowListResponse> list = new ArrayList<>();
+        ArrayList<FollowDto.FollowListResponse> list = new ArrayList<>();
         for (Object[] followItem : following) {
-            list.add(FollowListResponse.builder()
+            list.add(FollowDto.FollowListResponse.builder()
                     .profileImage((String) followItem[0])
                     .nickname((String) followItem[1])
                     .bio((String) followItem[2])
@@ -126,9 +126,9 @@ public class FollowService {
         if (follower.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로워 목록이 없습니다.", null);
         }
-        ArrayList<FollowListResponse> list = new ArrayList<>();
+        ArrayList<FollowDto.FollowListResponse> list = new ArrayList<>();
         for (Object[] followItem : follower) {
-            list.add(FollowListResponse.builder()
+            list.add(FollowDto.FollowListResponse.builder()
                     .profileImage((String) followItem[0])
                     .nickname((String) followItem[1])
                     .bio((String) followItem[2])
@@ -149,10 +149,10 @@ public class FollowService {
         if (requests.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로워 요청이 없습니다.", null);
         }
-        ArrayList<FollowRequestResponse> list = new ArrayList<>();
+        ArrayList<FollowDto.FollowRequestResponse> list = new ArrayList<>();
         for (String[] item : requests) {
             System.out.println(item[0] + " " + item[1]);
-            list.add(FollowRequestResponse.builder()
+            list.add(FollowDto.FollowRequestResponse.builder()
                     .nickname(item[0])
                     .profileImage(item[1])
                     .build()
@@ -161,7 +161,7 @@ public class FollowService {
         return Response.newResult(HttpStatus.OK, user.getNickname() + "의 팔로워 신청 목록", list);
     }
 
-    public ResponseEntity<Response> unfollow(FollowAskRequest followAskRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> unfollow(FollowDto.FollowAskRequest followAskRequest, HttpServletRequest request) {
         Optional<User> optionalUser = userRepository.findUserByNickname(followAskRequest.getUserNickname());
         if (!optionalUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);

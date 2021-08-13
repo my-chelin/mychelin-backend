@@ -9,8 +9,7 @@ import com.a206.mychelin.domain.repository.UserRepository;
 import com.a206.mychelin.util.RealTimeDataBase;
 import com.a206.mychelin.util.TimestampToDateString;
 import com.a206.mychelin.util.TokenToId;
-import com.a206.mychelin.web.dto.CommentInsertRequest;
-import com.a206.mychelin.web.dto.CommentResponse;
+import com.a206.mychelin.web.dto.CommentDto;
 import com.a206.mychelin.web.dto.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,11 +47,11 @@ public class CommentService {
     public ResponseEntity<Response> findCommentsByPostId(@PathVariable int postId) {
         //포스트 댓글 확인
         List<Object[]> comments = commentRepository.findCommentsByPostId(postId);
-        ArrayList<CommentResponse> arr = new ArrayList<>();
+        ArrayList<CommentDto.CommentResponse> arr = new ArrayList<>();
         for (Object[] item : comments) {
             String diff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
             arr.add(
-                    CommentResponse.builder()
+                    CommentDto.CommentResponse.builder()
                             .id((int) item[0])
                             .writerId((String) item[1])
                             .message((String) item[2])
@@ -65,7 +64,7 @@ public class CommentService {
 
     // 특정 게시글에 댓글 달기
     @Transactional
-    public ResponseEntity<Response> addComment(@PathVariable int postId, @RequestBody CommentInsertRequest commentRequest, HttpServletRequest request) {
+    public ResponseEntity<Response> addComment(@PathVariable int postId, @RequestBody CommentDto.CommentInsertRequest commentRequest, HttpServletRequest request) {
         User user = getUser(request);
         if (user == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);

@@ -56,7 +56,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 추가")
     @PostMapping
-    public ResponseEntity<Response> addPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewRequest review) {
+    public ResponseEntity<Response> addPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDto.ReviewRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.addPlaceReviews(userId, review);
@@ -64,7 +64,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 수정")
     @PutMapping
-    public ResponseEntity<Response> editPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewEditRequest review) {
+    public ResponseEntity<Response> editPlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDto.ReviewEditRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.editPlaceReviews(userId, review);
@@ -72,7 +72,7 @@ public class PlaceReviewController {
 
     @ApiOperation(value = "식당 리뷰 삭제")
     @DeleteMapping
-    public ResponseEntity<Response> deletePlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDeleteRequest review) {
+    public ResponseEntity<Response> deletePlaceReviews(@RequestHeader(AuthConstants.AUTH_HEADER) String myToken, @RequestBody ReviewDto.ReviewDeleteRequest review) {
         String token = TokenUtils.getTokenFromHeader(myToken);
         String userId = TokenUtils.getUserIdFromToken(token);
         return placeReviewService.deletePlaceReviews(userId, review);

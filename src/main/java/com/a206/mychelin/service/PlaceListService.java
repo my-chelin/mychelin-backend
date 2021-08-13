@@ -26,7 +26,7 @@ public class PlaceListService {
 
     static String message;
 
-    public ResponseEntity<Response> createPlaceList(PlaceListCreateRequest placeList, HttpServletRequest request) {
+    public ResponseEntity<Response> createPlaceList(PlaceListDto.PlaceListCreateRequest placeList, HttpServletRequest request) {
         String userId = TokenToId.check(request);
         User user = userRepository.findUserById(userId).get();
         PlaceList newPlaceList = PlaceList.builder()
@@ -104,7 +104,7 @@ public class PlaceListService {
 
         List<Object[]> items = placeListRepository.getPlaceListItemsById(listId, pageRequest);
 
-        ArrayList<PlaceListItemDetail> arr = new ArrayList<>();
+        ArrayList<PlaceListItemDto.PlaceListItemDetail> arr = new ArrayList<>();
         for (Object[] item : items) {
             Optional<Double> starRateOptional = placeRepository.getStartRateById(String.valueOf((int) item[1]));
             Double starRate = null;
@@ -113,7 +113,7 @@ public class PlaceListService {
             }
             int reviewCnt = reviewRepository.countAllByPlaceId((int) item[1]);
 
-            arr.add(PlaceListItemDetail.builder()
+            arr.add(PlaceListItemDto.PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
                     .placeId((int) item[1])
                     .contributorId((String) item[2])
@@ -213,12 +213,12 @@ public class PlaceListService {
 
         List<Object[]> list = placeListItemRepository.getMyPlacelistByContributorIdOrderByPlaceId(user.get().getId(), pageRequest);
 
-        List<PlaceListITemsByNicknameResponse> placeListItemsByNicknameResponses = new ArrayList<>();
+        List<PlaceListItemDto.PlaceListITemsByNicknameResponse> placeListItemsByNicknameResponses = new ArrayList<>();
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
 
         for (Object[] item : list) {
             String format = formatter.format(item[5]);
-            placeListItemsByNicknameResponses.add(PlaceListITemsByNicknameResponse.builder()
+            placeListItemsByNicknameResponses.add(PlaceListItemDto.PlaceListITemsByNicknameResponse.builder()
                     .placeListId((int) item[0])
                     .title((String) item[1])
                     .nickname((String) item[2])

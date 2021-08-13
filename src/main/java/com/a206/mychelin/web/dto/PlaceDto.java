@@ -25,4 +25,23 @@ public class PlaceDto {
         private boolean isSaved;
         private int reviewCnt;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PlaceAndStarRateByCoordinate {
+        private double distance;
+        private int id;
+        private String name;
+        private String descrption;
+        private float lattitude;
+        private float longitude;
+        private String phone;
+        private String location;
+        private String operationHours;
+        private int categoryId;
+        private String image;
+        private Double starRate;
+    }
 }

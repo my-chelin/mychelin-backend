@@ -31,7 +31,7 @@ public class PostService {
     private final RealTimeDataBase realTimeDataBase;
 
     @Transactional
-    public ResponseEntity<Response> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> addPost(@RequestBody PostDto.PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         postRequest.checkPlaceIdOrPlaceListId();
         Post newPost = Post.builder()
@@ -54,7 +54,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> update(@PathVariable int id, @RequestBody PostDto.PostUpdateRequest postUpdateRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         Optional<Post> tempPost = postRepository.findPostById(id);
 
@@ -92,7 +92,7 @@ public class PostService {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
         }
         if (entity.size() > 0) {
-            PostInfoResponse postInfo = extractPosts(entity, userId).get(0);
+            PostDto.PostInfoResponse postInfo = extractPosts(entity, userId).get(0);
             return Response.newResult(HttpStatus.OK, postId + "번 게시글을 불러왔습니다.", postInfo);
         }
         return Response.newResult(HttpStatus.BAD_REQUEST, "게시글을 불러오지 못했습니다.", null);
@@ -125,7 +125,7 @@ public class PostService {
         if (posts.size() == 0) {
             return Response.newResult(HttpStatus.OK, "아직 작성한 글이 없습니다", null);
         }
-        ArrayList<PostInfoResponse> arr = extractPosts(posts, userId);
+        ArrayList<PostDto.PostInfoResponse> arr = extractPosts(posts, userId);
         return Response.newResult(HttpStatus.OK, userNickname + "의 게시글을 불러왔습니다.", arr);
     }
 
@@ -145,7 +145,7 @@ public class PostService {
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
         List<Object[]> items = postRepository.findPostsByFollowingUsersOrderByCreateDateDesc(userId, pageRequest);
-        ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+        ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
         linkedHashmap.put("posts", arr);
         if (items.size() == 0) {
             return Response.newResult(HttpStatus.OK, "팔로우 하는 친구의 소식을 기다려주세요!", null);
@@ -154,15 +154,15 @@ public class PostService {
         return Response.newResult(HttpStatus.OK, "팔로우하는 유저의 소식을 불러옵니다.", linkedHashmap);
     }
 
-    private ArrayList<PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
-        ArrayList<PostInfoResponse> arr = new ArrayList<>();
+    private ArrayList<PostDto.PostInfoResponse> extractPosts(List<Object[]> posts, String userId) {
+        ArrayList<PostDto.PostInfoResponse> arr = new ArrayList<>();
 
         for (Object[] post : posts) {
             Optional<User> curWriter = userRepository.findUserByNickname((String) post[1]);
             Optional<PostLike> isLiked = postLikeRepository.findPostLikeByPostIdAndUserId((int) post[0], userId);
             String dateDiff = TimestampToDateString.getPassedTime((Timestamp) post[4]);
             List<Object[]> comments = commentRepository.findCommentsLimit2((int) post[0]);
-            ArrayList<CommentResponse> commArr = new ArrayList<>();
+            ArrayList<CommentDto.CommentResponse> commArr = new ArrayList<>();
             int len = comments.size();
 
             List<String> images = postImageRepository.findPostsByPostIdOrderById((int) post[0]);
@@ -171,7 +171,7 @@ public class PostService {
                 Object[] item = comments.get(i);
                 String diff = TimestampToDateString.getPassedTime((Timestamp) item[3]);
                 commArr.add(
-                        CommentResponse.builder()
+                        CommentDto.CommentResponse.builder()
                                 .id((int) item[0])
                                 .writerId((String) item[1])
                                 .message((String) item[2])
@@ -180,7 +180,7 @@ public class PostService {
                 );
             }
             if (isLiked.isPresent()) {
-                arr.add(PostInfoResponse.builder()
+                arr.add(PostDto.PostInfoResponse.builder()
                         .postId((int) post[0])
                         .userNickname((String) post[1])
                         .userFollowerCnt(post[2])
@@ -196,7 +196,7 @@ public class PostService {
                         .profileImage(curWriter.get().getProfileImage())
                         .build());
             } else {
-                arr.add(PostInfoResponse.builder()
+                arr.add(PostDto.PostInfoResponse.builder()
                         .postId((int) post[0])
                         .userNickname((String) post[1])
                         .userFollowerCnt(post[2])
@@ -217,7 +217,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<Response> likePost(PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
+    public ResponseEntity<Response> likePost(PostDto.PostLikeRequest postLikeRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용가능합니다.", null);
@@ -280,7 +280,7 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<Object[]> items = postRepository.findAllPost(pageRequest);
-        ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+        ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
         linkedHashmap.put("posts", arr);
         if (items.size() == 0) {
             return Response.newResult(HttpStatus.OK, "작성된 글이 없습니다.", null);
@@ -303,7 +303,7 @@ public class PostService {
             linkedHashmap.put("nowPage", page);
             linkedHashmap.put("nowPageSize", pageSize);
 
-            ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+            ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
             linkedHashmap.put("posts", arr);
 
             return Response.newResult(HttpStatus.OK, "키워드를 포함한 포스트를 불러옵니다.", linkedHashmap);
