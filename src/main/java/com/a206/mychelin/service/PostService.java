@@ -285,15 +285,29 @@ public class PostService {
         if (items.size() == 0) {
             return Response.newResult(HttpStatus.OK, "작성된 글이 없습니다.", null);
         }
-        extractPosts(items, userId);
+//        extractPosts(items, userId);
         return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", linkedHashmap);
     }
 
-    public ResponseEntity findPostsByKeyword(String keyword, int page, int pageSize) {
+    public ResponseEntity findPostsByKeyword(String keyword, int page, int pageSize, HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.check(httpServletRequest);
+        long totalPageItemCnt = postRepository.countPostsByKeywordByFollowOrPublicAccount(keyword, userId);
+
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
-        List<Object[]> items = postRepository.findPostsByContentContains(keyword, pageRequest);
 
+        List<Object[]> items = postRepository.findPostsByKeywordByFollowOrPublicAccount(keyword, userId, pageRequest);
+        if(items.size() > 0){
+            HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
+            linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
+            linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+            linkedHashmap.put("nowPage", page);
+            linkedHashmap.put("nowPageSize", pageSize);
 
+            ArrayList<PostInfoResponse> arr = extractPosts(items, userId);
+            linkedHashmap.put("posts", arr);
 
+            return Response.newResult(HttpStatus.OK, "키워드를 포함한 포스트를 불러옵니다.", linkedHashmap);
+        }
+        return Response.newResult(HttpStatus.OK, "일치하는 검색 결과가 없습니다.", null);
     }
 }
