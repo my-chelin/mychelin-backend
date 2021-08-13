@@ -34,4 +34,5 @@ public class NoticePostLike {
     public void readNotice() {
         isRead = true;
     }
+
 }

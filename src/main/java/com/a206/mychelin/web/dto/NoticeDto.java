@@ -66,6 +66,4 @@ public class NoticeDto {
         @ApiModelProperty(example = "아림 id")
         int id;
     }
-
-
 }

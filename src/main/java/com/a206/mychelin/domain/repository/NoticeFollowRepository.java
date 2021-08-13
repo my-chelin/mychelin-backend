@@ -1,7 +1,6 @@
 package com.a206.mychelin.domain.repository;
 
 import com.a206.mychelin.domain.entity.NoticeFollow;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

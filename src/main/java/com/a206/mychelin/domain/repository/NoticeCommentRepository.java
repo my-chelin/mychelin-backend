@@ -18,9 +18,7 @@ public interface NoticeCommentRepository extends JpaRepository<NoticeComment, In
 
     /*
         commentid를 바탕으로, 해당 comment가 달려 있는 post를 작성한 유저
-     */
-
-    //    List<NoticeComment> getNoticeComment(String commentId);
+    */
     @Query(value = "select u.nickname from user u, post p, comment c where p.id = c.post_id and c.comment_id=:commentId and p.user_id=u.id;", nativeQuery = true)
     String getPostWriterNicknameByCommentId(int commentId);
 
