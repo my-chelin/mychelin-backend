@@ -46,4 +46,10 @@ public interface PlaceListItemRepository extends JpaRepository<PlaceListItem, Pl
             "and pl.user_id = :user_id\n" +
             "and pi.contributor_id = :user_id", nativeQuery = true)
     long getIntersectionCount(String user_id);
+
+    @Query(value = "select count(*)\n" +
+            "from (select distinct contributor_id\n" +
+            "from placelist_item\n" +
+            "where placelist_id = :placeId) tmp", nativeQuery = true)
+    int countContributorByPlaceId(@Param("placeId") int placeId);
 }
