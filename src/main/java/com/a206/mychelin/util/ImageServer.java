@@ -17,7 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,11 +64,32 @@ public class ImageServer {
         int pos = strFileName.lastIndexOf(".");
         String ext = strFileName.substring(pos + 1);
         String fileName = time.getTime() + randomToken() + "." + ext;
+        BufferedImage image = ImageIO.read(file.getInputStream());
+        BufferedImage newImage = resizeImage(image);
 
-        s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(newImage, ext, os);
+        InputStream is = new ByteArrayInputStream(os.toByteArray());
+
+        s3Client.putObject(new PutObjectRequest(bucket, fileName, is, null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
         return s3Client.getUrl(bucket, fileName).toString();
     }
+
+    private static BufferedImage resizeImage(BufferedImage originalImage) {
+        double ratio = originalImage.getWidth() / (double) 600;
+        int tWidth = (int) (originalImage.getWidth() / ratio);
+        int tHeight = (int) (originalImage.getHeight() / ratio);
+
+        BufferedImage newImage = new BufferedImage(tWidth, tHeight, originalImage.getType());
+        Graphics2D graphic = newImage.createGraphics();
+        Image image = originalImage.getScaledInstance(tWidth, tHeight, Image.SCALE_SMOOTH);
+        graphic.drawImage(image, 0, 0, tWidth, tHeight, null);
+        graphic.dispose();
+
+        return newImage;
+    }
+
 
     private String randomToken() {
         StringBuffer token = new StringBuffer();
@@ -71,11 +99,11 @@ public class ImageServer {
             switch (rIndex) {
                 case 0:
                     // a-z
-                    token.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    token.append((char) ((rnd.nextInt(26)) + 97));
                     break;
                 case 1:
                     // A-Z
-                    token.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    token.append((char) ((rnd.nextInt(26)) + 65));
                     break;
                 case 2:
                     // 0-9
