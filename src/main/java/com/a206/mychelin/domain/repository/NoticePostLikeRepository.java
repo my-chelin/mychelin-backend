@@ -7,12 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface NoticePostLikeRepository extends JpaRepository<NoticePostLike,Integer> {
+public interface NoticePostLikeRepository extends JpaRepository<NoticePostLike, Integer> {
 
-    Optional<NoticePostLike> findByPostIdAndUserId(int postId,String userId);
+    Optional<NoticePostLike> findByPostIdAndUserId(int postId, String userId);
 
-    List<NoticePostLike> findByUserIdAndIsRead(String userId,boolean isRead);
-
+    List<NoticePostLike> findByUserIdAndIsRead(String userId, boolean isRead);
 
     @Query(value = "select npl.id as id, npl.post_id as postId, p.content as postContent,\n" +
             "p.place_id as placeId, p.placelist_id as placeListId,\n" +

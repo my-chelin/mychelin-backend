@@ -8,11 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.Optional;
 
-public interface NoticeFollowRepository extends JpaRepository<NoticeFollow,Integer> {
+public interface NoticeFollowRepository extends JpaRepository<NoticeFollow, Integer> {
 
     Optional<NoticeFollow> findByUserIdAndFollowingId(String userId, String followingId);
 
-    List<NoticeFollow> findByFollowingIdAndIsRead(String followingId,boolean isRead);
+    List<NoticeFollow> findByFollowingIdAndIsRead(String followingId, boolean isRead);
 
     @Query(value = "select nf.id as id, nf.user_id as userId, u.nickname as userNickname,\n" +
             "nf.is_read as isRead, nf.add_time as addTime\n" +

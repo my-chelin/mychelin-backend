@@ -31,7 +31,7 @@ public class NoticePostLike {
 
     private boolean isRead;
 
-    public void readNotice(){
-        isRead=true;
+    public void readNotice() {
+        isRead = true;
     }
 }

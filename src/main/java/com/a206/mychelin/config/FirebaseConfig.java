@@ -16,9 +16,9 @@ public class FirebaseConfig {
     private String databaseUrl;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         System.out.println(databaseUrl);
-        try{
+        try {
             FileInputStream serviceAccount =
                     new FileInputStream("src/main/resources/serviceAccountKey.json");
             FirebaseOptions options = FirebaseOptions.builder()

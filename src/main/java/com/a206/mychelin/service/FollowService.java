@@ -53,17 +53,15 @@ public class FollowService {
                     .build();
 
             noticeFollowRepository.save(noticeFollow);
-
             realTimeDataBase.setNotice(optionalUser.get().getNickname());
-
 
             return Response.newResult(HttpStatus.OK, "팔로우 신청이 전송됐습니다.", null);
         }
 
         // 팔로우 취소 => 해당 내역 테이블에서 제거
-        Optional<NoticeFollow> noticeFollow = noticeFollowRepository.findByUserIdAndFollowingId(userId,getFollowingId);
+        Optional<NoticeFollow> noticeFollow = noticeFollowRepository.findByUserIdAndFollowingId(userId, getFollowingId);
 
-        if(noticeFollow.isPresent()){
+        if (noticeFollow.isPresent()) {
             noticeFollowRepository.delete(noticeFollow.get());
         }
 

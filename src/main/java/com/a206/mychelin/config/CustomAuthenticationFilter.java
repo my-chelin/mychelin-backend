@@ -3,7 +3,6 @@ package com.a206.mychelin.config;
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.exception.InputNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Log4j2
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     public CustomAuthenticationFilter(final AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);

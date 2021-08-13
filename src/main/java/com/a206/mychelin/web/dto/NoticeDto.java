@@ -12,7 +12,7 @@ public class NoticeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    public static class NoticeComment{
+    public static class NoticeComment {
         String type;
         int id;
         int commentId;
@@ -29,7 +29,7 @@ public class NoticeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    public static class NoticeFollow{
+    public static class NoticeFollow {
         String type;
         int id;
         String userId;
@@ -42,7 +42,7 @@ public class NoticeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    public static class NoticePostLike{
+    public static class NoticePostLike {
         String type;
         int id;
         int postId;
@@ -59,7 +59,7 @@ public class NoticeDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
-    public static class NoticeRequest{
+    public static class NoticeRequest {
         @ApiModelProperty(example = "알림 타입")
         String type;
 

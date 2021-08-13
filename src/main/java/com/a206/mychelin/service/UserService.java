@@ -128,7 +128,7 @@ public class UserService {
         }
         if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
             userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(2);
-        } else if(followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(),false) > 0) {
+        } else if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), false) > 0) {
             userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(1);
         } else {
             userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(0);

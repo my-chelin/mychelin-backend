@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.NoArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+@Log4j2
 @Service
 @NoArgsConstructor
 public class ImageServer {
@@ -51,13 +53,10 @@ public class ImageServer {
 
     public String upload(MultipartFile file) throws IOException {
         Date time = new Date();
-
-//        System.out.println(file.getName());
         String strFileName = file.getOriginalFilename();
         int pos = strFileName.lastIndexOf(".");
         String ext = strFileName.substring(pos + 1);
-
-        String fileName = Long.toString(time.getTime()) + randomToken() + "." + ext;
+        String fileName = time.getTime() + randomToken() + "." + ext;
 
         s3Client.putObject(new PutObjectRequest(bucket, fileName, file.getInputStream(), null)
                 .withCannedAcl(CannedAccessControlList.PublicRead));

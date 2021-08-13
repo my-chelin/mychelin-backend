@@ -29,6 +29,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final NoticePostLikeRepository noticePostLikeRepository;
     private final RealTimeDataBase realTimeDataBase;
+
     @Transactional
     public ResponseEntity<Response> addPost(@RequestBody PostUploadRequest postRequest, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
@@ -65,7 +66,7 @@ public class PostService {
             // image Repository 해당 아이디 이미지 데이터 다 지우고
             List<PostImage> oldImages = postImageRepository.findPostImagesByPostId(id);
             for (PostImage item : oldImages) {
-                System.out.println(item.getId()+ " " + item.getImage());
+                System.out.println(item.getId() + " " + item.getImage());
                 postImageRepository.delete(item);
             }
             // 받아온걸로 다시 upload 로직
@@ -258,12 +259,11 @@ public class PostService {
         postLikeRepository.delete(cancelLike);
 
         // 있으면 좋아요 알림 삭제
-        Optional<NoticePostLike> noticePostLike = noticePostLikeRepository.findByPostIdAndUserId(cancelLike.getPostId(),cancelLike.getUserId());
+        Optional<NoticePostLike> noticePostLike = noticePostLikeRepository.findByPostIdAndUserId(cancelLike.getPostId(), cancelLike.getUserId());
 
-        if(noticePostLike.isPresent()){
+        if (noticePostLike.isPresent()) {
             noticePostLikeRepository.delete(noticePostLike.get());
         }
-
         return Response.newResult(HttpStatus.OK, "좋아요가 취소되었습니다.", null);
     }
 
