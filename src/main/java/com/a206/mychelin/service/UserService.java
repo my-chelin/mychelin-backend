@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -102,7 +103,7 @@ public class UserService {
 
     @Transactional
     public ResponseEntity<Response> getProfile(String userId, HttpServletRequest request) {
-        UserProfileResponse.UserProfileResponseBuilder userProfileResponseBuilder;
+        UserDto.UserProfileResponse.UserProfileResponseBuilder userProfileResponseBuilder;
         Optional<User> tempUser = userRepository.findUserById(userId);
         if (!tempUser.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
@@ -114,7 +115,7 @@ public class UserService {
         int follow = followRepository.countByUserIdAndAccept(user.getId(), true); // 사용자가 신청한 팔로우 리스트이므로 팔로잉
         int follower = followRepository.countByFollowingIdAndAccept(user.getId(), true); // 사용자를 팔로우 하겠다고 담은 사람 리스트이므로 팔로워.
         long like = postLikeRepository.getLikes(user.getId());
-        userProfileResponseBuilder = UserProfileResponse.builder()
+        userProfileResponseBuilder = UserDto.UserProfileResponse.builder()
                 .nickname(user.getNickname())
                 .bio(user.getBio())
                 .profileImage(user.getProfileImage())
@@ -124,7 +125,7 @@ public class UserService {
         User loginUser = getUser(request);
         if (loginUser.getId().equals(user.getId())) {
             userProfileResponseBuilder = userProfileResponseBuilder.phoneNumber(user.getPhoneNumber());
-            UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
+            UserDto.UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
             return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
         }
         if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
@@ -134,7 +135,7 @@ public class UserService {
         } else {
             userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(0);
         }
-        UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
+        UserDto.UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
         return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
     }
 
@@ -218,8 +219,16 @@ public class UserService {
 
     public ResponseEntity<Response> searchUserByNickname(String nickname) {
         List<User> userList = userRepository.findUsersByNicknameContains(nickname);
+        ArrayList<UserDto.UserSearchResponse> arr = new ArrayList<>();
+        for (User u : userList) {
+            arr.add(UserDto.UserSearchResponse.builder()
+                    .nickname(u.getNickname())
+                    .profileImage(u.getProfileImage())
+                    .bio(u.getBio())
+                    .build());
+        }
         if (userList.size() > 0) {
-            return Response.newResult(HttpStatus.OK, "사용자 검색을 완료하였습니다.", userList);
+            return Response.newResult(HttpStatus.OK, "사용자 검색을 완료하였습니다.", arr);
         }
         return Response.newResult(HttpStatus.OK, "일치하는 사용자가 없습니다.", null);
     }
