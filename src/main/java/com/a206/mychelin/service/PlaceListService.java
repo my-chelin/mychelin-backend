@@ -106,7 +106,7 @@ public class PlaceListService {
 
         ArrayList<PlaceListItemDto.PlaceListItemDetail> arr = new ArrayList<>();
         for (Object[] item : items) {
-            Optional<Double> starRateOptional = placeRepository.getStartRateById(String.valueOf((int) item[1]));
+            Optional<Double> starRateOptional = placeRepository.getStarRateById(String.valueOf((int) item[1]));
             Double starRate = null;
             if (starRateOptional.isPresent()) {
                 starRate = starRateOptional.get();

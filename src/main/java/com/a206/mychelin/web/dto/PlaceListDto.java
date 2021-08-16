@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class PlaceListDto {
 
@@ -18,6 +19,8 @@ public class PlaceListDto {
         private String userId;
         private String nickname;
         private BigInteger totalItemCnt;
+        private List<String> contributorProfiles;
+        private int contributorCnt;
     }
 
     @Data

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.ValueGenerationType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -25,24 +24,38 @@ public class UserPreference {
 
     public String userId;
 
-    public double sweet;
-    public double salty;
-    public double sour;
-    public double oily;
-    public double spicy;
+    public int sweet;
+    public int salty;
+    public int sour;
+    public int oily;
+    public int spicy;
 
     public boolean challenging;
     public boolean planning;
-    public boolean networking;
-    public boolean sensitive;
+    public boolean sociable;
+    public boolean sensitivity;
 
     @Builder
-    public UserPreference(String userId, double sweet, double salty, double sour, double oily, double spicy) {
+    public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy) {
         this.userId = userId;
         this.sweet = sweet;
         this.salty = salty;
         this.sour = sour;
         this.oily = oily;
         this.spicy = spicy;
+    }
+
+    @Builder
+    public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy, boolean challenging, boolean planning, boolean sociable, boolean sensitivity) {
+        this.userId = userId;
+        this.sweet = sweet;
+        this.salty = salty;
+        this.sour = sour;
+        this.oily = oily;
+        this.spicy = spicy;
+        this.challenging = challenging;
+        this.planning = planning;
+        this.sociable = sociable;
+        this.sensitivity = sensitivity;
     }
 }

@@ -23,6 +23,7 @@ public class PlaceService {
     private final PlaceRepository placeRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ReviewRepository reviewRepository;
+    private final UserPreferenceService userPreferenceService;
 
     public ResponseEntity<Response> getPlaceInfoById(String id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
@@ -53,7 +54,7 @@ public class PlaceService {
             }
         }
 
-        Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.get().getId()));
+        Optional<Double> starRate = placeRepository.getStarRateById(String.valueOf(nowPlace.get().getId()));
         if (starRate.isPresent()) {
             placeBuilder = placeBuilder.starRate(starRate.get());
         }
@@ -89,7 +90,7 @@ public class PlaceService {
                     .categoryId(nowPlace.getCategoryId())
                     .image(nowPlace.getImage())
                     .reviewCnt(reviewCnt);
-            Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.getId()));
+            Optional<Double> starRate = placeRepository.getStarRateById(String.valueOf(nowPlace.getId()));
             if (starRate.isPresent()) {
                 placeResponseBuilder = placeResponseBuilder.starRate(starRate.get());
             }
@@ -135,7 +136,7 @@ public class PlaceService {
                     .operationHours(nowPlace.getOperationHours())
                     .categoryId(nowPlace.getCategoryId())
                     .image(nowPlace.getImage());
-            Optional<Double> starRate = placeRepository.getStartRateById(String.valueOf(nowPlace.getId()));
+            Optional<Double> starRate = placeRepository.getStarRateById(String.valueOf(nowPlace.getId()));
             if (starRate.isPresent()) {
                 placeResponseBuilder = placeResponseBuilder.starRate(starRate.get());
             }
@@ -180,4 +181,48 @@ public class PlaceService {
         }
         return Response.newResult(HttpStatus.OK, "장소로 검색에 성공했습니다.", resultList);
     }
+
+    public ResponseEntity getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.check(httpServletRequest);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
+        }
+
+        String similarUserId = userPreferenceService.findMostSimilarUserByTaste(userId);
+        if (similarUserId == null) {
+            return Response.newResult(HttpStatus.NO_CONTENT, "서비스 이용을 위한 데이터를 모으는 중입니다. 조금만 기다려주세요", null);
+        }
+        if (similarUserId.equals("BAD_REQUEST")) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "취향 설문을 진행해주세요.", null);
+        }
+        if (similarUserId.equals("curUserNotValid")) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "일치하는 사용자가 없습니다.", null);
+        }
+        if (similarUserId.equals("NO_CONTENT")) {
+            return Response.newResult(HttpStatus.NO_CONTENT, "서비스 이용을 위한 데이터를 모으는 중입니다. 조금만 기다려주세요.", null);
+        }
+        HashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("similarTasteUser", similarUserId);
+        System.out.println(userId + "와 비슷한 유저 : " + similarUserId);
+
+        List<Object[]> recommendations = placeRepository.findPlacesBySimilarUsersRecommendation(userId, similarUserId);
+        ArrayList<PlaceDto.PlaceRecommendationReviewedBySimilarUser> arr = new ArrayList<>();
+        for (Object[] item : recommendations) {
+            arr.add(PlaceDto.PlaceRecommendationReviewedBySimilarUser.builder()
+                    .id((int) item[0])
+                    .name((String) item[1])
+                    .description((String) item[2])
+                    .location((String) item[3])
+                    .reviewContent((String) item[4])
+                    .starRate((float) item[5])
+                    .build());
+        }
+        if (arr.size() == 0) {
+            return Response.newResult(HttpStatus.OK, similarUserId + " 유저가 새로운 장소를 평가하길 기다려주세요.", linkedHashMap);
+        }
+
+        linkedHashMap.put("data", arr);
+        return Response.newResult(HttpStatus.OK, "입맛이 가장 비슷한 유저가 추천한 식당 정보입니다.", linkedHashMap);
+    }
+
 }

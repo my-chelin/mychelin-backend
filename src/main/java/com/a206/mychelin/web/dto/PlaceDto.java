@@ -44,4 +44,17 @@ public class PlaceDto {
         private String image;
         private Double starRate;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class PlaceRecommendationReviewedBySimilarUser {
+        private int id;
+        private String name;
+        private String description;
+        private String location;
+        private String reviewContent;
+        private float starRate;
+    }
 }

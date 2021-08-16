@@ -68,4 +68,9 @@ public class PlaceController {
             , @RequestParam(defaultValue = "0.5", required = false) float distance) {
         return placeService.getPlaceByCoordinate(lat, lng, distance);
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
+        return placeService.getPlacesBySimilarUser(httpServletRequest);
+    }
 }
