@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin("*")
+@RestController
+@RequestMapping("/preference")
 @RequiredArgsConstructor
-@RestController("/preference")
 public class UserPreferenceController {
     private final UserPreferenceService userPreferenceService;
 
     @ApiOperation(value = "사용자의 취향 설문 결과를 저장한다.")
-    @ApiImplicitParam(name = "UserPreferenceRequest", value = "사용자의 입맛과 식당 선택 기준")
     @PostMapping
     public ResponseEntity saveUserPreference(@RequestBody UserPreferenceDto.UserPreferenceRequest userPreferenceRequest, HttpServletRequest httpServletRequest){
         return userPreferenceService.saveUserPreference(userPreferenceRequest, httpServletRequest);
