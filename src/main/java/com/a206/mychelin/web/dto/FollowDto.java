@@ -26,6 +26,7 @@ public class FollowDto {
     @Getter
     @AllArgsConstructor
     @Builder
+    @NoArgsConstructor
     public static class FollowAskRequest {
         private String userNickname;
     }

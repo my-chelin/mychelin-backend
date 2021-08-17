@@ -49,7 +49,6 @@ public class PlaceService {
 
         if (userId != null) {
             Optional<BookmarkPlace> bookmark = bookmarkRepository.findBookmarkPlaceByUserIdAndPlaceId(userId, nowPlace.get().getId());
-            System.out.println(userId + " " + nowPlace.get().getId() + " " + bookmark.isPresent());
             if (bookmark.isPresent()) {
                 placeBuilder = placeBuilder.isSaved(true);
             }

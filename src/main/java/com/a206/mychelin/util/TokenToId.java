@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 public class TokenToId {
     public static String check(HttpServletRequest httpRequest) {
         String header = httpRequest.getHeader(AuthConstants.AUTH_HEADER);
-        System.out.println(header);
         if (header == null) {
             return null;
         }

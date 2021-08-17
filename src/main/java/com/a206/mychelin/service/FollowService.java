@@ -151,7 +151,6 @@ public class FollowService {
         }
         ArrayList<FollowDto.FollowRequestResponse> list = new ArrayList<>();
         for (String[] item : requests) {
-            System.out.println(item[0] + " " + item[1]);
             list.add(FollowDto.FollowRequestResponse.builder()
                     .nickname(item[0])
                     .profileImage(item[1])

@@ -77,7 +77,7 @@ public class ImageServer {
     }
 
     private static BufferedImage resizeImage(BufferedImage originalImage) {
-        double ratio = originalImage.getWidth() / (double) 600;
+        double ratio = originalImage.getWidth() / (double) 1200;
         int tWidth = (int) (originalImage.getWidth() / ratio);
         int tHeight = (int) (originalImage.getHeight() / ratio);
 
