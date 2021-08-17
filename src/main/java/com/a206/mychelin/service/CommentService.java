@@ -35,7 +35,6 @@ public class CommentService {
 
     private User getUser(HttpServletRequest request) {
         String id = TokenToId.check(request);
-        System.out.println(id);
         Optional<User> user = userRepository.findUserById(id);
         if (!user.isPresent()) {
             return null;

@@ -66,7 +66,6 @@ public class PostService {
             // image Repository 해당 아이디 이미지 데이터 다 지우고
             List<PostImage> oldImages = postImageRepository.findPostImagesByPostId(id);
             for (PostImage item : oldImages) {
-                System.out.println(item.getId() + " " + item.getImage());
                 postImageRepository.delete(item);
             }
             // 받아온걸로 다시 upload 로직
@@ -136,7 +135,6 @@ public class PostService {
         }
 
         long totalPageItemCnt = postRepository.countPostsByFollowingUsers(userId);
-        System.out.println(totalPageItemCnt);
         HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
         linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
         linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
@@ -245,7 +243,6 @@ public class PostService {
             noticePostLikeRepository.save(noticePostLike);
 
             User postUser = userRepository.getById(post.get().getUserId());
-            System.out.println(postUser);
             realTimeDataBase.setNotice(postUser.getNickname());
 
 
