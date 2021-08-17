@@ -22,8 +22,8 @@ public class UserPreferenceController {
         return userPreferenceService.saveUserPreference(userPreferenceRequest, httpServletRequest);
     }
 
-//    @GetMapping("/similar")
-//    public ResponseEntity getSimilarUser(HttpServletRequest httpServletRequest) {
-//        return userPreferenceService.findMostSimilarUser(httpServletRequest);
-//    }
+    @GetMapping
+    public ResponseEntity getPreference(HttpServletRequest httpServletRequest) {
+        return userPreferenceService.getPreference(httpServletRequest);
+    }
 }

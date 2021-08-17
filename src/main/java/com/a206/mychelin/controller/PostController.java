@@ -1,4 +1,4 @@
-package com.a206.mychelin.controller;
+  package com.a206.mychelin.controller;
 
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PostService;
