@@ -289,14 +289,14 @@ public class PostService {
         return Response.newResult(HttpStatus.OK, "전체 포스트를 불러옵니다.", linkedHashmap);
     }
 
-    public ResponseEntity findPostsByKeyword(String keyword, int page, int pageSize, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> findPostsByKeyword(String keyword, int page, int pageSize, HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
         long totalPageItemCnt = postRepository.countPostsByKeywordByFollowOrPublicAccount(keyword, userId);
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<Object[]> items = postRepository.findPostsByKeywordByFollowOrPublicAccount(keyword, userId, pageRequest);
-        if(items.size() > 0){
+        if (items.size() > 0) {
             HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
             linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
             linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);

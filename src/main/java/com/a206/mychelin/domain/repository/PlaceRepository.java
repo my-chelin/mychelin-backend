@@ -39,7 +39,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "FROM review r2\n" +
             "WHERE r2.user_id = :myId)\n" +
             "ORDER BY star_rate desc\n" +
-            "LIMIT 10",nativeQuery = true)
+            "LIMIT 10", nativeQuery = true)
     List<Object[]> findPlacesBySimilarUsersRecommendation(@Param("myId") String myId, @Param("similarUserId") String similarUserId);
 
 }

@@ -24,9 +24,9 @@ public class UserPreferenceService {
     private final UserPreferenceRepository userPreferenceRepository;
 
     @Transactional
-    public ResponseEntity saveUserPreference(UserPreferenceDto.UserPreferenceRequest userPreferenceRequest, HttpServletRequest httpServletRequest){
+    public ResponseEntity<Response> saveUserPreference(UserPreferenceDto.UserPreferenceRequest userPreferenceRequest, HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
-        if(userId == null) {
+        if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
         userPreferenceRepository.save(
@@ -46,9 +46,9 @@ public class UserPreferenceService {
         return Response.newResult(HttpStatus.OK, "사용자의 취향을 저장하였습니다.", null);
     }
 
-    public String findMostSimilarUserByTaste(String userId){
+    public String findMostSimilarUserByTaste(String userId) {
         Optional<User> user = userRepository.findUserById(userId);
-        if(!user.isPresent()){
+        if (!user.isPresent()) {
             return "curUserNotValid";
         }
         Optional<UserPreference> curUserPref = userPreferenceRepository.findUserPreferenceByUserId(user.get().getId());
@@ -60,7 +60,7 @@ public class UserPreferenceService {
         List<User> users = userRepository.findAll();
         double maxSimilarity = -1.0;
         String mostSimilarUserId = "null";
-        for(User item : users) {
+        for (User item : users) {
             String compareUserId = item.getId();
             if (userId.equals(compareUserId)) {
                 continue;
