@@ -52,6 +52,16 @@ public class UserService {
     @Transactional
     public ResponseEntity<Response> updateInfo(@RequestBody UserDto.UpdateRequest requestDTO, HttpServletRequest request) {
         String userId = TokenToId.check(request);
+        Optional<User> checkUser = userRepository.findUserByNickname(requestDTO.getNickname());
+        if (checkUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "이미 존재하는 닉네임입니다.", null);
+        }
+        if (requestDTO.getNickname().length() > 8) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "닉네임은 8자리 이하만 가능합니다.", null);
+        }
+        if (requestDTO.getPhoneNumber().length() > 11) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "폰번호는 11자리 이하만 가능합니다.", null);
+        }
         Optional<User> user = userRepository.findUserById(userId);
         user.get().updateInfo(requestDTO.getNickname(), requestDTO.getBio(), requestDTO.getPhoneNumber());
         return Response.newResult(HttpStatus.OK, "정보가 업데이트 되었습니다.", null);
