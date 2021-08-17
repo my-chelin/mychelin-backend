@@ -30,23 +30,13 @@ public class UserPreference {
     public int oily;
     public int spicy;
 
-    public boolean challenging;
-    public boolean planning;
-    public boolean sociable;
-    public boolean sensitivity;
+    public int challenging;
+    public int planning;
+    public int sociable;
+    public int sensitivity;
 
     @Builder
-    public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy) {
-        this.userId = userId;
-        this.sweet = sweet;
-        this.salty = salty;
-        this.sour = sour;
-        this.oily = oily;
-        this.spicy = spicy;
-    }
-
-    @Builder
-    public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy, boolean challenging, boolean planning, boolean sociable, boolean sensitivity) {
+    public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy, int challenging, int planning, int sociable, int sensitivity) {
         this.userId = userId;
         this.sweet = sweet;
         this.salty = salty;

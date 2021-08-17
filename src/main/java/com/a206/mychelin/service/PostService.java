@@ -228,7 +228,7 @@ public class PostService {
         }
         Optional<PostLike> postLike = postLikeRepository.findPostLikeByPostIdAndUserId(postLikeRequest.getPostId(), userId);
         if (!postLike.isPresent()) { // 없으면 좋아요 추가
-            PostLike newLike = PostLike.builder()
+            Pos  tLike newLike = PostLike.builder()
                     .postId(postLikeRequest.getPostId())
                     .userId(userId)
                     .build();
@@ -309,5 +309,30 @@ public class PostService {
             return Response.newResult(HttpStatus.OK, "키워드를 포함한 포스트를 불러옵니다.", linkedHashmap);
         }
         return Response.newResult(HttpStatus.OK, "일치하는 검색 결과가 없습니다.", null);
+    }
+
+    public ResponseEntity findPostsByTaggedPlaceId(int page, int pageSize, int placeId, HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.check(httpServletRequest);
+        if (userId == null) {
+            userId = "null";
+        }
+
+        long totalPageItemCount = postRepository.countPostsByTaggedPlaceId(placeId, userId);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+
+        List<Object[]> items = postRepository.findPostsByTaggedPlaceId(placeId, userId);
+        if(items.size() > 0){
+            HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
+            linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
+            linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+            linkedHashmap.put("nowPage", page);
+            linkedHashmap.put("nowPageSize", pageSize);
+
+            ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
+            linkedHashmap.put("posts", arr);
+
+            return Response.newResult(HttpStatus.OK, "이 장소가 태그된 포스트를 불러옵니다.", linkedHashmap);
+        }
+        return Response.newResult(HttpStatus.OK, "아직 장소가 태그된 글이 없어요.", null);
     }
 }

@@ -24,6 +24,7 @@ public class PlaceService {
     private final BookmarkRepository bookmarkRepository;
     private final ReviewRepository reviewRepository;
     private final UserPreferenceService userPreferenceService;
+    private final PostService postService;
 
     public ResponseEntity<Response> getPlaceInfoById(String id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);
@@ -225,4 +226,7 @@ public class PlaceService {
         return Response.newResult(HttpStatus.OK, "입맛이 가장 비슷한 유저가 추천한 식당 정보입니다.", linkedHashMap);
     }
 
+    public ResponseEntity getTaggedPostsByPlaceId(@RequestParam int placeId, int page, int pageSize, HttpServletRequest httpServletRequest) {
+        return postService.findPostsByTaggedPlaceId(placeId, page, pageSize, httpServletRequest);
+    }
 }

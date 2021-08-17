@@ -73,4 +73,13 @@ public class PlaceController {
     public ResponseEntity getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
         return placeService.getPlacesBySimilarUser(httpServletRequest);
     }
+
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+    })
+    @GetMapping("/post")
+    public ResponseEntity getTaggedPostsByPlaceId(@RequestParam int placeId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int pageSize, HttpServletRequest httpServletRequest) {
+        return placeService.getTaggedPostsByPlaceId(placeId, httpServletRequest);
+    }
 }

@@ -64,4 +64,27 @@ public interface PostRepository extends JpaRepository<Post, String> {
 
     @Query(value = "select COUNT(p.id) from post p where p.user_id in (select f.following_id from follow f where f.user_id = :userId)", nativeQuery = true)
     long countPostsByFollowingUsers(@Param("userId") String userId);
+
+    @Query(value = "select p.id, u.nickname, ifnull ( (select count(user_id) from follow f where f.following_id = u.id and f.accept = true),0) , p.content, p.create_date, ifnull ((select count(user_id) from post_like where p.id = post_id and user_id is not null group by post_id), 0) ,(select count(message) from comment where p.id = comment.post_id ), p.place_id, p.placelist_id\n" +
+            "from user u join post p \n" +
+            "where p.user_id = u.id \n" +
+            "and (u.is_private = false or u.is_private = true and p.user_id in (select following_id\n" +
+            "from follow\n" +
+            "where accept = true\n" +
+            "and user_id = :userId) )\n" +
+            "and p.place_id = :placeId\n" +
+            "order by p.create_date desc;", nativeQuery = true)
+    List<Post> findPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId", defaultValue = "null")String userId, Pageable pageable);
+
+    @Query(value = "select count(*) from (\n" +
+            "select p.id\n" +
+            "from user u join post p \n" +
+            "where p.user_id = u.id \n" +
+            "and (u.is_private = false or u.is_private = true and p.user_id in (select following_id\n" +
+            "from follow\n" +
+            "where accept = true\n" +
+            "and user_id = :userId) )\n" +
+            "and p.place_id = :placeId\n" +
+            ") tmp", nativeQuery = true)
+    long countPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId", defaultValue = "null")String userId);
 }

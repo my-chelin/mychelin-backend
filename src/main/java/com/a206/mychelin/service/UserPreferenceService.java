@@ -37,10 +37,10 @@ public class UserPreferenceService {
                         .sour(userPreferenceRequest.getSour())
                         .spicy(userPreferenceRequest.getSpicy())
                         .oily(userPreferenceRequest.getOily())
-                        .challenging(userPreferenceRequest.isChallenging())
-                        .planning(userPreferenceRequest.isPlanning())
-                        .sociable(userPreferenceRequest.isSociable())
-                        .sensitivity(userPreferenceRequest.isSensitivity())
+                        .challenging(userPreferenceRequest.getChallenging())
+                        .planning(userPreferenceRequest.getPlanning())
+                        .sociable(userPreferenceRequest.getSociable())
+                        .sensitivity(userPreferenceRequest.getSensitivity())
                         .build()
         );
         return Response.newResult(HttpStatus.OK, "사용자의 취향을 저장하였습니다.", null);
@@ -97,23 +97,10 @@ public class UserPreferenceService {
 
     private static Map<CharSequence, Integer> getSelectionStandardIntoMap(UserPreference userPref) {
         Map<CharSequence, Integer> userSelectionStandard = new HashMap<>();
-        int tmp1 = 0, tmp2 = 0, tmp3 = 0, tmp4 = 0;
-        if (userPref.isPlanning()) {
-            tmp1 = 1;
-        }
-        if (userPref.isChallenging()) {
-            tmp2 = 1;
-        }
-        if (userPref.isSociable()) {
-            tmp3 = 1;
-        }
-        if (userPref.isSensitivity()) {
-            tmp4 = 1;
-        }
-        userSelectionStandard.put("planning", tmp1);
-        userSelectionStandard.put("challenging", tmp2);
-        userSelectionStandard.put("networking", tmp3);
-        userSelectionStandard.put("sensitive", tmp4);
+        userSelectionStandard.put("planning", userPref.getPlanning());
+        userSelectionStandard.put("challenging", userPref.getChallenging());
+        userSelectionStandard.put("sociable", userPref.getSociable);
+        userSelectionStandard.put("sensitivity", userPref.getSensitivity);
         return userSelectionStandard;
     }
 }
