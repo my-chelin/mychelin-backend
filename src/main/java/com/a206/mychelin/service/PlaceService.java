@@ -222,7 +222,18 @@ public class PlaceService {
             return Response.newResult(HttpStatus.OK, similarUserId + " 유저가 새로운 장소를 평가하길 기다려주세요.", linkedHashMap);
         }
 
-        linkedHashMap.put("data", arr);
+        Random rand = new Random();
+        // 랜덤 5개 추출하기
+        ArrayList<PlaceDto.PlaceRecommendationReviewedBySimilarUser> randomArr = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            int randomIdx = rand.nextInt(arr.size());
+            while (randomArr.contains(arr.get(randomIdx))) {
+                randomIdx = rand.nextInt(arr.size());
+            }
+            randomArr.add(arr.get(randomIdx));
+        }
+
+        linkedHashMap.put("data", randomArr);
         return Response.newResult(HttpStatus.OK, "입맛이 가장 비슷한 유저가 추천한 식당 정보입니다.", linkedHashMap);
     }
 }
