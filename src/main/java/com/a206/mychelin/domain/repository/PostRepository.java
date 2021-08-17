@@ -73,8 +73,8 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "where accept = true\n" +
             "and user_id = :userId) )\n" +
             "and p.place_id = :placeId\n" +
-            "order by p.create_date desc;", nativeQuery = true)
-    List<Post> findPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId", defaultValue = "null")String userId, Pageable pageable);
+            "order by p.create_date desc", nativeQuery = true)
+    List<Object[]> findPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId") String userId, Pageable pageable);
 
     @Query(value = "select count(*) from (\n" +
             "select p.id\n" +
@@ -86,5 +86,5 @@ public interface PostRepository extends JpaRepository<Post, String> {
             "and user_id = :userId) )\n" +
             "and p.place_id = :placeId\n" +
             ") tmp", nativeQuery = true)
-    long countPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId", defaultValue = "null")String userId);
+    long countPostsByTaggedPlaceId(@Param("placeId") int placeId, @Param("userId") String userId);
 }

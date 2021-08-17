@@ -1,4 +1,4 @@
- package com.a206.mychelin.service;
+package com.a206.mychelin.service;
 
 import com.a206.mychelin.domain.entity.Follow;
 import com.a206.mychelin.domain.entity.NoticeFollow;
