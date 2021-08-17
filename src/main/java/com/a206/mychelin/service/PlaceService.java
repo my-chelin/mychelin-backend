@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -182,7 +183,7 @@ public class PlaceService {
         return Response.newResult(HttpStatus.OK, "장소로 검색에 성공했습니다.", resultList);
     }
 
-    public ResponseEntity getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
@@ -223,9 +224,5 @@ public class PlaceService {
 
         linkedHashMap.put("data", arr);
         return Response.newResult(HttpStatus.OK, "입맛이 가장 비슷한 유저가 추천한 식당 정보입니다.", linkedHashMap);
-    }
-
-    public ResponseEntity getTaggedPostsByPlaceId(@RequestParam int placeId, int page, int pageSize, HttpServletRequest httpServletRequest) {
-        return postService.findPostsByTaggedPlaceId(placeId, page, pageSize, httpServletRequest);
     }
 }

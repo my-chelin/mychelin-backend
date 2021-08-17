@@ -99,8 +99,8 @@ public class UserPreferenceService {
         Map<CharSequence, Integer> userSelectionStandard = new HashMap<>();
         userSelectionStandard.put("planning", userPref.getPlanning());
         userSelectionStandard.put("challenging", userPref.getChallenging());
-        userSelectionStandard.put("sociable", userPref.getSociable);
-        userSelectionStandard.put("sensitivity", userPref.getSensitivity);
+        userSelectionStandard.put("sociable", userPref.getSociable());
+        userSelectionStandard.put("sensitivity", userPref.getSensitivity());
         return userSelectionStandard;
     }
 }

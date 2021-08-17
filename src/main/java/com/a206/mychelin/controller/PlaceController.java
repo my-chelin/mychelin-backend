@@ -1,7 +1,9 @@
 package com.a206.mychelin.controller;
 
+import com.a206.mychelin.domain.entity.Post;
 import com.a206.mychelin.exception.PageIndexLessThanZeroException;
 import com.a206.mychelin.service.PlaceService;
+import com.a206.mychelin.service.PostService;
 import com.a206.mychelin.web.dto.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class PlaceController {
     private final PlaceService placeService;
+    private final PostService postService;
 
     @ApiOperation(value = "id를 이용하여 식당 정보 조회")
     @ApiImplicitParam(name = "id", value = "식당 고유 id")
@@ -70,16 +73,16 @@ public class PlaceController {
     }
 
     @GetMapping("/recommend")
-    public ResponseEntity getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> getPlacesBySimilarUser(HttpServletRequest httpServletRequest) {
         return placeService.getPlacesBySimilarUser(httpServletRequest);
     }
 
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
-            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
-    @GetMapping("/post")
-    public ResponseEntity getTaggedPostsByPlaceId(@RequestParam int placeId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int pageSize, HttpServletRequest httpServletRequest) {
-        return placeService.getTaggedPostsByPlaceId(placeId, httpServletRequest);
+    @GetMapping("/posts")
+    public ResponseEntity<Response> getTaggedPostsByPlaceId(@RequestParam int placeId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int pageSize, HttpServletRequest httpServletRequest) {
+        return postService.findPostsByTaggedPlaceId(page, pageSize, placeId, httpServletRequest);
     }
 }
