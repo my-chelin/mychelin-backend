@@ -1,6 +1,7 @@
 package com.a206.mychelin.controller;
 
 import com.a206.mychelin.service.UserPreferenceService;
+import com.a206.mychelin.web.dto.Response;
 import com.a206.mychelin.web.dto.UserPreferenceDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,12 @@ public class UserPreferenceController {
 
     @ApiOperation(value = "사용자의 취향 설문 결과를 저장한다.")
     @PostMapping
-    public ResponseEntity saveUserPreference(@RequestBody UserPreferenceDto.UserPreferenceRequest userPreferenceRequest, HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> saveUserPreference(@RequestBody UserPreferenceDto.UserPreferenceRequest userPreferenceRequest, HttpServletRequest httpServletRequest) {
         return userPreferenceService.saveUserPreference(userPreferenceRequest, httpServletRequest);
     }
 
     @GetMapping
-    public ResponseEntity getPreference(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> getPreference(HttpServletRequest httpServletRequest) {
         return userPreferenceService.getPreference(httpServletRequest);
     }
 }

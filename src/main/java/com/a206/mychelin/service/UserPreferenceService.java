@@ -104,10 +104,10 @@ public class UserPreferenceService {
         return userSelectionStandard;
     }
 
-    public ResponseEntity getPreference(HttpServletRequest httpServletRequest) {
+    public ResponseEntity<Response> getPreference(HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
         if (userId == null) {
-            return Response.newResult(HttpStatus.NOT_AUTHORIZED, "로그인 후 이용해주세요", null);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
         }
         Optional<User> curUser = userRepository.findUserById(userId);
         if (!curUser.isPresent()) {
@@ -118,7 +118,6 @@ public class UserPreferenceService {
         if (!userPref.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "취향 설문을 먼저 진행해주세요", null);
         }
-
 
         HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
 
@@ -131,9 +130,8 @@ public class UserPreferenceService {
                         .spicy(userPref.get().getSpicy())
                         .build();
 
-
-        String userAsAnimal = "";
-        String userAsAction = "";
+        String userAsAnimal;
+        String userAsAction;
         int challenging = userPref.get().getChallenging();
         int planning = userPref.get().getPlanning();
         int sociable = userPref.get().getSociable();

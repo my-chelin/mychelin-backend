@@ -152,11 +152,11 @@ public class UserService {
             switch (rIndex) {
                 case 0:
                     // a-z
-                    token.append((char) ((int) (rnd.nextInt(26)) + 97));
+                    token.append((char) (rnd.nextInt(26) + 97));
                     break;
                 case 1:
                     // A-Z
-                    token.append((char) ((int) (rnd.nextInt(26)) + 65));
+                    token.append((char) (rnd.nextInt(26) + 65));
                     break;
                 case 2:
                     // 0-9
