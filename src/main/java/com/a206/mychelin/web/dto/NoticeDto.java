@@ -63,7 +63,7 @@ public class NoticeDto {
         @ApiModelProperty(example = "알림 타입")
         String type;
 
-        @ApiModelProperty(example = "아림 id")
+        @ApiModelProperty(example = "알림 id")
         int id;
     }
 }
