@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class TimestampToDateString {
     public static String getPassedTime(Timestamp writtenTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY년 MM월 dd일");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy년 MM월 dd일");
         Date date = new Date();
         Timestamp timestamp = new Timestamp(date.getTime());
 

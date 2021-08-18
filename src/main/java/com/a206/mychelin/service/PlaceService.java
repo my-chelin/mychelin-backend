@@ -13,7 +13,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -25,7 +24,6 @@ public class PlaceService {
     private final BookmarkRepository bookmarkRepository;
     private final ReviewRepository reviewRepository;
     private final UserPreferenceService userPreferenceService;
-    private final PostService postService;
 
     public ResponseEntity<Response> getPlaceInfoById(String id, HttpServletRequest httpRequest) {
         String userId = TokenToId.check(httpRequest);

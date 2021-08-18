@@ -68,8 +68,8 @@ public class PlaceListController {
             @ApiImplicitParam(name = "title", value = "검색할 맛집 리스트 제목"),
             @ApiImplicitParam(name = "id", value = "검색할 맛집 리스트 id"),
             @ApiImplicitParam(name = "nickname", value = "닉네임으로 맛집 리스트 받아오기"),
-            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", required = false, dataType = "int", paramType = "query", defaultValue = "1"),
-            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", required = false, dataType = "int", paramType = "query", defaultValue = "10"),
+            @ApiImplicitParam(name = "page", value = "조회할 페이지 번호", dataType = "int", paramType = "query", defaultValue = "1"),
+            @ApiImplicitParam(name = "pagesize", value = "페이지당 보여주는 데이터 개수", dataType = "int", paramType = "query", defaultValue = "10"),
     })
     @GetMapping
     public ResponseEntity<Response> searchPlaceListByTitle(@RequestParam(defaultValue = "") String title

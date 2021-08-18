@@ -65,7 +65,7 @@ public class UserController {
 
     @ApiOperation(value = "유저 닉네임으로 검색하기")
     @GetMapping("/search")
-    public ResponseEntity searchUserByNickname(@RequestParam String nickname) {
+    public ResponseEntity<Response> searchUserByNickname(@RequestParam String nickname) {
         return userService.searchUserByNickname(nickname);
     }
 

@@ -293,19 +293,18 @@ public class PostService {
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
 
         List<Object[]> items = postRepository.findPostsByKeywordByFollowOrPublicAccount(keyword, userId, pageRequest);
-        if (items.size() > 0) {
-            HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
-            linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
-            linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
-            linkedHashmap.put("nowPage", page);
-            linkedHashmap.put("nowPageSize", pageSize);
-
-            ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
-            linkedHashmap.put("posts", arr);
-
-            return Response.newResult(HttpStatus.OK, "키워드를 포함한 포스트를 불러옵니다.", linkedHashmap);
+        if (items.size() == 0) {
+            return Response.newResult(HttpStatus.OK, "일치하는 검색 결과가 없습니다.", null);
         }
-        return Response.newResult(HttpStatus.OK, "일치하는 검색 결과가 없습니다.", null);
+        HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
+        linkedHashmap.put("totalPageItemCnt", totalPageItemCnt);
+        linkedHashmap.put("totalPage", ((totalPageItemCnt - 1) / pageSize) + 1);
+        linkedHashmap.put("nowPage", page);
+        linkedHashmap.put("nowPageSize", pageSize);
+
+        ArrayList<PostDto.PostInfoResponse> arr = extractPosts(items, userId);
+        linkedHashmap.put("posts", arr);
+        return Response.newResult(HttpStatus.OK, "키워드를 포함한 포스트를 불러옵니다.", linkedHashmap);
     }
 
     public ResponseEntity<Response> findPostsByTaggedPlaceId(int page, int pageSize, int placeId, HttpServletRequest httpServletRequest) {
