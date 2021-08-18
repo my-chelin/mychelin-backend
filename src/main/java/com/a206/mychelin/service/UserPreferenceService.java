@@ -95,7 +95,7 @@ public class UserPreferenceService {
         return userTaste;
     }
 
-    private static Map<CharSequence, Integer> getSelectionStandardIntoMap(UserPreference userPref) {
+    static Map<CharSequence, Integer> getSelectionStandardIntoMap(UserPreference userPref) {
         Map<CharSequence, Integer> userSelectionStandard = new HashMap<>();
         userSelectionStandard.put("planning", userPref.getPlanning());
         userSelectionStandard.put("challenging", userPref.getChallenging());
