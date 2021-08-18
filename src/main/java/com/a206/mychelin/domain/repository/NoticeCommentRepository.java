@@ -13,7 +13,7 @@ public interface NoticeCommentRepository extends JpaRepository<NoticeComment, In
             "u.id as writerId, u.nickname as writerNickname,\n" +
             "p.id as postId, p.content as postContent, nc.is_read as isRead, nc.add_time as addTime\n" +
             "from notice_comment nc, comment c, post p, user u\n" +
-            "where nc.is_read=false and p.user_id=:id and nc.comment_id=c.comment_id and p.id=c.post_id and u.id=c.writer_id;", nativeQuery = true)
+            "where nc.is_read=false and p.user_id=:id and nc.comment_id=c.comment_id and p.id=c.post_id and u.id=c.writer_id and c.writer_id != :id", nativeQuery = true)
     List<Object[]> getCommentByUserId(String id);
 
     /*

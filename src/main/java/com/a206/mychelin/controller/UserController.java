@@ -68,4 +68,10 @@ public class UserController {
     public ResponseEntity searchUserByNickname(@RequestParam String nickname) {
         return userService.searchUserByNickname(nickname);
     }
+
+    @ApiOperation(value = "식당 선택 기준으로 유저 추천")
+    @GetMapping("/recommend")
+    public ResponseEntity getUserRecommendationByPlacePreference(HttpServletRequest httpServletRequest) {
+        return userService.getUserRecommendationByPlacePreference(httpServletRequest);
+    }
 }

@@ -1,11 +1,11 @@
 package com.a206.mychelin.service;
 
+import com.a206.mychelin.domain.entity.Follow;
 import com.a206.mychelin.domain.entity.User;
 import com.a206.mychelin.domain.entity.UserEmailCheck;
-import com.a206.mychelin.domain.repository.FollowRepository;
-import com.a206.mychelin.domain.repository.PostLikeRepository;
-import com.a206.mychelin.domain.repository.UserEmailCheckRepository;
-import com.a206.mychelin.domain.repository.UserRepository;
+import com.a206.mychelin.domain.entity.UserPreference;
+import com.a206.mychelin.domain.repository.*;
+import com.a206.mychelin.util.CosineSimilarity;
 import com.a206.mychelin.util.TokenToId;
 import com.a206.mychelin.web.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserPreferenceRepository userPreferenceRepository;
     private final PostLikeRepository postLikeRepository;
     private final FollowRepository followRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -231,5 +229,74 @@ public class UserService {
             return Response.newResult(HttpStatus.OK, "사용자 검색을 완료하였습니다.", arr);
         }
         return Response.newResult(HttpStatus.OK, "일치하는 사용자가 없습니다.", null);
+    }
+
+    public ResponseEntity getUserRecommendationByPlacePreference(HttpServletRequest httpServletRequest) {
+        String userId = TokenToId.check(httpServletRequest);
+        if (userId == null) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 사용해주세요.", null);
+        }
+        Optional<User> curUser = userRepository.findUserById(userId);
+        if (!curUser.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "유효하지 않은 사용자입니다.", null);
+        }
+        Optional<UserPreference> userPreference = userPreferenceRepository.findUserPreferenceByUserId(userId);
+        if (!userPreference.isPresent()) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "취향 설문을 먼저 진행해주세요.", null);
+        }
+        Map<CharSequence, Integer> curUserPlace = UserPreferenceService.getSelectionStandardIntoMap(userPreference.get());
+
+        List<User> users = userRepository.findAll();
+        double maxSimilarity = -1.0;
+        double secondMaxSimilarity = -1.0;
+        String mostSimilarUserId = "null";
+        String secondMostSimilarUserId = "null";
+
+        for (User item : users) {
+            String compareUserId = item.getId();
+            if (userId.equals(compareUserId)) {
+                continue;
+            }
+            Optional<Follow> checkFollow = followRepository.findFollowByUserIdAndFollowingId(userId, compareUserId);
+            if (checkFollow.isPresent()) {
+                continue;
+            }
+            userPreferenceRepository.findUserPreferenceByUserId(compareUserId);
+            CosineSimilarity cs = new CosineSimilarity();
+            Optional<UserPreference> compareUserPref = userPreferenceRepository.findUserPreferenceByUserId(item.getId());
+            if (!compareUserPref.isPresent()) {
+                continue;
+            }
+            Map<CharSequence, Integer> compareUserPlace = UserPreferenceService.getSelectionStandardIntoMap(compareUserPref.get());
+            double comparison = cs.cosineSimilarity(curUserPlace, compareUserPlace);
+
+            if (maxSimilarity < comparison) {
+                maxSimilarity = comparison;
+                mostSimilarUserId = item.getId();
+            } else if (secondMaxSimilarity < comparison) {
+                secondMaxSimilarity = comparison;
+                secondMostSimilarUserId = item.getId();
+            }
+        }
+
+        ArrayList<UserDto.UserSearchResponse> arr = new ArrayList<>();
+        Optional<User> firstSimilarUser = userRepository.findUserById(mostSimilarUserId);
+        arr.add(UserDto.UserSearchResponse.builder()
+                .nickname(firstSimilarUser.get().getNickname())
+                .profileImage(firstSimilarUser.get().getProfileImage())
+                .bio(firstSimilarUser.get().getBio())
+                .build());
+        Optional<User> secondSimilarUser = userRepository.findUserById(secondMostSimilarUserId);
+        arr.add(UserDto.UserSearchResponse.builder()
+                .nickname(secondSimilarUser.get().getNickname())
+                .profileImage(secondSimilarUser.get().getProfileImage())
+                .bio(secondSimilarUser.get().getBio())
+                .build());
+
+        if (arr.size() > 0) {
+            return Response.newResult(HttpStatus.OK, "사용자 검색을 완료하였습니다.", arr);
+        }
+        return Response.newResult(HttpStatus.OK, "새로운 사용자의 가입을 기다려주세요.", null);
+
     }
 }

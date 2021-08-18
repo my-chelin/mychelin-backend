@@ -95,7 +95,7 @@ public class UserPreferenceService {
         return userTaste;
     }
 
-    private static Map<CharSequence, Integer> getSelectionStandardIntoMap(UserPreference userPref) {
+    static Map<CharSequence, Integer> getSelectionStandardIntoMap(UserPreference userPref) {
         Map<CharSequence, Integer> userSelectionStandard = new HashMap<>();
         userSelectionStandard.put("planning", userPref.getPlanning());
         userSelectionStandard.put("challenging", userPref.getChallenging());
@@ -107,7 +107,7 @@ public class UserPreferenceService {
     public ResponseEntity getPreference(HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
         if (userId == null) {
-            return Response.newResult(HttpStatus.NOT_AUTHORIZED, "로그인 후 이용해주세요", null);
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요", null);
         }
         Optional<User> curUser = userRepository.findUserById(userId);
         if (!curUser.isPresent()) {
@@ -118,7 +118,6 @@ public class UserPreferenceService {
         if (!userPref.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "취향 설문을 먼저 진행해주세요", null);
         }
-
 
         HashMap<String, Object> linkedHashmap = new LinkedHashMap<>();
 
