@@ -35,8 +35,8 @@ public class PlaceDto {
         private int id;
         private String name;
         private String descrption;
-        private float lattitude;
-        private float longitude;
+        private double lattitude;
+        private double longitude;
         private String phone;
         private String location;
         private String operationHours;

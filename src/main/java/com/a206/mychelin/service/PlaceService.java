@@ -155,7 +155,7 @@ public class PlaceService {
         return Response.newResult(HttpStatus.OK, "장소로 검색에 성공했습니다.", linkedHashMap);
     }
 
-    public ResponseEntity<Response> getPlaceByCoordinate(float lat, float lng, float distance) {
+    public ResponseEntity<Response> getPlaceByCoordinate(double lat, double lng, float distance) {
         List<Object[]> placeList = placeRepository.getPlaceByCoordinate(lat, lng, distance);
         List<PlaceDto.PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
         for (Object[] objects : placeList) {
@@ -164,8 +164,8 @@ public class PlaceService {
                     .id((int) objects[1])
                     .name((String) objects[2])
                     .descrption((String) objects[3])
-                    .lattitude((float) objects[4])
-                    .longitude((float) objects[5])
+                    .lattitude((double) objects[4])
+                    .longitude((double) objects[5])
                     .phone((String) objects[6])
                     .location((String) objects[7])
                     .operationHours((String) objects[8])
