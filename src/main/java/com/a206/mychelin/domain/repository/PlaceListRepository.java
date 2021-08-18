@@ -34,4 +34,12 @@ public interface PlaceListRepository extends JpaRepository<PlaceList, Integer> {
     int getPlaceListItemsNumById(int id);
 
     long countPlaceListsByUserId(@Param("user_id") String userId);
+
+    @Query(value = "select pl.id, pl.title, (select nickname from user u where u.id = pl.user_id) , count(pl.id)\n" +
+            "from placelist pl, bookmark_placelist bp\n" +
+            "where pl.id = bp.placelist_id\n" +
+            "group by pl.id\n" +
+            "order by count(pl.id) desc\n" +
+            "limit 10", nativeQuery = true)
+    List<Object[]> getPlaceListRecommendation();
 }

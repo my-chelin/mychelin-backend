@@ -223,7 +223,8 @@ public class PlaceService {
         Random rand = new Random();
         // 랜덤 5개 추출하기
         ArrayList<PlaceDto.PlaceRecommendationReviewedBySimilarUser> randomArr = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        int randomArrSize = (arr.size() > 5) ? 5 : arr.size();
+        for (int i = 0; i < randomArrSize; i++) {
             int randomIdx = rand.nextInt(arr.size());
             while (randomArr.contains(arr.get(randomIdx))) {
                 randomIdx = rand.nextInt(arr.size());
@@ -231,7 +232,39 @@ public class PlaceService {
             randomArr.add(arr.get(randomIdx));
         }
 
-        linkedHashMap.put("data", randomArr);
-        return Response.newResult(HttpStatus.OK, "입맛이 가장 비슷한 유저가 추천한 식당 정보입니다.", linkedHashMap);
+//        linkedHashMap.put("data", randomArr);
+        List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
+        // p.id, p.name, p.description, p.location, r.starRate
+        ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
+        for (Object[] item :places) {
+            recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
+                    .id((int) item[0])
+                    .name((String) item[1])
+                    .description((String) item[2])
+                    .location((String) item[3])
+                    .starRate((double) item[4])
+                    .build());
+        }
+
+        linkedHashMap.put("similarUserVisited", randomArr);
+        linkedHashMap.put("recentlyAdded", recentlySavedPlaces);
+        return Response.newResult(HttpStatus.OK, "유저들이 저장한 평가하고 저장한 식당 정보입니다.", linkedHashMap);
+    }
+
+    public ResponseEntity getRecentlyAddedPlaces() {
+        List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
+        // p.id, p.name, p.description, p.location, r.starRate
+        ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
+        for (Object[] item :places) {
+            recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
+                    .id((int) item[0])
+                    .name((String) item[1])
+                    .description((String) item[2])
+                    .location((String) item[3])
+                    .starRate((double) item[4])
+                    .build());
+        }
+
+        return Response.newResult(HttpStatus.OK, "최근에 사용자들이 저장한 장소입니다", recentlySavedPlaces);
     }
 }

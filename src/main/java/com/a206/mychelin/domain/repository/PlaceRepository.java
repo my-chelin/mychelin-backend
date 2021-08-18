@@ -42,4 +42,11 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "LIMIT 10", nativeQuery = true)
     List<Object[]> findPlacesBySimilarUsersRecommendation(@Param("myId") String myId, @Param("similarUserId") String similarUserId);
 
+    @Query(value = "select p.id, p.name, p.description, p.location, ifnull((select avg(r.star_rate) from review r where r.place_id = p.id group by r.place_id), 0)\n" +
+            "from place p\n" +
+            "join bookmark_place bp\n" +
+            "on bp.place_id = p.id\n" +
+            "order by bp.add_date desc\n" +
+            "limit 10", nativeQuery = true)
+    List<Object[]> findRecentlyAddedPlaces();
 }
