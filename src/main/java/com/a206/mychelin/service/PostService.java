@@ -288,6 +288,9 @@ public class PostService {
 
     public ResponseEntity<Response> findPostsByKeyword(String keyword, int page, int pageSize, HttpServletRequest httpServletRequest) {
         String userId = TokenToId.check(httpServletRequest);
+        if(userId == null) {
+            userId = "null";
+        }
         long totalPageItemCnt = postRepository.countPostsByKeywordByFollowOrPublicAccount(keyword, userId);
 
         PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
