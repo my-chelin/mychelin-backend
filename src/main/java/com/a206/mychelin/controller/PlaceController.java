@@ -85,4 +85,9 @@ public class PlaceController {
     public ResponseEntity<Response> getTaggedPostsByPlaceId(@RequestParam int placeId, @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "15") int pageSize, HttpServletRequest httpServletRequest) {
         return postService.findPostsByTaggedPlaceId(page, pageSize, placeId, httpServletRequest);
     }
+
+    @GetMapping("/recent")
+    public ResponseEntity getRecentlyAddedPlaces(){
+        return placeService.getRecentlyAddedPlaces();
+    }
 }

@@ -57,4 +57,16 @@ public class PlaceDto {
         private String reviewContent;
         private float starRate;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class RecentlySavedPlaces {
+        private int id;
+        private String name;
+        private String description;
+        private String location;
+        private double starRate;
+    }
 }

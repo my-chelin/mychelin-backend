@@ -231,4 +231,18 @@ public class PlaceListService {
         linkedHashMap.put("placeListItem", placeListItemsByNicknameResponses);
         return Response.newResult(HttpStatus.OK, nickname + "의 맛집 정보를 가져오는데 성공했습니다.", linkedHashMap);
     }
+
+    public ResponseEntity getPlaceListRecommendation() {
+        List<Object[]> list = placeListRepository.getPlaceListRecommendation();
+        ArrayList<PlaceListDto.PlaceListByTitle> arr = new ArrayList<>();
+        for (Object[] item : list) {
+            arr.add(PlaceListDto.PlaceListByTitle.builder()
+                    .id((int) item[0])
+                    .title((String) item[1])
+                    .nickname((String) item[2])
+                    .totalItemCnt((BigInteger) item[3])
+                    .build());
+        }
+        return Response.newResult(HttpStatus.OK, "장소 리스트를 가져오는 데 성공했습니다.", arr);
+    }
 }

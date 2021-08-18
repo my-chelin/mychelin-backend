@@ -94,4 +94,9 @@ public class PlaceListController {
         }
         return Response.newResult(HttpStatus.BAD_REQUEST, "파라미터가 잘못 되었습니다.", null);
     }
+
+    @GetMapping("/recommend")
+    public ResponseEntity getPlaceListRecommendation() {
+        return placeListService.getPlaceListRecommendation();
+    }
 }
