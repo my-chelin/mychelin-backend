@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @DynamicInsert
+@DynamicUpdate
 @Entity
 public class UserPreference {
     @Id
@@ -38,6 +40,18 @@ public class UserPreference {
     @Builder
     public UserPreference(String userId, int sweet, int salty, int sour, int oily, int spicy, int challenging, int planning, int sociable, int sensitivity) {
         this.userId = userId;
+        this.sweet = sweet;
+        this.salty = salty;
+        this.sour = sour;
+        this.oily = oily;
+        this.spicy = spicy;
+        this.challenging = challenging;
+        this.planning = planning;
+        this.sociable = sociable;
+        this.sensitivity = sensitivity;
+    }
+
+    public void update(int sweet, int salty, int sour, int oily, int spicy, int challenging, int planning, int sociable, int sensitivity) {
         this.sweet = sweet;
         this.salty = salty;
         this.sour = sour;
