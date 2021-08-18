@@ -29,20 +29,29 @@ public class UserPreferenceService {
         if (userId == null) {
             return Response.newResult(HttpStatus.UNAUTHORIZED, "로그인 후 이용해주세요.", null);
         }
-        userPreferenceRepository.save(
-                UserPreference.builder()
-                        .userId(userId)
-                        .sweet(userPreferenceRequest.getSweet())
-                        .salty(userPreferenceRequest.getSalty())
-                        .sour(userPreferenceRequest.getSour())
-                        .spicy(userPreferenceRequest.getSpicy())
-                        .oily(userPreferenceRequest.getOily())
-                        .challenging(userPreferenceRequest.getChallenging())
-                        .planning(userPreferenceRequest.getPlanning())
-                        .sociable(userPreferenceRequest.getSociable())
-                        .sensitivity(userPreferenceRequest.getSensitivity())
-                        .build()
-        );
+        if (userPreferenceRepository.countByUserId(userId) == 0) {
+            userPreferenceRepository.save(
+                    UserPreference.builder()
+                            .userId(userId)
+                            .sweet(userPreferenceRequest.getSweet())
+                            .salty(userPreferenceRequest.getSalty())
+                            .sour(userPreferenceRequest.getSour())
+                            .spicy(userPreferenceRequest.getSpicy())
+                            .oily(userPreferenceRequest.getOily())
+                            .challenging(userPreferenceRequest.getChallenging())
+                            .planning(userPreferenceRequest.getPlanning())
+                            .sociable(userPreferenceRequest.getSociable())
+                            .sensitivity(userPreferenceRequest.getSensitivity())
+                            .build());
+        }
+        Optional<UserPreference> optionalUserPreference = userPreferenceRepository.findUserPreferenceByUserId(userId);
+        UserPreference userPreference = optionalUserPreference.get();
+        System.out.println(userId);
+        System.out.println(userPreferenceRequest.getChallenging());
+        userPreference.update(userPreferenceRequest.getSweet(), userPreferenceRequest.getSalty(), userPreferenceRequest.getSour(),
+                userPreferenceRequest.getOily(), userPreferenceRequest.getSpicy(), userPreferenceRequest.getChallenging(),
+                userPreferenceRequest.getPlanning(), userPreferenceRequest.getSociable(), userPreferenceRequest.getSensitivity());
+
         return Response.newResult(HttpStatus.OK, "사용자의 취향을 저장하였습니다.", null);
     }
 
@@ -146,7 +155,7 @@ public class UserPreferenceService {
             userAsAnimal = "다람쥐";
         }
 
-        if(sociable >= 50 && sensitivity >= 50) {
+        if (sociable >= 50 && sensitivity >= 50) {
             userAsAction = "부지런한";
         } else if (sociable >= 50) {
             userAsAction = "사교적인";

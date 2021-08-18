@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface UserPreferenceRepository extends JpaRepository<UserPreference, Integer> {
     Optional<UserPreference> findUserPreferenceByUserId(String userId);
 
+    int countByUserId(String userId);
 }
