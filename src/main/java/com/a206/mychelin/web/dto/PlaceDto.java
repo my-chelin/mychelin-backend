@@ -56,6 +56,7 @@ public class PlaceDto {
         private String location;
         private String reviewContent;
         private float starRate;
+        private String emoji;
     }
 
     @Getter
@@ -68,5 +69,6 @@ public class PlaceDto {
         private String description;
         private String location;
         private double starRate;
+        private String emoji;
     }
 }

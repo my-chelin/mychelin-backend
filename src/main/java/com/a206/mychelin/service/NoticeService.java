@@ -124,31 +124,29 @@ public class NoticeService {
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
-        System.out.println(noticeRequest.getType() + " " + noticeRequest.getId());
-        if (noticeRequest.getType().equals("FOLLOW")) {
-            Optional<NoticeFollow> noticeFollow = noticeFollowRepository.findById(noticeRequest.getId());
-            System.out.println(noticeFollow.get().isRead());
-            if (noticeFollow.isPresent()) {
-                noticeFollow.get().readNotice();
-            } else {
-                return Response.newResult(HttpStatus.OK, "팔로우 알림이 없습니다.", null);
-            }
-        } else if (noticeRequest.getType().equals("POSTLIKE")) {
-            Optional<NoticePostLike> noticePostLike = noticePostLikeRepository.findById(noticeRequest.getId());
-            if (noticePostLike.isPresent()) {
-                noticePostLike.get().readNotice();
-            } else {
-                return Response.newResult(HttpStatus.OK, "게시글 좋아요 알림이 없습니다.", null);
-            }
-
-        } else if (noticeRequest.getType().equals("COMMENT")) {
-            Optional<NoticeComment> noticeComment = noticeCommentRepository.findById(noticeRequest.getId());
-            if (noticeComment.isPresent()) {
-                noticeComment.get().readNotice();
-            } else {
-                return Response.newResult(HttpStatus.OK, "댓글 알림이 없습니다.", null);
-            }
+        switch (noticeRequest.getType()) {
+            case "FOLLOW":
+                Optional<NoticeFollow> noticeFollow = noticeFollowRepository.findById(noticeRequest.getId());
+                if (noticeFollow.isPresent()) {
+                    noticeFollow.get().readNotice();
+                    return Response.newResult(HttpStatus.OK, "팔로우 알림을 읽었습니다.", null);
+                }
+                break;
+            case "POSTLIKE":
+                Optional<NoticePostLike> noticePostLike = noticePostLikeRepository.findById(noticeRequest.getId());
+                if (noticePostLike.isPresent()) {
+                    noticePostLike.get().readNotice();
+                    return Response.newResult(HttpStatus.OK, "게시글 좋아요 알림을 읽었습니다.", null);
+                }
+                break;
+            case "COMMENT":
+                Optional<NoticeComment> noticeComment = noticeCommentRepository.findById(noticeRequest.getId());
+                if (noticeComment.isPresent()) {
+                    noticeComment.get().readNotice();
+                    return Response.newResult(HttpStatus.OK, "댓글 알림을 읽었습니다.", null);
+                }
+                break;
         }
-        return Response.newResult(HttpStatus.BAD_REQUEST, "해당 타입 알림을 찾을 수 없습니다.", null);
+        return Response.newResult(HttpStatus.BAD_REQUEST, "해당 알림을 찾을 수 없습니다.", null);
     }
 }

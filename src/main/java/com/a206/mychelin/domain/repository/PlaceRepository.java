@@ -31,10 +31,11 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "WHERE DATA.distance < :distance order by DATA.distance", nativeQuery = true)
     List<Object[]> getPlaceByCoordinate(double lat, double lng, float distance);
 
-    @Query(value = "SELECT p.id, p.name, p.description, p.location, r.content, r.star_rate\n" +
-            "FROM review r inner join place p\n" +
+    @Query(value = "SELECT p.id, p.name, c.emoji, p.description, p.location, r.content, r.star_rate\n" +
+            "FROM category c, review r inner join place p\n" +
             "ON r.place_id = p.id\n" +
             "WHERE r.user_id = :similarUserId\n" +
+            "AND p.category_id = c.id\n" +
             "AND r.place_id not in (select r2.place_id\n" +
             "FROM review r2\n" +
             "WHERE r2.user_id = :myId)\n" +
@@ -42,10 +43,11 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "LIMIT 10", nativeQuery = true)
     List<Object[]> findPlacesBySimilarUsersRecommendation(@Param("myId") String myId, @Param("similarUserId") String similarUserId);
 
-    @Query(value = "select p.id, p.name, p.description, p.location, ifnull((select avg(r.star_rate) from review r where r.place_id = p.id group by r.place_id), 0)\n" +
-            "from place p\n" +
+    @Query(value = "select p.id, p.name, c.emoji, p.description, p.location, ifnull((select avg(r.star_rate) from review r where r.place_id = p.id group by r.place_id), 0)\n" +
+            "from category c, place p\n" +
             "join bookmark_place bp\n" +
             "on bp.place_id = p.id\n" +
+            "where p.category_id = c.id\n" +
             "order by bp.add_date desc\n" +
             "limit 10", nativeQuery = true)
     List<Object[]> findRecentlyAddedPlaces();
