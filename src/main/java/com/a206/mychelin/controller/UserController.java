@@ -5,6 +5,7 @@ import com.a206.mychelin.web.dto.*;
 import com.a206.mychelin.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +30,10 @@ public class UserController {
 
     @PutMapping("/profile")
     public ResponseEntity<Response> updateInfo(@RequestBody UserDto.UpdateRequest requestDTO, HttpServletRequest httpRequest) {
-        userService.updateInfo(requestDTO, httpRequest);
+        ResponseEntity<Response> updateResponse = userService.updateInfo(requestDTO, httpRequest);
+        if (updateResponse.getStatusCode() != HttpStatus.OK) {
+            return Response.newResult(updateResponse.getStatusCode(), updateResponse.getBody().getMessage(), null);
+        }
         ResponseEntity<Response> response = userService.getProfile(TokenToId.check(httpRequest), httpRequest);
         return Response.newResult(response.getStatusCode(), "정보를 수정했습니다.", response.getBody());
     }

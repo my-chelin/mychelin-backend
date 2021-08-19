@@ -236,7 +236,7 @@ public class PlaceService {
         List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
         // p.id, p.name, p.description, p.location, r.starRate
         ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
-        for (Object[] item :places) {
+        for (Object[] item : places) {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
@@ -255,7 +255,7 @@ public class PlaceService {
         List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
         // p.id, p.name, p.description, p.location, r.starRate
         ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
-        for (Object[] item :places) {
+        for (Object[] item : places) {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
@@ -264,7 +264,6 @@ public class PlaceService {
                     .starRate((double) item[4])
                     .build());
         }
-
         return Response.newResult(HttpStatus.OK, "최근에 사용자들이 저장한 장소입니다", recentlySavedPlaces);
     }
 }

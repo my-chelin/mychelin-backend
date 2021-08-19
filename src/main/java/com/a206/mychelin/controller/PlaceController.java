@@ -87,7 +87,7 @@ public class PlaceController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity getRecentlyAddedPlaces(){
+    public ResponseEntity getRecentlyAddedPlaces() {
         return placeService.getRecentlyAddedPlaces();
     }
 }
