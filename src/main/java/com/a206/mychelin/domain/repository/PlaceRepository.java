@@ -29,7 +29,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "FROM place\n" +
             ") DATA\n" +
             "WHERE DATA.distance < :distance order by DATA.distance", nativeQuery = true)
-    List<Object[]> getPlaceByCoordinate(float lat, float lng, float distance);
+    List<Object[]> getPlaceByCoordinate(double lat, double lng, float distance);
 
     @Query(value = "SELECT p.id, p.name, p.description, p.location, r.content, r.star_rate\n" +
             "FROM review r inner join place p\n" +

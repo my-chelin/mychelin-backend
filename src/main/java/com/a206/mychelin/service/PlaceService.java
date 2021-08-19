@@ -155,7 +155,7 @@ public class PlaceService {
         return Response.newResult(HttpStatus.OK, "장소로 검색에 성공했습니다.", linkedHashMap);
     }
 
-    public ResponseEntity<Response> getPlaceByCoordinate(float lat, float lng, float distance) {
+    public ResponseEntity<Response> getPlaceByCoordinate(double lat, double lng, float distance) {
         List<Object[]> placeList = placeRepository.getPlaceByCoordinate(lat, lng, distance);
         List<PlaceDto.PlaceAndStarRateByCoordinate> resultList = new ArrayList<>();
         for (Object[] objects : placeList) {
@@ -164,8 +164,8 @@ public class PlaceService {
                     .id((int) objects[1])
                     .name((String) objects[2])
                     .descrption((String) objects[3])
-                    .lattitude((float) objects[4])
-                    .longitude((float) objects[5])
+                    .lattitude((double) objects[4])
+                    .longitude((double) objects[5])
                     .phone((String) objects[6])
                     .location((String) objects[7])
                     .operationHours((String) objects[8])
@@ -236,7 +236,7 @@ public class PlaceService {
         List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
         // p.id, p.name, p.description, p.location, r.starRate
         ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
-        for (Object[] item :places) {
+        for (Object[] item : places) {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
@@ -255,7 +255,7 @@ public class PlaceService {
         List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
         // p.id, p.name, p.description, p.location, r.starRate
         ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
-        for (Object[] item :places) {
+        for (Object[] item : places) {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
@@ -264,7 +264,6 @@ public class PlaceService {
                     .starRate((double) item[4])
                     .build());
         }
-
         return Response.newResult(HttpStatus.OK, "최근에 사용자들이 저장한 장소입니다", recentlySavedPlaces);
     }
 }
