@@ -25,13 +25,6 @@ public class FollowController {
         return followService.follow(followAskRequest, httpRequest);
     }
 
-    @ApiOperation(value = "언팔로우 요청 보내기")
-    @ApiImplicitParam(name = "userNickname", value = "언팔로우하고자 하는 사용자 닉네임")
-    @DeleteMapping("/request")
-    public ResponseEntity<Response> unfollow(@RequestBody FollowDto.FollowAskRequest followAskRequest, HttpServletRequest request) {
-        return followService.unfollow(followAskRequest, request);
-    }
-
     @ApiOperation(value = "팔로우 요청을 수락한다.")
     @ApiImplicitParam(name = "userNickname", value = "사용자 닉네임")
     @PutMapping("/accept")

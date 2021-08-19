@@ -39,6 +39,12 @@ public class FollowService {
         if (optionalUser.get().isWithdraw()) {
             return Response.newResult(HttpStatus.NOT_FOUND, "탈퇴한 유저입니다.", null);
         }
+        if (userId.equals(optionalUser.get().getId())) {
+            return Response.newResult(HttpStatus.BAD_REQUEST, "자기 자신은 팔로우 할 수 없습니다.", null);
+        }
+        if (followRepository.countByUserIdAndFollowingIdAndAccept(userId, optionalUser.get().getId(), true) > 0) {
+            return unfollow(followAskRequest, request);
+        }
         String getFollowingId = optionalUser.get().getId();
         Optional<Follow> findFollow = followRepository.findFollowByUserIdAndFollowingId(userId, getFollowingId);
 
@@ -167,6 +173,6 @@ public class FollowService {
         }
         String userId = optionalUser.get().getId();
         followRepository.deleteAllByUserIdAndFollowingIdAndAccept(TokenToId.check(request), userId, true);
-        return Response.newResult(HttpStatus.BAD_REQUEST, "팔로우 요청이 취소 되었습니다.", null);
+        return Response.newResult(HttpStatus.OK, "언팔로우 되었습니다.", null);
     }
 }
