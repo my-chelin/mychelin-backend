@@ -144,7 +144,34 @@ public class UserService {
             userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(0);
         }
         UserDto.UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
-        return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
+
+        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("userProfile", userProfileResponse);
+
+        Optional<UserPreference> userPref = userPreferenceRepository.findUserPreferenceByUserId(userId);
+        if (userPref.isPresent()) {
+            UserPreferenceDto.TastePreferenceResponse tastePreferenceResponse =
+                    UserPreferenceDto.TastePreferenceResponse.builder()
+                            .sweet(userPref.get().getSweet())
+                            .salty(userPref.get().getSalty())
+                            .sour(userPref.get().getSour())
+                            .oily(userPref.get().getOily())
+                            .spicy(userPref.get().getSpicy())
+                            .build();
+            linkedHashMap.put("tastePreference", tastePreferenceResponse);
+
+            StringBuilder sb = new StringBuilder();
+            boolean challenging = userPref.get().getChallenging() >= 50;
+            boolean planning = userPref.get().getPlanning() >= 50;
+            boolean sensitivity = userPref.get().getSensitivity() >= 50;
+            boolean sociable = userPref.get().getSociable() >= 50;
+
+            String userAsAnimal = UserPreferenceService.getUserAnimalType(challenging, planning, sensitivity, sociable);
+
+            linkedHashMap.put("userAsAnimal", userAsAnimal);
+
+        }
+        return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", linkedHashMap);
     }
 
     public ResponseEntity<Response> checkEmail(EmailRequest emailRequest) {

@@ -39,11 +39,11 @@ public class UserPreferenceDto {
     @Getter
     @Builder
     public static class PlacePreferenceResponse {
-        public String userAsAnimal;
-        public String userAsAction;
-//        public int challenging;
-//        public int planning;
-//        public int sociable;
-//        public int sensitivity;
+//        public String userAsAnimal;
+        public boolean challenging;
+        public boolean planning;
+        public boolean sociable;
+        public boolean sensitivity;
+        public String explanation;
     }
 }
