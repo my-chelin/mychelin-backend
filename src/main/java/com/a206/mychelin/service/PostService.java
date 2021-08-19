@@ -62,14 +62,17 @@ public class PostService {
             return Response.newResult(HttpStatus.BAD_REQUEST, "게시글이 없습니다.", null);
         }
         Post post = tempPost.get();
-        if (userId.equals(post.getUserId())) {
+        if (!userId.equals(post.getUserId())) {
+            return Response.newResult(HttpStatus.UNAUTHORIZED, "수정 권한이 없습니다.", null);
+        }
+        post.update(postUpdateRequest.getContent(), postUpdateRequest.getPlaceId(), postUpdateRequest.getPlacelistId());
+        if (postUpdateRequest.getImages() != null) {
             // image Repository 해당 아이디 이미지 데이터 다 지우고
             List<PostImage> oldImages = postImageRepository.findPostImagesByPostId(id);
             for (PostImage item : oldImages) {
                 postImageRepository.delete(item);
             }
             // 받아온걸로 다시 upload 로직
-            post.update(postUpdateRequest.getContent());
             for (String image : postUpdateRequest.getImages()) {
                 // 이미지 추가
                 PostImage insertPostImage = PostImage.builder()
@@ -78,10 +81,8 @@ public class PostService {
                         .build();
                 postImageRepository.save(insertPostImage);
             }
-
-            return Response.newResult(HttpStatus.OK, post.getId() + "번 게시글이 수정되었습니다.", null);
         }
-        return Response.newResult(HttpStatus.UNAUTHORIZED, "수정 권한이 없습니다.", null);
+        return Response.newResult(HttpStatus.OK, post.getId() + "번 게시글이 수정되었습니다.", null);
     }
 
     public ResponseEntity<Response> getPostByPostId(@PathVariable int postId, HttpServletRequest httpRequest) {
