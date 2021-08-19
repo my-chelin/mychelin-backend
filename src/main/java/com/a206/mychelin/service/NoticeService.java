@@ -124,8 +124,10 @@ public class NoticeService {
         if (!user.isPresent()) {
             return Response.newResult(HttpStatus.BAD_REQUEST, "존재하지 않는 유저입니다.", null);
         }
+        System.out.println(noticeRequest.getType() + " " + noticeRequest.getId());
         if (noticeRequest.getType().equals("FOLLOW")) {
             Optional<NoticeFollow> noticeFollow = noticeFollowRepository.findById(noticeRequest.getId());
+            System.out.println(noticeFollow.get().isRead());
             if (noticeFollow.isPresent()) {
                 noticeFollow.get().readNotice();
             } else {
