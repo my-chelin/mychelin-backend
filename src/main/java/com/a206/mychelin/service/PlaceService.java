@@ -210,10 +210,11 @@ public class PlaceService {
             arr.add(PlaceDto.PlaceRecommendationReviewedBySimilarUser.builder()
                     .id((int) item[0])
                     .name((String) item[1])
-                    .description((String) item[2])
-                    .location((String) item[3])
-                    .reviewContent((String) item[4])
-                    .starRate((float) item[5])
+                    .emoji((String) item[2])
+                    .description((String) item[3])
+                    .location((String) item[4])
+                    .reviewContent((String) item[5])
+                    .starRate((float) item[6])
                     .build());
         }
         if (arr.size() == 0) {
@@ -240,9 +241,10 @@ public class PlaceService {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
-                    .description((String) item[2])
-                    .location((String) item[3])
-                    .starRate((double) item[4])
+                    .emoji((String) item[2])
+                    .description((String) item[3])
+                    .location((String) item[4])
+                    .starRate((double) item[5])
                     .build());
         }
 
@@ -251,7 +253,7 @@ public class PlaceService {
         return Response.newResult(HttpStatus.OK, "유저들이 저장한 평가하고 저장한 식당 정보입니다.", linkedHashMap);
     }
 
-    public ResponseEntity getRecentlyAddedPlaces() {
+    public ResponseEntity<Response> getRecentlyAddedPlaces() {
         List<Object[]> places = placeRepository.findRecentlyAddedPlaces();
         // p.id, p.name, p.description, p.location, r.starRate
         ArrayList<PlaceDto.RecentlySavedPlaces> recentlySavedPlaces = new ArrayList<>();
@@ -259,9 +261,10 @@ public class PlaceService {
             recentlySavedPlaces.add(PlaceDto.RecentlySavedPlaces.builder()
                     .id((int) item[0])
                     .name((String) item[1])
-                    .description((String) item[2])
-                    .location((String) item[3])
-                    .starRate((double) item[4])
+                    .emoji((String) item[2])
+                    .description((String) item[3])
+                    .location((String) item[4])
+                    .starRate((double) item[5])
                     .build());
         }
         return Response.newResult(HttpStatus.OK, "최근에 사용자들이 저장한 장소입니다", recentlySavedPlaces);
