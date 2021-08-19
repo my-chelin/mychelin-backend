@@ -131,19 +131,19 @@ public class UserService {
                 .follower(follower)
                 .like(like);
         User loginUser = getUser(request);
+        UserDto.UserProfileResponse userProfileResponse;
         if (loginUser.getId().equals(user.getId())) {
             userProfileResponseBuilder = userProfileResponseBuilder.phoneNumber(user.getPhoneNumber());
-            UserDto.UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
-            return Response.newResult(HttpStatus.OK, "회원정보를 출력합니다.", userProfileResponse);
-        }
-        if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
-            userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(2);
-        } else if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), false) > 0) {
-            userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(1);
         } else {
-            userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(0);
+            if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), true) > 0) {
+                userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(2);
+            } else if (followRepository.countByUserIdAndFollowingIdAndAccept(loginUser.getId(), user.getId(), false) > 0) {
+                userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(1);
+            } else {
+                userProfileResponseBuilder = userProfileResponseBuilder.isFollowing(0);
+            }
         }
-        UserDto.UserProfileResponse userProfileResponse = userProfileResponseBuilder.build();
+        userProfileResponse = userProfileResponseBuilder.build();
 
         LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
         linkedHashMap.put("userProfile", userProfileResponse);
