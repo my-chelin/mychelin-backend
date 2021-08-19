@@ -31,7 +31,7 @@ public interface PlaceRepository extends JpaRepository<Place, Integer> {
             "WHERE DATA.distance < :distance order by DATA.distance", nativeQuery = true)
     List<Object[]> getPlaceByCoordinate(double lat, double lng, float distance);
 
-    @Query(value = "SELECT p.id, p.name, p.description, p.location, r.content, r.star_rat\n" +
+    @Query(value = "SELECT p.id, p.name, p.description, p.location, r.content, r.star_rate\n" +
             "FROM review r inner join place p\n" +
             "ON r.place_id = p.id\n" +
             "WHERE r.user_id = :similarUserId\n" +
