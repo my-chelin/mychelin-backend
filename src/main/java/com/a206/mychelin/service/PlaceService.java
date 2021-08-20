@@ -217,20 +217,23 @@ public class PlaceService {
                     .starRate((float) item[6])
                     .build());
         }
-        if (arr.size() == 0) {
-            return Response.newResult(HttpStatus.OK, similarUserId + " 유저가 새로운 장소를 평가하길 기다려주세요.", linkedHashMap);
-        }
+        if (arr.size() > 0) {
+//            return Response.newResult(HttpStatus.OK, similarUserId + " 유저가 새로운 장소를 평가하길 기다려주세요.", linkedHashMap);
 
-        Random rand = new Random();
-        // 랜덤 5개 추출하기
-        ArrayList<PlaceDto.PlaceRecommendationReviewedBySimilarUser> randomArr = new ArrayList<>();
-        int randomArrSize = (arr.size() > 5) ? 5 : arr.size();
-        for (int i = 0; i < randomArrSize; i++) {
-            int randomIdx = rand.nextInt(arr.size());
-            while (randomArr.contains(arr.get(randomIdx))) {
-                randomIdx = rand.nextInt(arr.size());
+            Random rand = new Random();
+            // 랜덤 5개 추출하기
+            ArrayList<PlaceDto.PlaceRecommendationReviewedBySimilarUser> randomArr = new ArrayList<>();
+            int randomArrSize = (arr.size() > 5) ? 5 : arr.size();
+            for (int i = 0; i < randomArrSize; i++) {
+                int randomIdx = rand.nextInt(arr.size());
+                while (randomArr.contains(arr.get(randomIdx))) {
+                    randomIdx = rand.nextInt(arr.size());
+                }
+                randomArr.add(arr.get(randomIdx));
             }
-            randomArr.add(arr.get(randomIdx));
+            linkedHashMap.put("similarUserVisited", randomArr);
+        } else {
+            linkedHashMap.put("similarUserVisited", null);
         }
 
 //        linkedHashMap.put("data", randomArr);
@@ -247,9 +250,8 @@ public class PlaceService {
                     .starRate((double) item[5])
                     .build());
         }
-
-        linkedHashMap.put("similarUserVisited", randomArr);
         linkedHashMap.put("recentlyAdded", recentlySavedPlaces);
+
         return Response.newResult(HttpStatus.OK, "유저들이 저장한 평가하고 저장한 식당 정보입니다.", linkedHashMap);
     }
 
