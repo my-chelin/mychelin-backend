@@ -203,43 +203,43 @@ public class UserPreferenceService {
         String userAsAnimal = "";
         if (isChallenging && !isPlanning) {
             if (isSensitivity && isSociable) {
-                userAsAnimal = "다재다능한 여우";
+                userAsAnimal = "다재다능한 여우 🦊";
             } else if (isSensitivity) {
-                userAsAnimal = "모험을 좋아하는 복어";
+                userAsAnimal = "모험을 좋아하는 복어 🐡";
             } else if (isSociable) {
-                userAsAnimal = "외출을 좋아하는 강아지";
+                userAsAnimal = "외출을 좋아하는 강아지 🐶";
             } else {
-                userAsAnimal = "매력적인 앵무새";
+                userAsAnimal = "매력적인 앵무새 🦜";
             }
         } else if (isChallenging) { // 모험 계획
             if (isSensitivity && isSociable) { // 외향 민감
-                userAsAnimal = "호기심 많은 꿀벌";
+                userAsAnimal = "호기심 많은 꿀벌 🐝";
             } else if (isSensitivity) { // 내향 민감
-                userAsAnimal = "늠름한 토끼";
+                userAsAnimal = "늠름한 토끼 🐰";
             } else if (isSociable) { //외향 무던
-                userAsAnimal = "붙임성 있는 펭귄";
+                userAsAnimal = "붙임성 있는 펭귄 🐧";
             } else {
-                userAsAnimal = "생기발랄한 개미";
+                userAsAnimal = "생기발랄한 개미 🐜";
             }
         } else if (!isPlanning) { // 안정 즉흥
             if (isSociable && isSensitivity) {
-                userAsAnimal = "천진난만한 미어캣";
+                userAsAnimal = "천진난만한 미어캣 🐱";
             } else if (isSensitivity) {
-                userAsAnimal = "긍정적인 고슴도치";
+                userAsAnimal = "긍정적인 고슴도치 🦔";
             } else if (isSociable) {
-                userAsAnimal = "낭만적인 치타";
+                userAsAnimal = "낭만적인 치타 🐆";
             } else {
-                userAsAnimal = "온순한 나무늘보";
+                userAsAnimal = "온순한 나무늘보 🦥";
             }
         } else {
             if (isSociable && isSensitivity) {
-                userAsAnimal = "믿음직스러운 게코 도마뱀";
+                userAsAnimal = "믿음직스러운 게코 도마뱀 🦎";
             } else if (isSociable) {
-                userAsAnimal = "상냥한 반달가슴곰";
+                userAsAnimal = "상냥한 반달가슴곰 🐻";
             } else if (isSensitivity) {
-                userAsAnimal = "완벽을 추구하는 랫서팬더";
+                userAsAnimal = "완벽을 추구하는 랫서팬더 🐼";
             } else {
-                userAsAnimal = "정의로운 거북이";
+                userAsAnimal = "정의로운 거북이 🐢";
             }
         }
         return userAsAnimal;
