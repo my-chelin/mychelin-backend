@@ -148,11 +148,11 @@ public class UserPreferenceService {
         String userAsAnimal = getUserAnimalType(isChallenging, isPlanning, isSensitivity, isSociable);
 
         if (isChallenging) {
-           sb.append("최고의 맛을 쟁취하기 위해서라면 물리적 노력쯤이야! 그런 점을 마다하지 않고 찾아 나서는 당신에게는 탐험가의 기질이 있네요." +
+            sb.append("최고의 맛을 쟁취하기 위해서라면 물리적 노력쯤이야! 그런 점을 마다하지 않고 찾아 나서는 당신에게는 탐험가의 기질이 있네요." +
                     " 도전하면서 새로운 취향을 찾아가는 재미를 한 번 맛본 이상 두 번 다시 돌아갈 수 없어요. 당신이 맛의 콜럼버스가 되어 개척해나간 식당들을 리스트로 만들어 팔로워들에게 소개해 보는 건 어떨까요?");
         } else {
             sb.append("\uD83D\uDE04\n 안정적인 선택지에서 오는 안락함과 익숙함을 벗어나는 것을 조금은 두려워하는 듯 보여요. 하지만 또 반대로 생각하면 그런 당신이 좋아하는 가게라면 틀림없이 맛이 보장된 장소라는 이야기죠! " +
-                   "그런 당신의 추천을 많은 사람이 기다리고 있어요! ");
+                    "그런 당신의 추천을 많은 사람이 기다리고 있어요! ");
         }
         sb.append("\n");
 
@@ -173,7 +173,7 @@ public class UserPreferenceService {
                     "여럿이 함께 모은 좋은 가게들에 대한 정보를 얻을 수 있을 거예요\uD83D\uDE09 ");
         } else {
             sb.append("무인도에 던져져도 먹고 잘 수만 있다면 괜찮다고 순응할 성향이에요! 화를 잘 내지 않고 받아들일 수 있는 태도 덕분에 불만을 제기하며 싸운 경험도 거의 없을 거예요. " +
-                "세상을 둥글고 조금은 느긋하게 살아가는 태도 덕분에 감정 기복도 적고 주변을 편안하게 만들어주는 사람이에요. 어떤 상대든지 기복 없이 맞춰줄 수 있기에 사람들이 주변에서 편안함을 느껴요. ");
+                    "세상을 둥글고 조금은 느긋하게 살아가는 태도 덕분에 감정 기복도 적고 주변을 편안하게 만들어주는 사람이에요. 어떤 상대든지 기복 없이 맞춰줄 수 있기에 사람들이 주변에서 편안함을 느껴요. ");
         }
         sb.append("\n");
 
@@ -185,20 +185,21 @@ public class UserPreferenceService {
                     "NPC라고 여겼던 직원에게 독립적인 존재로 인식되는 순간 당신의 대처를 통해 당신의 상황 판단 능력을 확인할 수 있어요. 적당한 비즈니스적 친절을 제공해서 여러분의 마음에 평안함이 오는 장소를 함께 공유해 보아요!");
         }
         UserPreferenceDto.PlacePreferenceResponse placePreferenceResponse =
-            UserPreferenceDto.PlacePreferenceResponse.builder()
-                    .challenging(isChallenging)
-                    .planning(isPlanning)
-                    .sociable(isSociable)
-                    .sensitivity(isSensitivity)
-                    .explanation(sb.toString())
-                    .build();
+                UserPreferenceDto.PlacePreferenceResponse.builder()
+                        .challenging(isChallenging)
+                        .planning(isPlanning)
+                        .sociable(isSociable)
+                        .sensitivity(isSensitivity)
+                        .explanation(sb.toString())
+                        .build();
         linkedHashmap.put("userNickname", curUser.get().getNickname());
         linkedHashmap.put("userAsAnimal", userAsAnimal);
         linkedHashmap.put("tastePreference", tastePreferenceResponse);
         linkedHashmap.put("placePreference", placePreferenceResponse);
         return Response.newResult(HttpStatus.OK, "취향을 알려드립니다.", linkedHashmap);
     }
-    public static String getUserAnimalType(boolean isChallenging, boolean isPlanning, boolean isSensitivity, boolean isSociable){
+
+    public static String getUserAnimalType(boolean isChallenging, boolean isPlanning, boolean isSensitivity, boolean isSociable) {
         String userAsAnimal = "";
         if (isChallenging && !isPlanning) {
             if (isSensitivity && isSociable) {

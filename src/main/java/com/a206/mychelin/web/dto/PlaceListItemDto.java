@@ -14,7 +14,7 @@ public class PlaceListItemDto {
     public static class PlaceListItemDetail {
         private int placeListId;
         private int placeId;
-        private String contributorId;
+        private String nickname;
         private String name;
         private String description;
         private double latitude;

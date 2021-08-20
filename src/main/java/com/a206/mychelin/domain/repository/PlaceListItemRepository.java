@@ -29,6 +29,7 @@ public interface PlaceListItemRepository extends JpaRepository<PlaceListItem, Pl
             "right outer join placelist pl \n" +
             "on pi.placelist_id = pl.id\n" +
             "where pl.user_id = :contributor_id\n" +
+            "and pi.contributor_id = :contributor_id\n" +
             "order by pl.id)) a"
             , countQuery = "select count(*) from (SELECT distinct pi.placelist_id, pl.title, pi.contributor_id\n" +
             " FROM placelist_item pi, placelist pl where pi.placelist_id = pl.id and pi.contributor_id=:contributorId ) as data"

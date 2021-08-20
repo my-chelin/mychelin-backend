@@ -116,7 +116,7 @@ public class PlaceListService {
             arr.add(PlaceListItemDto.PlaceListItemDetail.builder()
                     .placeListId((int) item[0])
                     .placeId((int) item[1])
-                    .contributorId((String) item[2])
+                    .nickname(userRepository.findUserById((String) item[2]).get().getNickname())
                     .name((String) item[3])
                     .description((String) item[4])
                     .latitude((double) item[5])
@@ -232,7 +232,7 @@ public class PlaceListService {
         return Response.newResult(HttpStatus.OK, nickname + "의 맛집 정보를 가져오는데 성공했습니다.", linkedHashMap);
     }
 
-    public ResponseEntity getPlaceListRecommendation() {
+    public ResponseEntity<Response> getPlaceListRecommendation() {
         List<Object[]> list = placeListRepository.getPlaceListRecommendation();
         ArrayList<PlaceListDto.PlaceListByTitle> arr = new ArrayList<>();
         for (Object[] item : list) {
