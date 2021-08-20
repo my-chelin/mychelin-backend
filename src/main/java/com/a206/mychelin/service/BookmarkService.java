@@ -56,7 +56,7 @@ public class BookmarkService {
         }
         BookmarkPlace bookmark = new BookmarkPlace(item.get().getId(), userId, item.get().getPlaceId(), item.get().getAddDate());
         bookmarkRepository.delete(bookmark);
-        return Response.newResult(HttpStatus.OK, "북마크를 해체 하였습니다.", null);
+        return Response.newResult(HttpStatus.OK, "북마크를 해제하였습니다.", null);
     }
 
     @Transactional
